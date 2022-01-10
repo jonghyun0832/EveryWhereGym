@@ -7,7 +7,7 @@
     tools:context=".LoginActivity">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/hardtext_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="어 디 든 짐(GYM)"
@@ -24,15 +24,34 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.25"
-        />
+        app:layout_constraintGuide_percent="0.2" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.3" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.7" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.9" />
 
     <EditText
-        android:id="@+id/editText_login_email"
+        android:id="@+id/edittext_login_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="80dp"
         android:ems="12"
         android:hint="이메일을 입력해주세요"
         android:inputType="textEmailAddress"
@@ -40,10 +59,10 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toTopOf="@+id/guideline5" />
 
     <EditText
-        android:id="@+id/editText_login_passward"
+        android:id="@+id/edittext_login_passward"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
@@ -55,7 +74,7 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_login_email" />
+        app:layout_constraintTop_toBottomOf="@+id/edittext_login_email" />
 
     <Button
         android:id="@+id/btn_find_passward"
@@ -65,63 +84,62 @@
         android:layout_marginEnd="30dp"
         android:text="비밀번호 찾기"
         android:minHeight="50dp"
-        android:background="none"
+        android:background="@android:color/transparent"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_login_passward" />
+        app:layout_constraintTop_toBottomOf="@+id/edittext_login_passward" />
 
     <Button
         android:id="@+id/btn_login"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="60dp"
         android:layout_marginEnd="40dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="15dp"
         android:background="@drawable/round_button"
         android:minHeight="50dp"
         android:text="로 그 인"
         android:textColor="@color/white"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_create_account"
+        app:layout_constraintBottom_toTopOf="@+id/btn_sign_up"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_find_passward" />
+        app:layout_constraintTop_toTopOf="@+id/guideline3" />
 
     <Button
-        android:id="@+id/btn_create_account"
+        android:id="@+id/btn_sign_up"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="40dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="40dp"
-        android:layout_marginBottom="70dp"
         android:background="@drawable/round_button"
         android:minHeight="50dp"
         android:text="회 원 가 입"
         android:textColor="@color/white"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/guideline4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_login" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/imageview_login_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
-        app:layout_constraintEnd_toStartOf="@+id/editText_login_email"
-        app:layout_constraintTop_toTopOf="@+id/editText_login_email"
+        app:layout_constraintEnd_toStartOf="@+id/edittext_login_email"
+        app:layout_constraintTop_toTopOf="@+id/edittext_login_email"
         app:srcCompat="@drawable/ic_outline_person" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/imageview_login_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
-        app:layout_constraintEnd_toStartOf="@+id/editText_login_passward"
-        app:layout_constraintTop_toTopOf="@+id/editText_login_passward"
+        app:layout_constraintEnd_toStartOf="@+id/edittext_login_passward"
+        app:layout_constraintTop_toTopOf="@+id/edittext_login_passward"
         app:srcCompat="@drawable/ic_baseline_password" />
 </androidx.constraintlayout.widget.ConstraintLayout>
