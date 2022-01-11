@@ -12,9 +12,24 @@ public interface ApiInterface {
 //    @GET("example_select.php")
 //    Call<Person> getNameHobby();
 
+    //메일 인증용 get
     @GET("mail.php")
     Call<UserInfo> sendMail(
             @Query("email") String email
+    );
+
+    //중복 체크용 get
+    @GET("checkDuplicate.php")
+    Call<UserInfo> sendNickName(
+            @Query("nickname") String nickname
+    );
+
+    @FormUrlEncoded
+    @POST("saveUserInfo.php")
+    Call<UserInfo> sendUserInfo(
+            @Field("email") String name,
+            @Field("password") String password,
+            @Field("nickname") String nickname
     );
 
 //    @FormUrlEncoded

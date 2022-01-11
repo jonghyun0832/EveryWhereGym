@@ -96,7 +96,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
         android:ems="10"
-        android:hint="이름(닉네임)"
+        android:hint="닉네임"
         android:inputType="text"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="@+id/edittext_signup_repassword"
@@ -212,6 +212,7 @@
         app:layout_constraintGuide_percent="0.95"/>
 
     <FrameLayout
+        android:id="@+id/frameLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline11"
@@ -241,13 +242,98 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="20dp"
-                android:text="3:00"
+
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/edittext_signup_certification"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/imageview_certify_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/edittext_signup_certification"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_baseline_check_circle_disable" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>
+
+    <ImageView
+        android:id="@+id/imageview_repassword_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/edittext_signup_repassword"
+        app:layout_constraintEnd_toStartOf="@+id/edittext_signup_repassword"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/edittext_signup_repassword"
+        app:srcCompat="@drawable/ic_baseline_check_circle_disable" />
+
+    <ImageView
+        android:id="@+id/imageview_password_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/edittext_signup_password"
+        app:layout_constraintEnd_toStartOf="@+id/edittext_signup_password"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/edittext_signup_password"
+        app:srcCompat="@drawable/ic_baseline_check_circle_disable" />
+
+    <ImageView
+        android:id="@+id/imageview_nickname_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/edittext_signup_name"
+        app:layout_constraintEnd_toStartOf="@+id/edittext_signup_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/edittext_signup_name"
+        app:srcCompat="@drawable/ic_baseline_check_circle_disable" />
+
+    <TextView
+        android:id="@+id/textview_alert_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:textColor="@color/alert_message"
+        app:layout_constraintStart_toStartOf="@+id/edittext_signup_email"
+        app:layout_constraintTop_toBottomOf="@+id/edittext_signup_email" />
+
+    <TextView
+        android:id="@+id/textview_alert_certify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:textColor="@color/alert_message"
+        app:layout_constraintStart_toStartOf="@+id/textview_alert_email"
+        app:layout_constraintTop_toTopOf="@+id/guideline11" />
+
+    <TextView
+        android:id="@+id/textview_alert_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="영문+숫자포함 최소 6자리 이상"
+        android:textColor="#A3A3A3"
+        app:layout_constraintStart_toStartOf="@+id/textview_alert_certify"
+        app:layout_constraintTop_toBottomOf="@+id/edittext_signup_password" />
+
+    <TextView
+        android:id="@+id/textview_alert_repassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:textColor="@color/alert_message"
+        app:layout_constraintStart_toStartOf="@+id/textview_alert_password"
+        app:layout_constraintTop_toBottomOf="@+id/edittext_signup_repassword" />
+
+    <TextView
+        android:id="@+id/textview_alert_nickname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/alert_message"
+        app:layout_constraintStart_toStartOf="@+id/textview_alert_repassword"
+        app:layout_constraintTop_toBottomOf="@+id/edittext_signup_name" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

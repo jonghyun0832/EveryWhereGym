@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="btn">#292929</color>
     <color name="more">#7E7E7E</color>
+    <color name="disable">#5E5E5E</color>
+    <color name="alert_message">#FF0000</color>
 </resources>
