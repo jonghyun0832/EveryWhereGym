@@ -299,7 +299,6 @@ public class SignUpActivity extends AppCompatActivity {
     //인증메일 보내기
     private void sendCertifyMail(String email) {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-//        Toast.makeText(SignUpActivity.this, email+"들어감", Toast.LENGTH_SHORT).show();
         Call<UserInfo> call = apiInterface.sendMail(email);
         call.enqueue(new Callback<UserInfo>()
         {

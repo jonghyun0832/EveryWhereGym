@@ -27,9 +27,17 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("saveUserInfo.php")
     Call<UserInfo> sendUserInfo(
-            @Field("email") String name,
+            @Field("email") String email,
             @Field("password") String password,
             @Field("nickname") String nickname
+    );
+
+
+    @FormUrlEncoded
+    @POST("login.php")
+    Call<UserInfo> userLogin(
+            @Field("email") String email,
+            @Field("password") String password
     );
 
 //    @FormUrlEncoded
