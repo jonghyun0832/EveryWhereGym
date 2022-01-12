@@ -80,6 +80,8 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
 
         et_signup_email = (EditText) findViewById(R.id.edittext_signup_email);
         et_signup_certify = (EditText) findViewById(R.id.edittext_signup_certification);

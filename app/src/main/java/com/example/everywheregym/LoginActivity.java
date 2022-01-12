@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,8 +19,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -180,7 +177,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
                         if(response.body().isSuccess()){
-                            Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
+                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                             startActivity(intent);
                             finish();
                         } else {

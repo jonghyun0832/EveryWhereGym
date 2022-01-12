@@ -126,4 +126,6 @@
                         "3.대검찰청 인터넷범죄수사센터 (http://icic.sppo.go.kr/02-3480-3600)\n" 
                         "4.경찰청 사이버테러대응센터(www.ctrc.go.kr/)"
     </string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

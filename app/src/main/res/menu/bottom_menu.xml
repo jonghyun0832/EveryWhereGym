@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item
+        android:id="@+id/action_live"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_live"
+        android:title="라이브"/>
+
+    <item
+        android:id="@+id/action_video"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_ondemand_video"
+        android:title="비디오"/>
+
+
+    <item
+        android:id="@+id/action_mypage"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_mypage"
+        android:title="마이페이지"/>
+
+</menu>
