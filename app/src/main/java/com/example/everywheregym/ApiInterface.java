@@ -18,6 +18,11 @@ public interface ApiInterface {
             @Query("email") String email
     );
 
+    @GET("findPwMail.php")
+    Call<UserInfo> sendFindMail(
+            @Query("email") String email
+    );
+
     //중복 체크용 get
     @GET("checkDuplicate.php")
     Call<UserInfo> sendNickName(
@@ -36,6 +41,13 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("login.php")
     Call<UserInfo> userLogin(
+            @Field("email") String email,
+            @Field("password") String password
+    );
+
+    @FormUrlEncoded
+    @POST("resetPassword.php")
+    Call<UserInfo> resetPassword(
             @Field("email") String email,
             @Field("password") String password
     );

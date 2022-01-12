@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -19,6 +20,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.regex.Pattern;
 
 import retrofit2.Call;
@@ -77,6 +80,7 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+
         et_signup_email = (EditText) findViewById(R.id.edittext_signup_email);
         et_signup_certify = (EditText) findViewById(R.id.edittext_signup_certification);
         et_signup_password = (EditText) findViewById(R.id.edittext_signup_password);
@@ -109,7 +113,7 @@ public class SignUpActivity extends AppCompatActivity {
                 //처음엔 버튼 클릭못하게 하기
         btn_certify_check.setEnabled(false);
         btn_certify_check.setBackground(ContextCompat.getDrawable(SignUpActivity.this,R.drawable.round_button_disable));
-        btn_certify_check.setTextColor(Color.parseColor("#5E5E5E"));
+        btn_certify_check.setTextColor(Color.parseColor("#4D5E5E5E"));
 
 
 
@@ -123,7 +127,7 @@ public class SignUpActivity extends AppCompatActivity {
                     tv_alert_email.setText("이메일을 입력해주세요");
                 } else {
                     if (Patterns.EMAIL_ADDRESS.matcher(inputEmail).matches()){ //이메일 형식일떄
-                        btn_certify_send.setText("재전송");
+
                         sendCertifyMail(inputEmail);
                         //다시 버튼 활성화
                         btn_certify_check.setEnabled(true);
@@ -221,16 +225,11 @@ public class SignUpActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 AlertDialog.Builder ad = new AlertDialog.Builder(SignUpActivity.this);
-//                ad.setTitle("서비스 이용약관");
-//                LayoutInflater inflater = (LayoutInflater) SignUpActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//                View dialogView = inflater.inflate(R.layout.dialog_signup_more_service, null);
-//                ad.setView(dialogView);
-
                 ad.setMessage(R.string.more_service);
                 ad.setPositiveButton("확인", new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //Toast.makeText(SignUpActivity.this, "확인누름", Toast.LENGTH_SHORT).show();
+
                     }
                 });
                 AlertDialog alertDialog = ad.create();
@@ -280,7 +279,7 @@ public class SignUpActivity extends AppCompatActivity {
                     }
                 } else {
                     AlertDialog.Builder ad = new AlertDialog.Builder(SignUpActivity.this);
-                    ad.setMessage("회원가입 정보들을 모두 입력해주세요.");
+                    ad.setMessage("조건에 맞게 회원가입 정보를 모두 입력해주세요.");
                     ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -293,6 +292,8 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
+
+
     }
 
 
@@ -304,7 +305,6 @@ public class SignUpActivity extends AppCompatActivity {
         {
             @Override
             public void onResponse(@NonNull Call<UserInfo> call, @NonNull Response<UserInfo> response) {
-                Toast.makeText(SignUpActivity.this, "제대로 보냈습니다", Toast.LENGTH_SHORT).show();
                 if (response.isSuccessful() && response.body() != null)
                 {
                     String getted_email = response.body().getEmail();
@@ -313,7 +313,9 @@ public class SignUpActivity extends AppCompatActivity {
                         tv_alert_email.setText("이미 가입되어있는 이메일입니다");
                         //Toast.makeText(SignUpActivity.this, "이미 가입되어있는 이메일입니다", Toast.LENGTH_SHORT).show();
                     } else{
-                        Toast.makeText(SignUpActivity.this, "서버에서 이메일 : " + getted_email + "숫자 : " + getted_cnum, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignUpActivity.this, "인증번호를 보냈습니다", Toast.LENGTH_SHORT).show();
+                        btn_certify_send.setText("재전송");
+                        //Toast.makeText(SignUpActivity.this, "서버에서 이메일 : " + getted_email + "숫자 : " + getted_cnum, Toast.LENGTH_SHORT).show();
                         certifyNum = getted_cnum;
 
                         i = 15;
@@ -387,6 +389,7 @@ public class SignUpActivity extends AppCompatActivity {
             tv_alert_certify.setVisibility(View.INVISIBLE);
             AlertDialog alertDialog = ad.create();
             alertDialog.show();
+
 
 
 
@@ -474,35 +477,46 @@ public class SignUpActivity extends AppCompatActivity {
 
 
     private void checkDulicate(String nickname){
-        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<UserInfo> call = apiInterface.sendNickName(nickname);
-        call.enqueue(new Callback<UserInfo>() {
-            @Override
-            public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
-                if (response.isSuccessful() && response.body() != null)
-                {
-                    boolean getted_nickname = response.body().isNameDuplicate();
-                    if(getted_nickname){
-                        tv_alert_nickname.setText("이미 존재하는 닉네임입니다");
-                        tv_alert_nickname.setTextColor(Color.RED);
-                        img_nickname_check.setBackground(ContextCompat.getDrawable(SignUpActivity.this,R.drawable.ic_baseline_check_circle_disable));
-                        passName = false;
-                    } else{
-                        tv_alert_nickname.setText("사용 가능한 닉네임입니다");
-                        tv_alert_nickname.setTextColor(Color.BLUE);
-                        img_nickname_check.setBackground(ContextCompat.getDrawable(SignUpActivity.this,R.drawable.ic_baseline_check_circle));
-                        passName = true;
+        String val_symbol = "^[가-힣ㄱ-ㅎa-zA-Z0-9]{1,12}$";
+        if (Pattern.matches(val_symbol,nickname)){ //정규식 만족할 경우
+            ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+            Call<UserInfo> call = apiInterface.sendNickName(nickname);
+            call.enqueue(new Callback<UserInfo>() {
+                @Override
+                public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
+                    if (response.isSuccessful() && response.body() != null)
+                    {
+                        boolean getted_nickname = response.body().isNameDuplicate();
+                        if(getted_nickname){
+                            tv_alert_nickname.setText("이미 존재하는 닉네임입니다");
+                            tv_alert_nickname.setTextColor(Color.RED);
+                            img_nickname_check.setBackground(ContextCompat.getDrawable(SignUpActivity.this,R.drawable.ic_baseline_check_circle_disable));
+                            passName = false;
+                        } else{
+                            tv_alert_nickname.setText("사용 가능한 닉네임입니다");
+                            tv_alert_nickname.setTextColor(Color.BLUE);
+                            img_nickname_check.setBackground(ContextCompat.getDrawable(SignUpActivity.this,R.drawable.ic_baseline_check_circle));
+                            passName = true;
+                        }
+                    }else {
+                        Toast.makeText(SignUpActivity.this, "뭔가 잘못됬음", Toast.LENGTH_SHORT).show();
                     }
-                }else {
-                    Toast.makeText(SignUpActivity.this, "뭔가 잘못됬음", Toast.LENGTH_SHORT).show();
                 }
-            }
 
-            @Override
-            public void onFailure(Call<UserInfo> call, Throwable t) {
-                Toast.makeText(SignUpActivity.this, "실패했습니다", Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onFailure(Call<UserInfo> call, Throwable t) {
+                    Toast.makeText(SignUpActivity.this, "실패했습니다", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        } else { //정규식 만족하지 않는 경우
+            tv_alert_nickname.setText("공백,특수문자 미포함 12자 이하로 입력해주세요");
+            tv_alert_nickname.setTextColor(Color.RED);
+            img_nickname_check.setBackground(ContextCompat.getDrawable(SignUpActivity.this,R.drawable.ic_baseline_check_circle_disable));
+            passName = false;
+        }
+
+
     }
 
     private void saveSignUpInfo(String email, String password, String nickname){
@@ -534,10 +548,32 @@ public class SignUpActivity extends AppCompatActivity {
 
 
     private String encodePassword(String password){
-        String convert_password = password;
+        String convert_password = getHash(password);
         //암호화 과정 필요
         return convert_password;
     }
+
+    public static String getHash(String str) {
+        String digest = "";
+        try{
+
+            //암호화
+            MessageDigest sh = MessageDigest.getInstance("SHA-256"); // SHA-256 해시함수를 사용
+            sh.update(str.getBytes()); // str의 문자열을 해싱하여 sh에 저장
+            byte byteData[] = sh.digest(); // sh 객체의 다이제스트를 얻는다.
+
+            //얻은 결과를 string으로 변환
+            StringBuffer sb = new StringBuffer();
+            for(int i = 0 ; i < byteData.length ; i++) {
+                sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            digest = sb.toString();
+        }catch(NoSuchAlgorithmException e) {
+            e.printStackTrace(); digest = null;
+        }
+        return digest; // 결과  return
+    }
+
 
 
 }

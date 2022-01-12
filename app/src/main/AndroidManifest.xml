@@ -13,10 +13,14 @@
         android:theme="@style/Theme.EveryWhereGym"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".ResetPasswordActivity"
+            android:exported="true" />
+        <activity
             android:name=".ProfileActivity"
             android:exported="true" />
         <activity
             android:name=".SignUpActivity"
+            android:windowSoftInputMode="adjustPan"
             android:exported="true" />
         <activity
             android:name=".LoginActivity"
