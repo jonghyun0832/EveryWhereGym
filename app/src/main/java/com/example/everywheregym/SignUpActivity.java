@@ -132,9 +132,9 @@ public class SignUpActivity extends AppCompatActivity {
 
                         sendCertifyMail(inputEmail);
                         //다시 버튼 활성화
-                        btn_certify_check.setEnabled(true);
-                        btn_certify_check.setBackground(ContextCompat.getDrawable(SignUpActivity.this,R.drawable.round_button_gray));
-                        btn_certify_check.setTextColor(Color.parseColor("#FFFFFF"));
+//                        btn_certify_check.setEnabled(true);
+//                        btn_certify_check.setBackground(ContextCompat.getDrawable(SignUpActivity.this,R.drawable.round_button_gray));
+//                        btn_certify_check.setTextColor(Color.parseColor("#FFFFFF"));
 
                     } else { //이메일 형식이 아닐때
                         tv_alert_email.setText("이메일형식(xxx@xxx.com)으로 입력해주세요");
@@ -317,10 +317,13 @@ public class SignUpActivity extends AppCompatActivity {
                     } else{
                         Toast.makeText(SignUpActivity.this, "인증번호를 보냈습니다", Toast.LENGTH_SHORT).show();
                         btn_certify_send.setText("재전송");
+                        btn_certify_check.setEnabled(true);
+                        btn_certify_check.setBackground(ContextCompat.getDrawable(SignUpActivity.this,R.drawable.round_button_gray));
+                        btn_certify_check.setTextColor(Color.parseColor("#FFFFFF"));
                         //Toast.makeText(SignUpActivity.this, "서버에서 이메일 : " + getted_email + "숫자 : " + getted_cnum, Toast.LENGTH_SHORT).show();
                         certifyNum = getted_cnum;
 
-                        i = 15;
+                        i = 30;
                         isRunning = true;
                         tv_limit.setTextColor(Color.RED);
 

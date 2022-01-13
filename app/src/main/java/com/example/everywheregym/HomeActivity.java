@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -28,6 +29,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        Log.d("TAG", "HomeonCreate: ");
 
         bottomNavigationView = findViewById(R.id.bottomNavi);
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -56,7 +58,17 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("TAG", "HOMEonPause: ");
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("TAG", "HOMEonDestroy: ");
+    }
 
     public void setFrag(int n) {
         fm = getSupportFragmentManager();

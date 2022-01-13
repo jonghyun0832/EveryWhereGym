@@ -17,6 +17,9 @@ public class UserInfo {
     @Expose
     @SerializedName("success") private boolean success;
 
+    @Expose
+    @SerializedName("user_id") private String user_id;
+
 
 
 //    @Expose
@@ -56,6 +59,14 @@ public class UserInfo {
 
     public void setSuccess(boolean success) {
         this.success = success;
+    }
+
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
     }
 
     //    public String getPassword() {

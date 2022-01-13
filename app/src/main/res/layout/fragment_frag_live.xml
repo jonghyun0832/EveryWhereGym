@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/textView_live"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="라이브 페이지"

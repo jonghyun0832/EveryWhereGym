@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -65,6 +66,16 @@ public class LoginActivity extends AppCompatActivity {
         btn_find_password = (Button) findViewById(R.id.btn_find_passward);
         btn_login = (Button) findViewById(R.id.btn_login);
         btn_sign_up = (Button) findViewById(R.id.btn_sign_up);
+
+
+        SharedPreferences sharedPreferences= getSharedPreferences("info", MODE_PRIVATE);
+        String user_id = sharedPreferences.getString("user_id","");
+        if(!user_id.equals("")){
+            //로그인 정보가 있으면 자동 로그인
+            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+            startActivity(intent);
+            finish();
+        }
 
 
         btn_find_password.setOnClickListener(new View.OnClickListener() {
@@ -177,6 +188,12 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
                         if(response.body().isSuccess()){
+                            String user_id = response.body().getUser_id();
+                            SharedPreferences sharedPreferences= getSharedPreferences("info", MODE_PRIVATE);
+                            SharedPreferences.Editor editor= sharedPreferences.edit();
+                            editor.putString("user_id",user_id);
+                            editor.commit();
+
                             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                             startActivity(intent);
                             finish();

@@ -52,6 +52,12 @@ public interface ApiInterface {
             @Field("password") String password
     );
 
+    @FormUrlEncoded
+    @POST("destroyAccount.php")
+    Call<UserInfo> destroyAccount(
+            @Field("user_id") String user_id
+    );
+
 //    @FormUrlEncoded
 //    @POST("example_insert.php")
 //    Call<Person> insertPerson( //post일떄는 Field get일떄는 Query 이노테이션 사용
