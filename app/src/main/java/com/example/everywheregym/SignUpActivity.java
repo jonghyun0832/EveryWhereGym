@@ -125,6 +125,7 @@ public class SignUpActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String inputEmail = et_signup_email.getText().toString();
                 tv_alert_email.setText("");
+                tv_alert_certify.setText("");
                 if (inputEmail.equals("")){ //비었을때
                     tv_alert_email.setText("이메일을 입력해주세요");
                 } else {
@@ -323,7 +324,7 @@ public class SignUpActivity extends AppCompatActivity {
                         //Toast.makeText(SignUpActivity.this, "서버에서 이메일 : " + getted_email + "숫자 : " + getted_cnum, Toast.LENGTH_SHORT).show();
                         certifyNum = getted_cnum;
 
-                        i = 30;
+                        i = 20;
                         isRunning = true;
                         tv_limit.setTextColor(Color.RED);
 

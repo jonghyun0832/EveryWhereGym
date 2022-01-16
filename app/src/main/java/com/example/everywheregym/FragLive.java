@@ -28,10 +28,10 @@ public class FragLive extends Fragment {
 
         //코드
 
-        SharedPreferences sharedPreferences= getContext().getSharedPreferences("info", MODE_PRIVATE);
-        String user_id = sharedPreferences.getString("user_id","0");
+//        SharedPreferences sharedPreferences= getContext().getSharedPreferences("info", MODE_PRIVATE);
+//        String user_id = sharedPreferences.getString("user_id","0");
 
-        tv_live.setText(user_id);
+        //tv_live.setText(user_id);
 
 
         return view;

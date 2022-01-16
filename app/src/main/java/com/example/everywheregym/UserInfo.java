@@ -20,6 +20,9 @@ public class UserInfo {
     @Expose
     @SerializedName("user_id") private String user_id;
 
+    @Expose
+    @SerializedName("user_name") private String user_name;
+
 
 
 //    @Expose
@@ -69,24 +72,11 @@ public class UserInfo {
         this.user_id = user_id;
     }
 
-    //    public String getPassword() {
-//        return password;
-//    }
-//
-//    public void setPassword(String password) {
-//        this.password = password;
-//    }
-//
-//    public String getNickname() {
-//        return nickname;
-//    }
-//
-//    public void setNickname(String nickname) {
-//        this.nickname = nickname;
-//    }
+    public String getUser_name() {
+        return user_name;
+    }
 
-    //    @Expose
-//    @SerializedName("") private String email;
-
-
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
+    }
 }
