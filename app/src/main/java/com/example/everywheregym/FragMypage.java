@@ -118,7 +118,6 @@ public class FragMypage extends Fragment {
                 tv_profile_name.setText("통신오류");
             }
         });
-
     }
 
     @Override
