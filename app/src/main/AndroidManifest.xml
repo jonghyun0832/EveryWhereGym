@@ -16,6 +16,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EveryWhereGym"
         android:usesCleartextTraffic="true">
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat"/>
         <activity
             android:name=".EditProfileActivity"
             android:exported="true" />

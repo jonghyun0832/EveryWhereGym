@@ -3,6 +3,7 @@ package com.example.everywheregym;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -33,7 +34,8 @@ public class FragMypage extends Fragment {
     ImageView iv_profile;
 
     String user_name;
-    int url;
+    String user_img;
+    String url;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -55,7 +57,7 @@ public class FragMypage extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), EditProfileActivity.class);
                 intent.putExtra("user_name",user_name);
-                intent.putExtra("user_img",url);
+                intent.putExtra("user_img",user_img);
                 startActivity(intent);
             }
         });
@@ -95,7 +97,14 @@ public class FragMypage extends Fragment {
                 if (response.isSuccessful() && response.body() != null){
                     if(response.body().isSuccess()){
                         user_name = response.body().getUser_name();
+                        user_img = response.body().getUser_img();
                         tv_profile_name.setText(user_name);
+                        if (user_img == null){
+                            url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/IMAGE_no_image.jpeg";
+                        }else {
+                            url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/" + user_img;
+                        }
+                        Glide.with(getContext()).load(url).override(250,250).into(iv_profile);
                     } else {
                         tv_profile_name.setText("실패오류");
                     }
@@ -109,8 +118,7 @@ public class FragMypage extends Fragment {
                 tv_profile_name.setText("통신오류");
             }
         });
-        url = R.drawable.no_image; //이거 진짜 url로 바꿔줘야함
-        Glide.with(getContext()).load(url).override(250,250).into(iv_profile);
+
     }
 
     @Override

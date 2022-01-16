@@ -40,15 +40,15 @@ public class HomeActivity extends AppCompatActivity {
         Log.d("TAG", "HomeonCreate: ");
 
 
-        //권한 획득 체크
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if(checkSelfPermission(Manifest.permission.CAMERA)== PackageManager.PERMISSION_GRANTED
-                    && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED
-                    && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==PackageManager.PERMISSION_GRANTED){
-                Log.d("permission", "권한 설정 완료");
-            }
-            else {
-                Log.d("permission", "권한 설정 요청");
+//        //권한 획득 체크
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            if(checkSelfPermission(Manifest.permission.CAMERA)== PackageManager.PERMISSION_GRANTED
+//                    && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED
+//                    && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==PackageManager.PERMISSION_GRANTED){
+//                Log.d("permission", "권한 설정 완료");
+//            }
+//            else {
+//                Log.d("permission", "권한 설정 요청");
 
 
 //                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
@@ -61,10 +61,10 @@ public class HomeActivity extends AppCompatActivity {
 //
 //                }
 
-                ActivityCompat.requestPermissions(HomeActivity.this,new String[]
-                        {Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE},PERMISSION_REQUEST_CODE);
-            }
-        }
+//                ActivityCompat.requestPermissions(HomeActivity.this,new String[]
+//                        {Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE},PERMISSION_REQUEST_CODE);
+//            }
+//        }
 
 
 
@@ -131,14 +131,14 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if(grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED){
-            Log.d("permission", "PERMISSION: " + permissions[0] + "was" + grantResults[0]);
-        }else {
-            Toast.makeText(this, "권한을 허용해주세요\n기능 사용이 제한될 수 있습니다.", Toast.LENGTH_SHORT).show();
-        }
-    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//
+//        if(grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED){
+//            Log.d("permission", "PERMISSION: " + permissions[0] + "was" + grantResults[0]);
+//        }else {
+//            Toast.makeText(this, "권한을 허용해주세요\n기능 사용이 제한될 수 있습니다.", Toast.LENGTH_SHORT).show();
+//        }
+//    }
 }
