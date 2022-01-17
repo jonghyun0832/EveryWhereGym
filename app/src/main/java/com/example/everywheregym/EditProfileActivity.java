@@ -139,8 +139,9 @@ public class EditProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (ischange){
-                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                    String filename = user_id + "_IMAGE_" + timeStamp;
+                    //String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                    //String filename = user_id + "_IMAGE_" + timeStamp;
+                    String filename = "IMAGE";
 
 //                    SharedPreferences sharedPreferences= getSharedPreferences("info", MODE_PRIVATE);
 //                    SharedPreferences.Editor editor= sharedPreferences.edit();
@@ -155,7 +156,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     }
 
                     ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.JPEG,100,bos);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG,60,bos);
                     byte[] bitmapdata = bos.toByteArray();
 
                     FileOutputStream fos = null;
@@ -182,7 +183,28 @@ public class EditProfileActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
                             if (response.isSuccessful()){
-                                Toast.makeText(EditProfileActivity.this, "업로드 성공", Toast.LENGTH_SHORT).show();
+                                String input_name = et_pf_edit_name.getText().toString();
+
+                                ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+                                Call<UserInfo> call3 = apiInterface.profileEdit(user_id,input_name);
+                                call3.enqueue(new Callback<UserInfo>() {
+                                    @Override
+                                    public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
+                                        if (response.isSuccessful() && response.body() != null){
+                                            if(response.body().isSuccess()){
+                                                finish();
+                                            } else {
+                                                Toast.makeText(EditProfileActivity.this, "서버단 저장 오류", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<UserInfo> call, Throwable t) {
+                                        Toast.makeText(EditProfileActivity.this, "통신 오류", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                                Toast.makeText(EditProfileActivity.this, "수정 완료", Toast.LENGTH_SHORT).show();
                             }
                         }
 
@@ -191,29 +213,31 @@ public class EditProfileActivity extends AppCompatActivity {
                             Toast.makeText(EditProfileActivity.this, "업로드 실패", Toast.LENGTH_SHORT).show();
                         }
                     });
-                }
-                //바뀐 이미지, 텍스트 서버 통신해서 저장하기, 돌아가기
-                String input_name = et_pf_edit_name.getText().toString();
+                } else{
+                    String input_name = et_pf_edit_name.getText().toString();
 
-                ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-                Call<UserInfo> call = apiInterface.profileEdit(user_id,input_name);
-                call.enqueue(new Callback<UserInfo>() {
-                    @Override
-                    public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
-                        if (response.isSuccessful() && response.body() != null){
-                            if(response.body().isSuccess()){
-                                finish();
-                            } else {
-                                Toast.makeText(EditProfileActivity.this, "서버단 저장 오류", Toast.LENGTH_SHORT).show();
+                    ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+                    Call<UserInfo> call = apiInterface.profileEdit(user_id,input_name);
+                    call.enqueue(new Callback<UserInfo>() {
+                        @Override
+                        public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
+                            if (response.isSuccessful() && response.body() != null){
+                                if(response.body().isSuccess()){
+                                    finish();
+                                } else {
+                                    Toast.makeText(EditProfileActivity.this, "서버단 저장 오류", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         }
-                    }
 
-                    @Override
-                    public void onFailure(Call<UserInfo> call, Throwable t) {
-                        Toast.makeText(EditProfileActivity.this, "통신 오류", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<UserInfo> call, Throwable t) {
+                            Toast.makeText(EditProfileActivity.this, "통신 오류", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                //바뀐 이미지, 텍스트 서버 통신해서 저장하기, 돌아가기
+
             }
         });
 
@@ -231,7 +255,6 @@ public class EditProfileActivity extends AppCompatActivity {
                 btn_galary.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(context, "갤러리", Toast.LENGTH_SHORT).show();
                         Intent galleryIntent = new Intent(Intent.ACTION_PICK); //MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                         galleryIntent.setType("image/*");
                         //galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -243,7 +266,6 @@ public class EditProfileActivity extends AppCompatActivity {
                 btn_camera.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(context, "카메라", Toast.LENGTH_SHORT).show();
                             Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                             activityLauncher_camera.launch(cameraIntent);
 
@@ -271,7 +293,7 @@ public class EditProfileActivity extends AppCompatActivity {
         if(grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED){
             Log.d("permission", "PERMISSION: " + permissions[0] + "was" + grantResults[0]);
         }else {
-            Toast.makeText(this, "다시시도해주세요", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "다시시도해주세요", Toast.LENGTH_SHORT).show();
         }
     }
 

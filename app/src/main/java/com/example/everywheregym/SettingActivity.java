@@ -76,6 +76,7 @@ public class SettingActivity extends AppCompatActivity {
                         SharedPreferences sharedPreferences= getSharedPreferences("info", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.remove("user_id");
+                        editor.remove("is_trainer");
                         editor.commit();
 
                         Intent intent = new Intent(SettingActivity.this, LoginActivity.class);
@@ -120,6 +121,7 @@ public class SettingActivity extends AppCompatActivity {
                                         //쉐어드 유저id 삭제
                                         SharedPreferences.Editor editor = sharedPreferences.edit();
                                         editor.remove("user_id");
+                                        editor.remove("is_trainer");
                                         editor.commit();
 
                                         Toast.makeText(SettingActivity.this, "회원탈퇴가 완료되었습니다", Toast.LENGTH_SHORT).show();

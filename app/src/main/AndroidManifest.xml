@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
-    <uses-feature android:name="android.hardware.camera2"/>
+    <uses-feature android:name="android.hardware.camera2" />
 
     <application
         android:allowBackup="true"
@@ -16,8 +16,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EveryWhereGym"
         android:usesCleartextTraffic="true">
-        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-            android:theme="@style/Base.Theme.AppCompat"/>
+        <activity
+            android:name=".TrainerEditProfileActivity"
+            android:exported="true" />
+        <activity
+            android:name=".MakeLiveActivity"
+            android:exported="true" />
+        <activity
+            android:name=".VodUploadActivity"
+            android:exported="true" /> <!-- <activity -->
+        <!-- android:name="com.theartofdev.edmodo.cropper.CropImageActivity" -->
+        <!-- android:theme="@style/Base.Theme.AppCompat" /> -->
+        <activity
+            android:name=".TrainerHomeActivity"
+            android:exported="true" />
         <activity
             android:name=".EditProfileActivity"
             android:exported="true" />
@@ -43,14 +55,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <provider
-            android:authorities="com.example.everywheregym"
             android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.everywheregym"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
+                android:resource="@xml/file_paths" />
         </provider>
     </application>
 

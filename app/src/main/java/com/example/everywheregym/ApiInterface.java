@@ -84,6 +84,25 @@ public interface ApiInterface {
             @Query("user_id") String user_id
     );
 
+
+
+    @FormUrlEncoded
+    @POST("getTrainerInfo.php")
+    Call<TrainerInfo> getTrainerInfo(
+            @Field("user_id") String user_id
+    );
+
+
+//    @Multipart
+//    @POST("getTrainerInfo.php")
+//    Call<UserInfo> uploadFile(
+//            @Part MultipartBody.Part image,
+//            @Query("prev_url") String prev_url,
+//            @Query("user_id") String user_id
+//    );
+
+
+
 //    @FormUrlEncoded
 //    @POST("example_insert.php")
 //    Call<Person> insertPerson( //post일떄는 Field get일떄는 Query 이노테이션 사용

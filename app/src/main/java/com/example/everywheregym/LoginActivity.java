@@ -70,11 +70,18 @@ public class LoginActivity extends AppCompatActivity {
 
         SharedPreferences sharedPreferences= getSharedPreferences("info", MODE_PRIVATE);
         String user_id = sharedPreferences.getString("user_id","");
+        String is_trainer = sharedPreferences.getString("is_trainer","");
         if(!user_id.equals("")){
             //로그인 정보가 있으면 자동 로그인
-            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-            startActivity(intent);
-            finish();
+            if(is_trainer.equals("1")){ //트레이너는 트레이너 홈으로 이동
+                Intent intent = new Intent(LoginActivity.this, TrainerHomeActivity.class);
+                startActivity(intent);
+                finish();
+            } else{
+                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                startActivity(intent);
+                finish();
+            }
         }
 
 
@@ -189,14 +196,23 @@ public class LoginActivity extends AppCompatActivity {
                     public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
                         if(response.body().isSuccess()){
                             String user_id = response.body().getUser_id();
+                            String user_trainer = response.body().getUser_trainer();
                             SharedPreferences sharedPreferences= getSharedPreferences("info", MODE_PRIVATE);
                             SharedPreferences.Editor editor= sharedPreferences.edit();
                             editor.putString("user_id",user_id);
+                            editor.putString("is_trainer",user_trainer);
                             editor.commit();
 
-                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                            startActivity(intent);
-                            finish();
+                            if (user_trainer.equals("1")){
+                                Intent intent = new Intent(LoginActivity.this, TrainerHomeActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                            else{
+                                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
                         } else {
                             AlertDialog.Builder ad = new AlertDialog.Builder(LoginActivity.this);
                             ad.setMessage("아이디 또는 비밀번호가 잘못 입력 되었습니다.\n" +

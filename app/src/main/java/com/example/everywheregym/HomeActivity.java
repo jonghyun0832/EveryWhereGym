@@ -29,8 +29,6 @@ public class HomeActivity extends AppCompatActivity {
     private FragVideo frag_video; //VOD
     private FragMypage frag_mypage; //마이페이지
 
-    static final int PERMISSION_REQUEST_CODE = 1;
-
 
 
     @Override

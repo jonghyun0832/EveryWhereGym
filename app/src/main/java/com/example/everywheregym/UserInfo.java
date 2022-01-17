@@ -26,6 +26,9 @@ public class UserInfo {
     @Expose
     @SerializedName("user_img") private String user_img;
 
+    @Expose
+    @SerializedName("user_trainer") private String user_trainer;
+
 
 
 //    @Expose
@@ -89,5 +92,13 @@ public class UserInfo {
 
     public void setUser_img(String user_img) {
         this.user_img = user_img;
+    }
+
+    public String getUser_trainer() {
+        return user_trainer;
+    }
+
+    public void setUser_trainer(String user_trainer) {
+        this.user_trainer = user_trainer;
     }
 }
