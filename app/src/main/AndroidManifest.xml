@@ -8,6 +8,12 @@
 
     <uses-feature android:name="android.hardware.camera2" />
 
+    <queries>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,6 +22,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EveryWhereGym"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".ShowImageActivity"
+            android:exported="true" />
         <activity
             android:name=".TrainerEditProfileActivity"
             android:exported="true" />
@@ -58,7 +67,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.everywheregym"
+            android:authorities="com.example.everywheregym.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

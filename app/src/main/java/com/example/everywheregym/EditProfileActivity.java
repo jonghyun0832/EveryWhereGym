@@ -12,15 +12,18 @@ import android.content.DialogInterface;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -54,25 +57,25 @@ public class EditProfileActivity extends AppCompatActivity {
 
     static final int PERMISSION_REQUEST_CODE = 1;
 
-    AlertDialog alertDialog;
+    private AlertDialog alertDialog;
 
-    ImageView iv_pf_edit_back;
-    Button btn_pf_edit_complete;
-    ImageView iv_pf_edit_image;
-    EditText et_pf_edit_name;
+    private ImageView iv_pf_edit_back;
+    private Button btn_pf_edit_complete;
+    private ImageView iv_pf_edit_image;
+    private EditText et_pf_edit_name;
 
-    Button btn_galary;
-    Button btn_camera;
+    private Button btn_galary;
+    private Button btn_camera;
 
-    Bitmap bitmap;
+    private Bitmap bitmap;
 
     boolean ischange = false;
 
-    String url;
-    String prev_url = "";
+    private String url;
+    private String prev_url = "";
 
-    String user_id;
-
+    private String user_id;
+    private String currentPhotoPath;
 
 
     @Override
@@ -267,7 +270,25 @@ public class EditProfileActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                             Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                            activityLauncher_camera.launch(cameraIntent);
+                        if(cameraIntent.resolveActivity(getPackageManager()) != null) {
+                            File photoFile = null;
+                            try {
+                                photoFile = File.createTempFile(
+                                        "temp_image_file",
+                                        ".jpeg",
+                                        getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                                );
+                                currentPhotoPath = photoFile.getAbsolutePath();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            if (photoFile != null) {
+                                Uri ProviderURI = FileProvider.getUriForFile(EditProfileActivity.this, "com.example.everywheregym.provider", photoFile);
+                                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, ProviderURI);
+                                activityLauncher_camera.launch(cameraIntent);
+                            }
+                        }
 
 
 
@@ -305,8 +326,22 @@ public class EditProfileActivity extends AppCompatActivity {
                     Log.d("TAG", "onActivityResult:LAUNCH ");
                     if (result.getResultCode() == RESULT_OK){ //코드가 맞을경우
                         Log.d("TAG", "onActivityResult:RESULT OK ");
-                        Intent cameraIntent = result.getData();
-                        bitmap = (Bitmap) cameraIntent.getExtras().get("data");
+                        Uri tmp_photo_uri = Uri.fromFile(new File(currentPhotoPath));
+//                        Intent cameraIntent = result.getData();
+//                        bitmap = (Bitmap) cameraIntent.getExtras().get("data");
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            try {
+                                bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(getContentResolver(),tmp_photo_uri));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            try {
+                                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),tmp_photo_uri);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         if(bitmap != null){
                             Log.d("TAG", "onActivityResult:비트맵안비었음 ");
                             iv_pf_edit_image.setImageBitmap(bitmap);

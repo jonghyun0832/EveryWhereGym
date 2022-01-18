@@ -1,5 +1,8 @@
 package com.example.everywheregym;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -90,6 +93,27 @@ public interface ApiInterface {
     @POST("getTrainerInfo.php")
     Call<TrainerInfo> getTrainerInfo(
             @Field("user_id") String user_id
+    );
+
+    @Multipart
+    @POST("uploadFileTR.php")
+    Call<UserInfo> uploadFileTR(
+            @Part ArrayList<MultipartBody.Part> images,
+            @Query("prev_img_url") String prev_img_url,
+            @Query("prev_back_url") String prev_back_img_url,
+            @Query("user_id") String user_id
+    );
+
+    @FormUrlEncoded
+    @POST("profileEditTR.php")
+    Call<TrainerInfo> profileEditTR(
+            @Field("user_id") String user_id,
+            @Field("user_name") String user_name,
+            @Field("tr_intro") String tr_intro,
+            @Field("tr_expert") String tr_expert,
+            @Field("tr_career") String tr_career,
+            @Field("tr_certify") String tr_certify
+            //여기 이미지도 같이 보내야함
     );
 
 

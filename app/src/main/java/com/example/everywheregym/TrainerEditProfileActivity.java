@@ -1,4 +1,7 @@
 package com.example.everywheregym;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -8,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.content.Context;
@@ -15,25 +19,44 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.ImageDecoder;
 import android.media.Image;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.security.Provider;
+import java.util.ArrayList;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class TrainerEditProfileActivity extends AppCompatActivity {
 
     AlertDialog alertDialog;
 
-    Bitmap bitmap;
-    Boolean ischange;
+    Bitmap bitmap = null;
+    Bitmap back_bitmap = null;
+    Boolean ischange = false;
+    Boolean ischange_back = false;
 
     ImageView iv_edit_image;
     ImageView iv_edit_backimage;
@@ -44,6 +67,13 @@ public class TrainerEditProfileActivity extends AppCompatActivity {
     EditText et_edit_certify;
     Button btn_edit_complete;
     Button btn_edit_cancel;
+
+    File upload_file;
+    File upload_file2;
+
+    ArrayList<MultipartBody.Part> images;
+
+    private String currentPhotoPath;
 
 
     static final int PERMISSION_REQUEST_CODE = 1;
@@ -156,17 +186,37 @@ public class TrainerEditProfileActivity extends AppCompatActivity {
                 btn_camera.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+
+                        //photoUri = FileProvider.getUriForFile(this, "com.example.everywheregym.provider",filePath);
                         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                        activityLauncher_back_camera.launch(cameraIntent);
+                        if(cameraIntent.resolveActivity(getPackageManager()) != null){
+                            File photoFile = null;
+                            try{
+                                photoFile = File.createTempFile(
+                                        "temp_image_file",
+                                        ".jpeg",
+                                        getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                                );
+                                currentPhotoPath = photoFile.getAbsolutePath();
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+
+                            if(photoFile!= null){
+                                Uri ProviderURI = FileProvider.getUriForFile(TrainerEditProfileActivity.this,"com.example.everywheregym.provider",photoFile);
+                                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, ProviderURI);
+                                activityLauncher_back_camera.launch(cameraIntent);
+                            }
+                        }
+
+                        //activityLauncher_back_camera.launch(cameraIntent);
 
                     }
                 });
-
                 ad.setTitle("프로필 사진 설정");
                 ad.setView(dialogView);
                 alertDialog = ad.create();
                 alertDialog.show();
-
             }
         });
 
@@ -197,19 +247,31 @@ public class TrainerEditProfileActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                        activityLauncher_camera.launch(cameraIntent);
+                        if(cameraIntent.resolveActivity(getPackageManager()) != null) {
+                            File photoFile = null;
+                            try {
+                                photoFile = File.createTempFile(
+                                        "temp_image_file",
+                                        ".jpeg",
+                                        getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                                );
+                                currentPhotoPath = photoFile.getAbsolutePath();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
-
-
-
+                            if (photoFile != null) {
+                                Uri ProviderURI = FileProvider.getUriForFile(TrainerEditProfileActivity.this, "com.example.everywheregym.provider", photoFile);
+                                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, ProviderURI);
+                                activityLauncher_camera.launch(cameraIntent);
+                            }
+                        }
                     }
                 });
-
                 ad.setTitle("프로필 사진 설정");
                 ad.setView(dialogView);
                 alertDialog = ad.create();
                 alertDialog.show();
-
             }
         });
 
@@ -218,9 +280,90 @@ public class TrainerEditProfileActivity extends AppCompatActivity {
         btn_edit_complete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //레트로핏으로 보내서 정보들 저장하기
-                //여기서 그 ischange = true일때 2번
-                //아닐때 1번 으로 해결 했었음 여기도 그렇게
+                if (ischange){
+                    images = new ArrayList<>();
+                    if(bitmap != null){
+                        upload_file = saveImage(bitmap);
+                        RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"),upload_file);
+                        images.add(MultipartBody.Part.createFormData("img_upload",upload_file.getName(), reqFile));
+                    }
+                    if (back_bitmap != null) {
+                        upload_file2 = saveImage2(back_bitmap);
+                        RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"),upload_file2);
+                        images.add(MultipartBody.Part.createFormData("img_upload2",upload_file2.getName(), reqFile));
+                    }
+
+                    ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+                    Call<UserInfo> call = apiInterface.uploadFileTR(images,prev_img_url,prev_back_img_url,user_id);
+                    call.enqueue(new Callback<UserInfo>() {
+                        @Override
+                        public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
+                            if (response.isSuccessful() && response.body() != null){
+                                if(response.body().isSuccess()){
+                                    String input_name = et_edit_name.getText().toString();
+                                    String input_intro = et_edit_intro.getText().toString();
+                                    String input_expert = et_edit_expert.getText().toString();
+                                    String input_career = et_edit_career.getText().toString();
+                                    String input_certify = et_edit_certify.getText().toString();
+
+                                    ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+                                    Call<TrainerInfo> call2 = apiInterface.profileEditTR(user_id,input_name,input_intro,
+                                            input_expert,input_career,input_certify);
+                                    call2.enqueue(new Callback<TrainerInfo>() {
+                                        @Override
+                                        public void onResponse(Call<TrainerInfo> call2, Response<TrainerInfo> response) {
+                                            if (response.isSuccessful() && response.body() != null){
+                                                if(response.body().isSuccess()){
+                                                    finish();
+                                                } else {
+                                                    Toast.makeText(TrainerEditProfileActivity.this, "서버단 저장 오류", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<TrainerInfo> call, Throwable t) {
+                                            Toast.makeText(TrainerEditProfileActivity.this, "통신 오류", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<UserInfo> call, Throwable t) {
+                            Toast.makeText(TrainerEditProfileActivity.this, "업로드 실패", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    String input_name = et_edit_name.getText().toString();
+                    String input_intro = et_edit_intro.getText().toString();
+                    String input_expert = et_edit_expert.getText().toString();
+                    String input_career = et_edit_career.getText().toString();
+                    String input_certify = et_edit_certify.getText().toString();
+
+                    ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+                    Call<TrainerInfo> call = apiInterface.profileEditTR(user_id,input_name,input_intro,
+                            input_expert,input_career,input_certify);
+                    call.enqueue(new Callback<TrainerInfo>() {
+                        @Override
+                        public void onResponse(Call<TrainerInfo> call, Response<TrainerInfo> response) {
+                            if (response.isSuccessful() && response.body() != null){
+                                if(response.body().isSuccess()){
+                                    finish();
+                                } else {
+                                    Toast.makeText(TrainerEditProfileActivity.this, "서버단 저장 오류", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<TrainerInfo> call, Throwable t) {
+                            Toast.makeText(TrainerEditProfileActivity.this, "통신 오류", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
             }
         });
 
@@ -257,8 +400,22 @@ public class TrainerEditProfileActivity extends AppCompatActivity {
                     Log.d("TAG", "onActivityResult:LAUNCH ");
                     if (result.getResultCode() == RESULT_OK){ //코드가 맞을경우
                         Log.d("TAG", "onActivityResult:RESULT OK ");
-                        Intent cameraIntent = result.getData();
-                        bitmap = (Bitmap) cameraIntent.getExtras().get("data");
+                        Uri tmp_photo_uri = Uri.fromFile(new File(currentPhotoPath));
+//                        Intent cameraIntent = result.getData();
+//                        bitmap = (Bitmap) cameraIntent.getExtras().get("data");
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            try {
+                                bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(getContentResolver(),tmp_photo_uri));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            try {
+                                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),tmp_photo_uri);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         if(bitmap != null){
                             Log.d("TAG", "onActivityResult:비트맵안비었음 ");
                             iv_edit_image.setImageBitmap(bitmap);
@@ -306,11 +463,25 @@ public class TrainerEditProfileActivity extends AppCompatActivity {
                     Log.d("TAG", "onActivityResult:LAUNCH ");
                     if (result.getResultCode() == RESULT_OK){ //코드가 맞을경우
                         Log.d("TAG", "onActivityResult:RESULT OK ");
-                        Intent cameraIntent = result.getData();
-                        bitmap = (Bitmap) cameraIntent.getExtras().get("data");
-                        if(bitmap != null){
+                        Uri tmp_photo_uri = Uri.fromFile(new File(currentPhotoPath));
+                        //Intent cameraIntent = result.getData();
+                        //back_bitmap = (Bitmap) cameraIntent.getExtras().get("data");
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            try {
+                                back_bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(getContentResolver(),tmp_photo_uri));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            try {
+                                back_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),tmp_photo_uri);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        if(back_bitmap != null){
                             Log.d("TAG", "onActivityResult:비트맵안비었음 ");
-                            iv_edit_backimage.setImageBitmap(bitmap);
+                            iv_edit_backimage.setImageBitmap(back_bitmap);
                             ischange = true;
                         }
                     }
@@ -331,10 +502,10 @@ public class TrainerEditProfileActivity extends AppCompatActivity {
                             //resolver, uri 넣어서 비트맵으로
 //                            Uri uri = galleryIntent.getData();
 //                            iv_pf_edit_image.setImageURI(uri);
-                            bitmap = MediaStore.Images.Media.getBitmap(
+                            back_bitmap = MediaStore.Images.Media.getBitmap(
                                     getContentResolver(),galleryIntent.getData()
                             );
-                            iv_edit_backimage.setImageBitmap(bitmap);
+                            iv_edit_backimage.setImageBitmap(back_bitmap);
                             ischange = true;
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -345,6 +516,69 @@ public class TrainerEditProfileActivity extends AppCompatActivity {
     );
 
 
+    private File saveImage(Bitmap bitmap){
+        String filename = "TRAINER_IMAGE";
+
+        File tmp_file = new File(getApplicationContext().getCacheDir(),filename);
+        try{
+            tmp_file.createNewFile();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG,60,bos);
+        byte[] bitmapdata = bos.toByteArray();
+
+        //BufferedOutputStream buffos = null;
+
+        FileOutputStream fos = null;
+        try{
+            fos = new FileOutputStream(tmp_file);
+        }catch (Exception e){
+            e.printStackTrace();
+        }try{
+            fos.write(bitmapdata);
+            fos.flush();
+            fos.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return tmp_file;
+    }
+
+    private File saveImage2(Bitmap bitmap){
+        String filename = "TRAINER_IMAGE_2";
+
+        File tmp_file = new File(getApplicationContext().getCacheDir(),filename);
+        try{
+            tmp_file.createNewFile();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG,90,bos);
+        byte[] bitmapdata = bos.toByteArray();
+
+        //BufferedOutputStream buffos = null;
+
+        FileOutputStream fos = null;
+        try{
+            fos = new FileOutputStream(tmp_file);
+        }catch (Exception e){
+            e.printStackTrace();
+        }try{
+            fos.write(bitmapdata);
+            fos.flush();
+            fos.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return tmp_file;
+    }
 
 
 

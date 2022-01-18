@@ -71,6 +71,23 @@ public class FragTrMypage extends Fragment {
 
 
 
+        iv_profile_img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), ShowImageActivity.class);
+                intent.putExtra("img_url",img_url);
+                startActivity(intent);
+            }
+        });
+
+        iv_backgroud.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), ShowImageActivity.class);
+                intent.putExtra("img_url",back_img_url);
+                startActivity(intent);
+            }
+        });
 
 
 
@@ -191,7 +208,7 @@ public class FragTrMypage extends Fragment {
                         }else {
                             back_img_url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/" + tr_img;
                         }
-                        Glide.with(getContext()).load(back_img_url).override(250,250).into(iv_backgroud);
+                        Glide.with(getContext()).load(back_img_url).into(iv_backgroud);
 
                         //제대로 온경우 코드 작성
                     }

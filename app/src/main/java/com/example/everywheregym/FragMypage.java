@@ -28,14 +28,14 @@ import retrofit2.Response;
 
 public class FragMypage extends Fragment {
 
-    Button btn_setting;
-    Button btn_edit_profile;
-    TextView tv_profile_name;
-    ImageView iv_profile;
+    private Button btn_setting;
+    private Button btn_edit_profile;
+    private TextView tv_profile_name;
+    private ImageView iv_profile;
 
-    String user_name;
-    String user_img;
-    String url;
+    private String user_name;
+    private String user_img;
+    private String url;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -49,7 +49,14 @@ public class FragMypage extends Fragment {
         iv_profile = view.findViewById(R.id.circle_iv_edit_profile);
 
 
-
+        iv_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), ShowImageActivity.class);
+                intent.putExtra("img_url",url);
+                startActivity(intent);
+            }
+        });
 
 
         btn_edit_profile.setOnClickListener(new View.OnClickListener() {

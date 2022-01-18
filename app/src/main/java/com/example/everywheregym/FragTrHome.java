@@ -4,7 +4,10 @@ package com.example.everywheregym;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -27,6 +34,7 @@ public class FragTrHome extends Fragment {
     Button btn_make_live; //라이브 일정 추가 버튼
     Button btn_upload_vod; //영상 업로드 버튼
     RecyclerView rv_home_live; //오늘의 라이브 리사이클러뷰
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -76,8 +84,9 @@ public class FragTrHome extends Fragment {
 
 
 
-
-
         return view;
     }
+
+
+
 }
