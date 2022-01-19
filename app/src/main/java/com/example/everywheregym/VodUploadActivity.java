@@ -1,4 +1,8 @@
 package com.example.everywheregym;
+import okhttp3.MultipartBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -8,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +33,13 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import java.io.File;
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 public class VodUploadActivity extends AppCompatActivity {
 
@@ -36,6 +48,9 @@ public class VodUploadActivity extends AppCompatActivity {
     private TextView mBufferingTextView;
     private Uri video_uri;
     private String video_path;
+    private  Button btn_check;
+
+    public ProgressDialog pDialog;
 
     private static final String PLAYBACK_TIME = "play_time";
 
@@ -49,6 +64,7 @@ public class VodUploadActivity extends AppCompatActivity {
 
         btn_select = findViewById(R.id.pickVideo);
         btn_upload = findViewById(R.id.uploadVideo);
+        btn_check = findViewById(R.id.button_check);
 
         mVideoView = findViewById(R.id.videoview);
         mBufferingTextView = findViewById(R.id.buffering_textview);
@@ -65,6 +81,26 @@ public class VodUploadActivity extends AppCompatActivity {
             }
         });
 
+        btn_upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(video_uri != null){
+                    uploadFile();
+                } else {
+                    Toast.makeText(VodUploadActivity.this, "비디오를 선택해주세요", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        btn_check.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(VodUploadActivity.this,VideoCheck.class);
+                startActivity(intent);
+            }
+        });
+
+
         if(savedInstanceState != null){ //중단점 있으면 언젠지 가져오기
             mCurrentPosition = savedInstanceState.getInt(PLAYBACK_TIME);
         }
@@ -73,8 +109,7 @@ public class VodUploadActivity extends AppCompatActivity {
         controller.setMediaPlayer(mVideoView);
         mVideoView.setMediaController(controller);
 
-        //여기부터 다시 , 위쪽에 업로드 버튼 만들어서 업로드도 만들어줘야함
-        //initDialog();
+        initDialog();
 
     }
 
@@ -282,6 +317,83 @@ public class VodUploadActivity extends AppCompatActivity {
     }
 
 
+    protected void initDialog(){
+        pDialog = new ProgressDialog(this);
+        pDialog.setMessage("loading");
+        pDialog.setCancelable(true);
+    }
 
+
+    private void uploadFile(){
+        if(video_uri == null || video_uri.equals("")){
+            Toast.makeText(this, "비디오를 선택해주세요", Toast.LENGTH_SHORT).show();
+            return;
+        } else {
+            showpDialog();
+
+            //Map은 multipart에서 okhttp3.RequestBody에 사용됨
+            HashMap<String, RequestBody> map = new HashMap<>();
+            File file = new File(video_path);
+
+            System.out.println("파일의 경로는 :"+file);
+
+            //미디어 파일 파싱
+            //RequestBody requestBody = RequestBody.create(MediaType.parse("*/*"),file);
+            RequestBody requestBody = RequestBody.create(MediaType.parse("*/*"),file);
+
+            //map.put("file\"; filename=\"" + file.getName() + "\"", requestBody);
+            //map.put("file\"; filename=\""+file.getName() + "\"", requestBody);
+
+            String pdname = String.valueOf(Calendar.getInstance().getTimeInMillis());
+            RequestBody filename = RequestBody.create(MediaType.parse("text/plain"),pdname);
+            RequestBody filetest = RequestBody.create(MediaType.parse("text/plain"),"123123");
+            map.put("test1",filename);
+            map.put("test2",filetest);
+
+            MultipartBody.Part vFile = MultipartBody.Part.createFormData("video_file", file.getName(),requestBody);
+
+            //System.out.println("맵넘어가는것좀 보자 : "+ map);
+            System.out.println("파일이름 : " + filename);
+            System.out.println("만든파일 : " + vFile);
+            ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+            Call<UserInfo> call = apiInterface.uploadVideo(vFile,map);
+            //Call<UserInfo> call = apiInterface.uploadVideo(vFile);
+            call.enqueue(new Callback<UserInfo>() {
+                @Override
+                public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
+                    if (response.isSuccessful() && response.body() != null){
+                        if(response.body().isSuccess()){
+                            hidepDialog();
+                        } else {
+                            hidepDialog();
+                            Toast.makeText(VodUploadActivity.this, "서버단쪽 sql에 문제생김", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        hidepDialog();
+                        Toast.makeText(VodUploadActivity.this, "영상 업로드에 문제생김", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UserInfo> call, Throwable t) {
+                    hidepDialog();
+                    Toast.makeText(VodUploadActivity.this, "동영상 업로드 실패", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        }
+    }
+
+    protected void showpDialog(){
+        if(!pDialog.isShowing()){
+            pDialog.show();
+        }
+    }
+
+    protected void hidepDialog(){
+        if(pDialog.isShowing()){
+            pDialog.dismiss();
+        }
+    }
 
 }

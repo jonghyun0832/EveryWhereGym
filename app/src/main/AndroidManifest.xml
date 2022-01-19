@@ -23,6 +23,12 @@
         android:theme="@style/Theme.EveryWhereGym"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".VodDetailActivity"
+            android:exported="true" />
+        <activity
+            android:name=".VideoCheck"
+            android:exported="true" />
+        <activity
             android:name=".ShowImageActivity"
             android:exported="true" />
         <activity

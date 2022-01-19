@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="category_array">
+        <item>전신</item>
+        <item>복근</item>
+        <item>하체</item>
+        <item>가슴</item>
+        <item>등</item>
+    </string-array>
+
+    <string-array name="difficulty_array">
+        <item>입문</item>
+        <item>초급</item>
+        <item>중급</item>
+        <item>상급</item>
+    </string-array>
+</resources>

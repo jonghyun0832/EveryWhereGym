@@ -2,8 +2,12 @@ package com.example.everywheregym;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.MultipartBody;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -11,6 +15,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.PartMap;
 import retrofit2.http.Query;
 
 public interface ApiInterface {
@@ -95,6 +100,7 @@ public interface ApiInterface {
             @Field("user_id") String user_id
     );
 
+    //트레이너 프로필 사진들
     @Multipart
     @POST("uploadFileTR.php")
     Call<UserInfo> uploadFileTR(
@@ -104,6 +110,7 @@ public interface ApiInterface {
             @Query("user_id") String user_id
     );
 
+    //트레이너 프로필 글씨 정보들
     @FormUrlEncoded
     @POST("profileEditTR.php")
     Call<TrainerInfo> profileEditTR(
@@ -115,6 +122,26 @@ public interface ApiInterface {
             @Field("tr_certify") String tr_certify
             //여기 이미지도 같이 보내야함
     );
+
+    //동영상 업로드
+    @Multipart
+    @POST("uploadVideo.php")
+    Call<UserInfo> uploadVideo(
+            @Part MultipartBody.Part file, @PartMap HashMap<String, RequestBody> data
+            //@Part MultipartBody.Part file, @Part("filename") RequestBody name
+            //@PartMap Map<String, RequestBody> map
+            //@Part MultipartBody.Part video
+            );
+
+    //동영상 데이터 업로드
+    @Multipart
+    @POST("uploadVideoData.php")
+    Call<UserInfo> uploadVideoData(
+            @Part MultipartBody.Part file, @PartMap HashMap<String, RequestBody> data
+            //@Part MultipartBody.Part file, @Part("filename") RequestBody name
+
+    );
+
 
 
 //    @Multipart
