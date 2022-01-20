@@ -147,7 +147,8 @@ public class FragTrHome extends Fragment {
         btn_home_test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), VodUploadActivity.class);
+                //VodUploadActivity.class삭제해야됨
+                Intent intent = new Intent(getContext(), TestActivity.class);
                 startActivity(intent);
             }
         });

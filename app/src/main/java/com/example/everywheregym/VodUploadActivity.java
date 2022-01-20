@@ -33,10 +33,8 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import java.io.File;
-import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -66,7 +64,7 @@ public class VodUploadActivity extends AppCompatActivity {
         btn_upload = findViewById(R.id.uploadVideo);
         btn_check = findViewById(R.id.button_check);
 
-        mVideoView = findViewById(R.id.videoview);
+        mVideoView = findViewById(R.id.videoview2);
         mBufferingTextView = findViewById(R.id.buffering_textview);
 
 

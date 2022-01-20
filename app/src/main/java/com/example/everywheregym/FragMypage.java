@@ -106,7 +106,7 @@ public class FragMypage extends Fragment {
                         user_name = response.body().getUser_name();
                         user_img = response.body().getUser_img();
                         tv_profile_name.setText(user_name);
-                        if (user_img == null){
+                        if (user_img == null || user_img.equals("")){
                             url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/IMAGE_no_image.jpeg";
                         }else {
                             url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/" + user_img;

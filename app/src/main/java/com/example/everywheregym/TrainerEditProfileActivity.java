@@ -141,7 +141,7 @@ public class TrainerEditProfileActivity extends AppCompatActivity {
         et_edit_certify.setText(tr_certify);
 
         //배경 이미지 설정
-        if (tr_img == null){
+        if (tr_img == null || tr_img.equals("")){
             back_img_url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/IMAGE_no_back_image.jpeg";
         } else {
             back_img_url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/" + tr_img;
@@ -151,7 +151,7 @@ public class TrainerEditProfileActivity extends AppCompatActivity {
         //Glide.with(this).load(back_img_url).override(250,250).into(iv_edit_backimage);
 
         //프로필 이미지 설정
-        if (user_img == null){
+        if (user_img == null || user_img.equals("")){
             img_url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/IMAGE_no_image.jpeg";
         } else {
             img_url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/" + user_img;

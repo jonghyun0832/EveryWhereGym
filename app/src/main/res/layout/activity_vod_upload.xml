@@ -8,7 +8,7 @@
 
 
     <VideoView
-        android:id="@+id/videoview"
+        android:id="@+id/videoview2"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="8dp"
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/videoview"
+        app:layout_constraintEnd_toStartOf="@+id/videoview2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -34,13 +34,13 @@
         android:id="@+id/pickVideo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/videoview"
+        android:layout_below="@+id/videoview2"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="10dp"
         android:text="Pick a video"
         app:layout_constraintBottom_toTopOf="@+id/uploadVideo"
         app:layout_constraintEnd_toEndOf="@+id/uploadVideo"
-        app:layout_constraintTop_toBottomOf="@+id/videoview" />
+        app:layout_constraintTop_toBottomOf="@+id/videoview2" />
 
     <Button
         android:id="@+id/uploadVideo"

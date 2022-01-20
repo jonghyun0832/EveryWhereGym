@@ -144,6 +144,13 @@ public interface ApiInterface {
     );
 
 
+    @FormUrlEncoded
+    @POST("getvideoInfo.php")
+    Call<VideoInfo> getvideoInfo(
+            @Field("user_id") String user_id
+    );
+
+
 
 //    @Multipart
 //    @POST("getTrainerInfo.php")
