@@ -183,26 +183,15 @@
         app:srcCompat="@drawable/ic_baseline_workspace_premium_24" />
 
     <Spinner
-        android:id="@+id/spinner_vod_category"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:layout_marginEnd="20dp"
-        android:minHeight="50dp"
-        app:layout_constraintBottom_toBottomOf="@+id/hardtext_vod_category"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/hardtext_vod_category"
-        app:layout_constraintTop_toTopOf="@+id/hardtext_vod_category" />
-
-    <Spinner
         android:id="@+id/spinner_vod_difficulty"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
         android:layout_marginEnd="20dp"
         android:minHeight="50dp"
         app:layout_constraintBottom_toBottomOf="@+id/hardtext_vod_difficulty"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/spinner_vod_category"
+        app:layout_constraintStart_toEndOf="@+id/hardtext_vod_difficulty"
         app:layout_constraintTop_toTopOf="@+id/hardtext_vod_difficulty" />
 
     <Button
@@ -219,5 +208,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinner_vod_difficulty" />
+
+    <TextView
+        android:id="@+id/textview_category_select"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:hint="선택해주세요"
+        android:minHeight="50dp"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:background="@drawable/text_edge_all"
+        app:layout_constraintBottom_toBottomOf="@+id/hardtext_vod_category"
+        app:layout_constraintEnd_toEndOf="@+id/spinner_vod_difficulty"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/spinner_vod_difficulty"
+        app:layout_constraintTop_toTopOf="@+id/hardtext_vod_category" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

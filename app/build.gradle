@@ -38,7 +38,7 @@ dependencies {
     implementation 'androidx.fragment:fragment:1.4.0-alpha10' //프래그먼트
     implementation 'com.android.support:design:31.0.0' //디자인보조
 
-
+    implementation 'gun0912.ted:tedpermission:2.0.0'//테드 퍼미션
 
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'

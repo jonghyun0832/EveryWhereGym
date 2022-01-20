@@ -549,7 +549,7 @@ public class TrainerEditProfileActivity extends AppCompatActivity {
     }
 
     private File saveImage2(Bitmap bitmap){
-        String filename = "TRAINER_IMAGE_2";
+        String filename = "TRAINER_IMAGE_BACK";
 
         File tmp_file = new File(getApplicationContext().getCacheDir(),filename);
         try{

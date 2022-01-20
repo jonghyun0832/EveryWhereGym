@@ -4,6 +4,7 @@ package com.example.everywheregym;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
+import android.Manifest;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -32,7 +33,11 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
+
 import java.io.File;
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -90,12 +95,52 @@ public class FragTrHome extends Fragment {
             }
         });
 
+
+
+        ActivityResultLauncher<Intent> activityLauncher_getVideo = registerForActivityResult( //갤러리에서 이미지 받아오기
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == RESULT_OK) {
+                            Log.d("TAG", "gallery_pick ");
+                            //Intent galleryIntent = result.getData();
+                            if (result.getData() != null) {
+                                video_uri = result.getData().getData(); //얠 보내서 동영상 재생
+                                Log.d("VIDEO", "화면에 띄울 파일의 uri: " + video_uri);
+                                video_path = getRealPathFromURI2(getContext(), video_uri); //파일 만들때 쓸거임
+                                Log.d("VIDEO", "절대경로 : " + video_path);
+
+                                SharedPreferences sharedPreferences= getContext().getSharedPreferences("video", MODE_PRIVATE);
+                                SharedPreferences.Editor editor= sharedPreferences.edit();
+                                editor.putString("v_uri",video_uri.toString()); //쓸때는 파싱해서 써야함
+                                editor.putString("v_path",video_path);
+                                editor.commit();
+
+
+                                Intent intent = new Intent(getContext(), VideoCheck.class);
+                                startActivity(intent);
+
+                            }
+                        } else {
+                            Toast.makeText(getContext(), "영상 선택 에러발생", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+        );
+
         btn_upload_vod.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("video/*");
-                activityLauncher_getVideo.launch(intent);
+
+                ted();
+
+                Intent vod_intent = new Intent(Intent.ACTION_PICK);
+                vod_intent.setType("video/*");
+                activityLauncher_getVideo.launch(vod_intent);
+//                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+//                intent.setType("video/*");
+//                activityLauncher_getVideo.launch(intent);
             }
         });
 
@@ -111,41 +156,6 @@ public class FragTrHome extends Fragment {
 
         return view;
     }
-
-
-    ActivityResultLauncher<Intent> activityLauncher_getVideo = registerForActivityResult( //갤러리에서 이미지 받아오기
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == RESULT_OK) {
-                        Log.d("TAG", "gallery_pick ");
-                        //Intent galleryIntent = result.getData();
-                        if (result.getData() != null) {
-                            video_uri = result.getData().getData(); //얠 보내서 동영상 재생
-                            Log.d("VIDEO", "화면에 띄울 파일의 uri: " + video_uri);
-                            video_path = getRealPathFromURI2(getContext(), video_uri); //파일 만들때 쓸거임
-                            Log.d("VIDEO", "절대경로 : " + video_path);
-
-                            SharedPreferences sharedPreferences= getContext().getSharedPreferences("video", MODE_PRIVATE);
-                            SharedPreferences.Editor editor= sharedPreferences.edit();
-                            editor.putString("v_uri",video_uri.toString()); //쓸때는 파싱해서 써야함
-                            editor.putString("v_path",video_path);
-                            editor.commit();
-
-
-                            Intent intent = new Intent(getContext(), VideoCheck.class);
-//                            intent.putExtra("video_uri",video_uri);
-//                            intent.putExtra("video_path",video_path);
-                            startActivity(intent);
-
-                        }
-                    } else {
-                        Toast.makeText(getContext(), "영상 선택 에러발생", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-    );
 
 
     public static String getRealPathFromURI2(Context context, Uri uri){
@@ -253,6 +263,29 @@ public class FragTrHome extends Fragment {
             }
         }
         return null;
+    }
+
+
+    void ted(){
+        PermissionListener permissionLitener = new PermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+                //권한 요청 성공
+
+            }
+
+            @Override
+            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+                Log.d("permission", "onPermissionDenied: 요청 실패");
+            }
+        };
+
+        TedPermission.with(getContext()).setPermissionListener(permissionLitener)
+                .setDeniedMessage("동영상을 업로드 하기 위해 접근 권한이 필요합니다.")
+                .setPermissions(new String[] {Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE})
+                .check();
+
+
     }
 
 

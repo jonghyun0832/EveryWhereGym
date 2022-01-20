@@ -137,7 +137,8 @@ public interface ApiInterface {
     @Multipart
     @POST("uploadVideoData.php")
     Call<UserInfo> uploadVideoData(
-            @Part MultipartBody.Part file, @PartMap HashMap<String, RequestBody> data
+            @Part MultipartBody.Part file, @PartMap HashMap<String, RequestBody> data,
+            @Part MultipartBody.Part image
             //@Part MultipartBody.Part file, @Part("filename") RequestBody name
 
     );
