@@ -3,7 +3,6 @@ package com.example.everywheregym;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,8 +18,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-
-import java.net.URL;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,7 +43,7 @@ public class FragMypage extends Fragment {
         btn_setting = view.findViewById(R.id.button_setting);
         btn_edit_profile = view.findViewById(R.id.button_edit_profile);
         tv_profile_name = view.findViewById(R.id.textview_profile_name);
-        iv_profile = view.findViewById(R.id.circle_iv_edit_profile);
+        iv_profile = view.findViewById(R.id.iv_mypage_user_img);
 
 
         iv_profile.setOnClickListener(new View.OnClickListener() {

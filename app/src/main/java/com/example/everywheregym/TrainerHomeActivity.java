@@ -1,4 +1,6 @@
 package com.example.everywheregym;
+import androidx.appcompat.app.AlertDialog;
+import android.content.DialogInterface;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,13 +34,29 @@ public class TrainerHomeActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch(item.getItemId()){
-                    case R.id.action_home:
+                    case R.id.action_video:
                         setFrag(0);
                         break;
                     case R.id.action_live:
                         setFrag(1);
                         break;
-                    case R.id.action_video:
+                    case R.id.action_add:
+
+//                        AlertDialog.Builder ad = new AlertDialog.Builder(TrainerHomeActivity.this);
+//                        ad.setTitle("알림");
+//                        ad.setMessage("체크체크");
+//                        ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                            }
+//
+//                        });
+//                        AlertDialog alertDialog = ad.create();
+//                        alertDialog.show();
+                        //여기에다가 두개 추가해서 쓰기
+
+
                         setFrag(2);
                         break;
                     case R.id.action_mypage:
@@ -64,7 +82,7 @@ public class TrainerHomeActivity extends AppCompatActivity {
         ft = fm.beginTransaction();
         switch (n){
             case 0:
-                ft.replace(R.id.main_frame_tr,frag_tr_home);
+                ft.replace(R.id.main_frame_tr,frag_video);
                 ft.commit();
                 break;
             case 1:
@@ -72,7 +90,7 @@ public class TrainerHomeActivity extends AppCompatActivity {
                 ft.commit();
                 break;
             case 2:
-                ft.replace(R.id.main_frame_tr,frag_video);
+                ft.replace(R.id.main_frame_tr,frag_tr_home);
                 ft.commit();
                 break;
             case 3:

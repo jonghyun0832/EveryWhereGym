@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".ShowProfileActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -16,7 +17,7 @@
             android:layout_height="wrap_content">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/iv_tr_mypage_img"
+                android:id="@+id/iv_showpf_img"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_gravity="center"
@@ -31,19 +32,19 @@
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/guideline26"
-                app:layout_constraintVertical_bias="1.0" />
+                app:layout_constraintVertical_bias="0.0" />
 
             <ImageView
-                android:id="@+id/iv_tr_mypage_background"
+                android:id="@+id/iv_showPF_background"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:scaleType="centerCrop"
                 app:layout_constraintBottom_toTopOf="@+id/guideline25"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0"
+                app:layout_constraintVertical_bias="0.0"
                 tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
             <androidx.constraintlayout.widget.Guideline
@@ -68,7 +69,7 @@
                 app:layout_constraintGuide_percent="0.4" />
 
             <TextView
-                android:id="@+id/textview_tr_mypage_intro"
+                android:id="@+id/textview_showPF_intro"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
@@ -89,7 +90,7 @@
                 app:layout_constraintTop_toTopOf="@+id/guideline27" />
 
             <TextView
-                android:id="@+id/textview_tr_mypage_name"
+                android:id="@+id/textview_showPF_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
@@ -97,7 +98,7 @@
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toTopOf="@+id/guideline27"
-                app:layout_constraintStart_toEndOf="@+id/iv_tr_mypage_img"
+                app:layout_constraintStart_toEndOf="@+id/iv_showpf_img"
                 app:layout_constraintTop_toTopOf="@+id/guideline26" />
 
             <androidx.constraintlayout.widget.Guideline
@@ -115,9 +116,9 @@
                 android:text="전문분야"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@+id/textview_tr_expert"
+                app:layout_constraintBottom_toBottomOf="@+id/textview_showPF_expert"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textview_tr_expert" />
+                app:layout_constraintTop_toTopOf="@+id/textview_showPF_expert" />
 
             <TextView
                 android:id="@+id/hardtext_tr_mypage_editcareer_edit"
@@ -126,9 +127,9 @@
                 android:text="경력사항"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@+id/textview_tr_career"
+                app:layout_constraintBottom_toBottomOf="@+id/textview_showPF_career"
                 app:layout_constraintStart_toStartOf="@+id/hardtext_tr_mypage_expert_edit"
-                app:layout_constraintTop_toTopOf="@+id/textview_tr_career" />
+                app:layout_constraintTop_toTopOf="@+id/textview_showPF_career" />
 
             <TextView
                 android:id="@+id/hardtext_tr_mypage_certify_edit"
@@ -137,12 +138,12 @@
                 android:text="자격사항"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@+id/textview_tr_certify"
+                app:layout_constraintBottom_toBottomOf="@+id/textview_showPF_certify"
                 app:layout_constraintStart_toStartOf="@+id/hardtext_tr_mypage_editcareer_edit"
-                app:layout_constraintTop_toTopOf="@+id/textview_tr_certify" />
+                app:layout_constraintTop_toTopOf="@+id/textview_showPF_certify" />
 
             <TextView
-                android:id="@+id/textview_tr_expert"
+                android:id="@+id/textview_showPF_expert"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
@@ -156,10 +157,10 @@
                 app:layout_constraintEnd_toStartOf="@+id/guideline34"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/guideline33"
-                app:layout_constraintTop_toBottomOf="@+id/textview_tr_mypage_intro" />
+                app:layout_constraintTop_toBottomOf="@+id/textview_showPF_intro" />
 
             <TextView
-                android:id="@+id/textview_tr_career"
+                android:id="@+id/textview_showPF_career"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -172,10 +173,10 @@
                 android:textColor="@color/black"
                 app:layout_constraintEnd_toStartOf="@+id/guideline34"
                 app:layout_constraintStart_toStartOf="@+id/guideline33"
-                app:layout_constraintTop_toBottomOf="@+id/textview_tr_expert" />
+                app:layout_constraintTop_toBottomOf="@+id/textview_showPF_expert" />
 
             <TextView
-                android:id="@+id/textview_tr_certify"
+                android:id="@+id/textview_showPF_certify"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -188,7 +189,7 @@
                 android:textColor="@color/black"
                 app:layout_constraintEnd_toStartOf="@+id/guideline34"
                 app:layout_constraintStart_toStartOf="@+id/guideline33"
-                app:layout_constraintTop_toBottomOf="@+id/textview_tr_career" />
+                app:layout_constraintTop_toBottomOf="@+id/textview_showPF_career" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline33"
@@ -204,63 +205,10 @@
                 android:orientation="vertical"
                 app:layout_constraintGuide_begin="330dp" />
 
-            <Button
-                android:id="@+id/btn_tr_mypage_edit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:background="@android:color/transparent"
-                android:text="프로필 편집"
-                android:textColor="@color/black"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/guideline26" />
-
-            <Button
-                android:id="@+id/btn_my_live"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="80dp"
-                android:paddingLeft="20dp"
-                android:text="내 라이브 수업 일정"
-                android:textAlignment="textStart"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textview_tr_certify" />
-
-            <Button
-                android:id="@+id/btn_my_upload"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="20dp"
-                android:text="내 업로드한 영상"
-                android:textAlignment="textStart"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_my_live" />
-
-            <Button
-                android:id="@+id/btn_tr_logout"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="20dp"
-                android:paddingLeft="20dp"
-                android:text="로그아웃"
-                android:textAlignment="textStart"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_my_upload" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+

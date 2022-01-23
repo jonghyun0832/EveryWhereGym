@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/iv_vod_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_vod_user_img"
+        app:layout_constraintEnd_toStartOf="@+id/iv_vod_user_img"
+        app:layout_constraintTop_toTopOf="@+id/iv_vod_user_img"
+        app:srcCompat="@drawable/ic_baseline_search_24" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_vod_user_img"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:layout_marginEnd="20dp"
+        android:background="@android:color/transparent"
+        app:civ_border_color="#000000"
+        app:civ_border_overlay="false"
+        app:civ_border_width="3dp"
+        app:layout_constraintBottom_toBottomOf="@+id/hardtext_vod"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/hardtext_vod" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline30"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.14" />
+
+    <TextView
+        android:id="@+id/filter_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:background="@drawable/round_text"
+        android:paddingLeft="10dp"
+        android:paddingTop="5dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="5dp"
+        android:text="집중부위 ▼"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/guideline30"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/filter_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:background="@drawable/round_text"
+        android:paddingLeft="10dp"
+        android:paddingTop="5dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="5dp"
+        android:text="운동시간 ▼"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/guideline30"
+        app:layout_constraintStart_toEndOf="@+id/filter_category" />
+
+    <TextView
+        android:id="@+id/filter_difficulty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="난이도 ▼"
+        android:textColor="@color/black"
+        android:background="@drawable/round_text"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline30"
+        app:layout_constraintStart_toEndOf="@+id/filter_time" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_vod"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline30" />
+
+    <TextView
+        android:id="@+id/hardtext_vod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:text="VOD 컨텐츠"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

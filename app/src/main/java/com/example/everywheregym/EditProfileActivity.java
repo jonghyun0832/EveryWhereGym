@@ -8,7 +8,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import android.Manifest;
-import android.content.DialogInterface;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -35,14 +34,11 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -88,7 +84,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
         iv_pf_edit_back = findViewById(R.id.imageview_profile_edit_back);
         btn_pf_edit_complete = findViewById(R.id.button_profile_edit_complete);
-        iv_pf_edit_image = findViewById(R.id.circle_iv_edit_profile);
+        iv_pf_edit_image = findViewById(R.id.iv_edit_mypage_user_img);
         et_pf_edit_name = findViewById(R.id.edittext_profile_edit_name);
 
         SharedPreferences sharedPreferences= this.getSharedPreferences("info", Context.MODE_PRIVATE);

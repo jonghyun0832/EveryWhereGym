@@ -23,7 +23,7 @@ public class FragLive extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_frag_live,container,false);
 
-        tv_live = view.findViewById(R.id.textView_live);
+        //tv_live = view.findViewById(R.id.textView_live);
 
 
         //코드

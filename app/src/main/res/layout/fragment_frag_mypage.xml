@@ -28,7 +28,7 @@
         app:layout_constraintGuide_percent="0.5" />
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/circle_iv_edit_profile"
+        android:id="@+id/iv_mypage_user_img"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_gravity="center"

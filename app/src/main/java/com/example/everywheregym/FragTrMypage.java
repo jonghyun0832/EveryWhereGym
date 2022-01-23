@@ -54,16 +54,16 @@ public class FragTrMypage extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_trainer_mypage,container,false);
 
-        iv_backgroud = view.findViewById(R.id.iv_tr_mypage_background_edit);
-        iv_profile_img = view.findViewById(R.id.iv_tr_mypage_img_edit);
+        iv_backgroud = view.findViewById(R.id.iv_tr_mypage_background);
+        iv_profile_img = view.findViewById(R.id.iv_tr_mypage_img);
 
         tv_profile_name = view.findViewById(R.id.textview_tr_mypage_name);
         btn_tr_edit = view.findViewById(R.id.btn_tr_mypage_edit);
-        tv_profile_intro = view.findViewById(R.id.textview_tr_mypage_intro_edit);
+        tv_profile_intro = view.findViewById(R.id.textview_tr_mypage_intro);
 
         tv_tr_expert = view.findViewById(R.id.textview_tr_expert);
         tv_tr_career = view.findViewById(R.id.textview_tr_career);
-        tv_tr_certify = view.findViewById(R.id.textview_tr_certify_edit);
+        tv_tr_certify = view.findViewById(R.id.textview_tr_certify);
 
         btn_my_live = view.findViewById(R.id.btn_my_live);
         btn_my_upload = view.findViewById(R.id.btn_my_upload);

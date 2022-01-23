@@ -10,6 +10,7 @@ import retrofit2.Response;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -41,7 +42,7 @@ public class TestActivity extends AppCompatActivity {
 
         videoView = findViewById(R.id.videoView_test);
         tv_title = findViewById(R.id.textView_test1);
-        tv_category = findViewById(R.id.textView_test2);
+        //tv_category = findViewById(R.id.textView_test2);
         tv_difficulty = findViewById(R.id.textView_test3);
 
 
@@ -51,89 +52,68 @@ public class TestActivity extends AppCompatActivity {
         initDialog();
         showpDialog();
 
-        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<VideoInfo> call = apiInterface.getvideoInfo(user_id);
-        call.enqueue(new Callback<VideoInfo>() {
+        Intent intent = getIntent();
+        String vod_path = intent.getStringExtra("vod_path");
+        String vod_title = intent.getStringExtra("vod_title");
+        String vod_difficulty = intent.getStringExtra("vod_difficulty");
+
+        SAMPLE_VIDEO_URL = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/video/" + vod_path;
+        tv_title.setText(vod_title);
+        tv_difficulty.setText(vod_difficulty);
+
+        mediaController = new MediaController(TestActivity.this);
+
+        // 비디오뷰에 컨트롤러 설정
+        videoView.setMediaController(mediaController);
+
+        // 비디오 재생경로
+        videoView.setVideoURI(Uri.parse(SAMPLE_VIDEO_URL));
+
+        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
-            public void onResponse(Call<VideoInfo> call, Response<VideoInfo> response) {
-                if (response.isSuccessful() && response.body() != null){
-                    if(response.body().isSuccess()){
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                videoView.seekTo(1);
 
-                        String title = response.body().getTitle();
-                        String category = response.body().getCategory();
-                        String difficulty = response.body().getDifficulty();
-                        String video_url = response.body().getVideo_url();
+                videoView.start();
+                hidepDialog();
 
-                        SAMPLE_VIDEO_URL = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/video/" + video_url;
-
-                        tv_title.setText(title);
-                        tv_category.setText(category);
-                        tv_difficulty.setText(difficulty);
-
-                        mediaController = new MediaController(TestActivity.this);
-
-                        // 비디오뷰에 컨트롤러 설정
-                        videoView.setMediaController(mediaController);
-
-                        // 비디오 재생경로
-                        videoView.setVideoURI(Uri.parse(SAMPLE_VIDEO_URL));
-
-                        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                            @Override
-                            public void onPrepared(MediaPlayer mediaPlayer) {
-                                videoView.seekTo(1);
-
-                                videoView.start();
-                                hidepDialog();
-
-                            }
-                        });
-
-                        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                            @Override
-                            public void onCompletion(MediaPlayer mediaPlayer) {
-                                //끝났으면 처음으로 돌아간다
-                                videoView.seekTo(1);
-                            }
-                        });
-
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<VideoInfo> call, Throwable t) {
-                Toast.makeText(TestActivity.this, "실패했습니다", Toast.LENGTH_SHORT).show();
             }
         });
 
+        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                //끝났으면 처음으로 돌아간다
+                videoView.seekTo(1);
+            }
+        });
 
-        //SAMPLE_VIDEO_URL = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/video/4_1642659633875";
-
-//        mediaController = new MediaController(this);
-//
-//        // 비디오뷰에 컨트롤러 설정
-//        videoView.setMediaController(mediaController);
-//
-//        // 비디오 재생경로
-//        videoView.setVideoURI(Uri.parse(SAMPLE_VIDEO_URL));
-//
-//        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+//        Call<VideoInfo> call = apiInterface.getvideoInfo(user_id);
+//        call.enqueue(new Callback<VideoInfo>() {
 //            @Override
-//            public void onPrepared(MediaPlayer mediaPlayer) {
+//            public void onResponse(Call<VideoInfo> call, Response<VideoInfo> response) {
+//                if (response.isSuccessful() && response.body() != null){
+//                    if(response.body().isSuccess()){
 //
-//                videoView.seekTo(1);
+//                        String title = response.body().getTitle();
+//                        String category = response.body().getCategory();
+//                        String difficulty = response.body().getDifficulty();
+//                        String video_url = response.body().getVideo_url();
 //
-//                videoView.start();
+//                        SAMPLE_VIDEO_URL = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/video/" + video_url;
 //
+//                        tv_title.setText(title);
+//                        tv_category.setText(category);
+//                        tv_difficulty.setText(difficulty);
+//
+//                    }
+//                }
 //            }
-//        });
 //
-//        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 //            @Override
-//            public void onCompletion(MediaPlayer mediaPlayer) {
-//                //끝났으면 처음으로 돌아간다
-//                videoView.seekTo(1);
+//            public void onFailure(Call<VideoInfo> call, Throwable t) {
+//                Toast.makeText(TestActivity.this, "실패했습니다", Toast.LENGTH_SHORT).show();
 //            }
 //        });
 

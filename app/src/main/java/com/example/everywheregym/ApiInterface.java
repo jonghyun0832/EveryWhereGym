@@ -151,6 +151,19 @@ public interface ApiInterface {
     );
 
 
+    @POST("getVodListInfo.php")
+    Call<VodDataArray> getvodList(
+    );
+
+    @FormUrlEncoded
+    @POST("getVodListInfo.php")
+    Call<VodData> getvodFilterList(
+            @Field("category") String category,
+            @Field("time") String time,
+            @Field("difficulty") String difficulty
+    );
+
+
 
 //    @Multipart
 //    @POST("getTrainerInfo.php")

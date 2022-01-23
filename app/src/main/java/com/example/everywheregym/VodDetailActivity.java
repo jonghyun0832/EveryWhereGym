@@ -76,7 +76,7 @@ public class VodDetailActivity extends AppCompatActivity {
 
     private ProgressDialog prDialog;
 
-    long vod_length;
+    private String vod_length;
 
     private String user_id;
 
@@ -130,7 +130,7 @@ public class VodDetailActivity extends AppCompatActivity {
 
             String time = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
             long timeInmillisec = Long.parseLong(time);
-            vod_length = timeInmillisec; //데이터 저장용
+            //vod_length = timeInmillisec; //데이터 저장용
             long duration = timeInmillisec / 1000;
             long hours = duration / 3600;
             long minutes = (duration - hours * 3600) / 60;
@@ -369,7 +369,7 @@ public class VodDetailActivity extends AppCompatActivity {
                         alertDialog.show();
                     } else {
                         showpDialog();
-
+                        vod_length = tv_vod_length.getText().toString();
                         selected_category = tv_categoty.getText().toString();
                         //이미지 파일 만들어주기 (캐시에 생성)
                         File upload_file = saveImage(thumbnail);
@@ -386,7 +386,7 @@ public class VodDetailActivity extends AppCompatActivity {
 
                         String pdname = user_id + "_" + Calendar.getInstance().getTimeInMillis();
                         RequestBody filename = RequestBody.create(MediaType.parse("text/plain"),pdname);
-                        RequestBody file_length = RequestBody.create(MediaType.parse("text/plain"),String.valueOf(vod_length));
+                        RequestBody file_length = RequestBody.create(MediaType.parse("text/plain"),vod_length);
                         RequestBody file_user = RequestBody.create(MediaType.parse("text/plain"),user_id);
                         RequestBody file_title = RequestBody.create(MediaType.parse("text/plain"),input_title);
                         RequestBody file_category = RequestBody.create(MediaType.parse("text/plain"),selected_category);
