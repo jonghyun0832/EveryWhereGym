@@ -53,6 +53,7 @@ public class FragVideo extends Fragment {
     private LinearLayoutManager linearLayoutManager;
 
     private String user_id;
+    private String is_trainer;
 
     private ProgressDialog prDialog;
 
@@ -86,6 +87,7 @@ public class FragVideo extends Fragment {
 
         SharedPreferences sharedPreferences= getActivity().getSharedPreferences("info", Context.MODE_PRIVATE);
         user_id = sharedPreferences.getString("user_id","0");
+        is_trainer = sharedPreferences.getString("is_trainer","");
 
         if(!user_id.equals("0")){
             ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -171,14 +173,30 @@ public class FragVideo extends Fragment {
         vodAdapter.setOnClickMoreListener(new VodAdapter.myRecyclerViewMoreClickListener() {
             @Override
             public void whenMoreClick(int position) {
+
                 AlertDialog.Builder ad = new AlertDialog.Builder(getContext());
                 LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 View dialogView = inflater.inflate(R.layout.dialog_vod_more, null);
 
                 TextView tv_more_edit = dialogView.findViewById(R.id.tv_more_edit);
                 TextView tv_more_delete = dialogView.findViewById(R.id.tv_more_delete);
+                TextView tv_more_register = dialogView.findViewById(R.id.tv_more_register);
+                ImageView iv_more_edit = dialogView.findViewById(R.id.iv_more_edit);
+                ImageView iv_more_delete = dialogView.findViewById(R.id.iv_more_delete);
+                //ImageView iv_more_register = dialogView.findViewById(R.id.iv_more_register);
 
-                //VodData tmp_arr = vodArray.get(position);
+                tv_more_edit.setVisibility(View.GONE);
+                tv_more_delete.setVisibility(View.GONE);
+                iv_more_edit.setVisibility(View.GONE);
+                iv_more_delete.setVisibility(View.GONE);
+
+                if (is_trainer.equals("1") && user_id.equals(vodArray.get(position).getVod_uploader_id())){
+                    tv_more_edit.setVisibility(View.VISIBLE);
+                    tv_more_delete.setVisibility(View.VISIBLE);
+                    iv_more_edit.setVisibility(View.VISIBLE);
+                    iv_more_delete.setVisibility(View.VISIBLE);
+                }
+
                 String vod_id = vodArray.get(position).getVod_id(); //수정에서 보냄
                 String vod_thumbnail_path = vodArray.get(position).getVod_thumbnail(); //수정에서 보냄
                 String vod_time = vodArray.get(position).getVod_time(); //수정에서 보냄
@@ -277,6 +295,14 @@ public class FragVideo extends Fragment {
                     }
                 });
 
+
+                //즐겨찾기 등록
+                tv_more_register.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //즐겨찾기 테이블에 저장하기 ㄱㄱ
+                    }
+                });
 
             }
         });
