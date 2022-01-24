@@ -36,6 +36,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -64,7 +66,7 @@ public class VodDetailActivity extends AppCompatActivity {
     private EditText et_vod_title;
 
     private TextView tv_categoty;
-    private Spinner sp_category;
+
     private Spinner sp_difficulty;
 
     private String selected_category; //카테고리
@@ -86,6 +88,20 @@ public class VodDetailActivity extends AppCompatActivity {
     private CheckBox cb_chest;
     private CheckBox cb_back;
 
+    //수정으로 온 데이터 받기
+    private boolean isEdit = false;
+    private String getted_vod_id;
+    private String getted_vod_thumbnail;
+    private String getted_vod_time;
+    private String getted_vod_title;
+    private String getted_vod_category;
+    private String getted_vod_difficulty;
+    private String previous_thumbnail;
+
+    private int spinner_default = 0;
+
+    private boolean ischange = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,72 +117,337 @@ public class VodDetailActivity extends AppCompatActivity {
         et_vod_title = (EditText) findViewById(R.id.edittext_vod_detail_title);
 
         tv_categoty = (TextView) findViewById(R.id.textview_category_select);
-        //sp_category = (Spinner) findViewById(R.id.spinner_vod_category);
+
         sp_difficulty = (Spinner) findViewById(R.id.spinner_vod_difficulty);
 
         btn_upload = (Button) findViewById(R.id.btn_upload_vod);
 
         initDialog(); //프로그래스 다이얼로그 세팅
 
-        SharedPreferences sharedPreferences= this.getSharedPreferences("video", Context.MODE_PRIVATE);
-        String get_path = sharedPreferences.getString("v_path","");
-        String get_uri = sharedPreferences.getString("v_uri", "");
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        //수정인지 판단하기
+        try{
+            Intent intentEdit = getIntent();
+            isEdit = intentEdit.getBooleanExtra("isEdit",false);
+            getted_vod_id = intentEdit.getStringExtra("vod_id");
+            getted_vod_thumbnail = intentEdit.getStringExtra("vod_thumbnail_path");
+            getted_vod_time = intentEdit.getStringExtra("vod_time");
+            getted_vod_title = intentEdit.getStringExtra("vod_title");
+            getted_vod_category = intentEdit.getStringExtra("vod_category");
+            getted_vod_difficulty = intentEdit.getStringExtra("vod_difficulty");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         SharedPreferences sharedPreferences2= this.getSharedPreferences("info", Context.MODE_PRIVATE);
         user_id = sharedPreferences2.getString("user_id","");
 
-//        Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(get_path, MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
-//        Bitmap thumbnail = ThumbnailUtils.extractThumbnail(bitmap,480,360);
-//        iv_thumbnail.setImageBitmap(thumbnail);
+        if(isEdit){
+            //썸네일 불러와서 넣어주기
+            String getted_thumbnail_url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/" + getted_vod_thumbnail;
+            Glide.with(VodDetailActivity.this).load(getted_thumbnail_url).into(iv_thumbnail);
+            previous_thumbnail = getted_vod_thumbnail;
 
-        if (!get_path.equals("")){ //영상 썸네일 설정하기 (자동)
-            MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
-            System.out.println("get_path 들어온거 : " + get_path);
+            //시간 불러와서 넣어주기
+            tv_vod_length.setText(getted_vod_time);
 
-            mediaMetadataRetriever.setDataSource(get_path);
+            //제목 불러와서 넣어주기 (글자수 제한 갱신)
+            et_vod_title.setText(getted_vod_title);
 
-            thumbnail = mediaMetadataRetriever.getFrameAtTime(1000000);
-            iv_thumbnail.setImageBitmap(thumbnail);
+            tv_title_limit.setText(et_vod_title.getText().toString().length() + " / 30");
+            //집중 부위 불러와서 넣어주기
+            tv_categoty.setText(getted_vod_category);
+            //난이도 불러와서 넣어주기 (스피너)
+            if (getted_vod_difficulty.equals("입문")){
+                spinner_default = 0;
 
-            String time = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-            long timeInmillisec = Long.parseLong(time);
-            //vod_length = timeInmillisec; //데이터 저장용
-            long duration = timeInmillisec / 1000;
-            long hours = duration / 3600;
-            long minutes = (duration - hours * 3600) / 60;
-            long seconds = duration - (hours * 3600 + minutes * 60);
-
-            if(hours > 0){
-                if(minutes < 10){
-                    if(seconds < 10){
-                        tv_vod_length.setText(hours + ":0" + minutes + ":0"+seconds);
-                    } else {
-                        tv_vod_length.setText(hours + ":0" + minutes + ":"+seconds);
-                    }
-                }else {
-                    if(seconds < 10){
-                        tv_vod_length.setText(hours + ":" + minutes + ":0"+seconds);
-                    } else {
-                        tv_vod_length.setText(hours + ":" + minutes + ":"+seconds);
-                    }
-                }
+            }else if(getted_vod_difficulty.equals("초급")){
+                spinner_default = 1;
             } else {
-                if(seconds < 10){
-                    tv_vod_length.setText(minutes + ":0"+seconds);
-                } else {
-                    tv_vod_length.setText(minutes + ":"+seconds);
+                spinner_default = 2;
+            }
+            //sp_difficulty.setSelection(spinner_default);
+            //동영상 업로드 -> 동영상 수정하기로 바꾸고 클릭했을떄도 업데이트 하는걸로 바꾸기
+            //썸네일 바꿨을떄는 수정하기 보낼때 비트맵을 변환해서 올리는 과정이 있어야한다 (없을떄는 그냥 보내도됨)
+            ischange = false;
+            btn_upload.setText("동영상 수정하기");
+
+            btn_upload.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(tv_categoty.getText().toString().equals("") || et_vod_title.getText().toString().equals("")){
+                        AlertDialog.Builder ad = new AlertDialog.Builder(VodDetailActivity.this);
+                        ad.setTitle("알림");
+                        ad.setMessage("세부 정보들을 모두 입력해주세요");
+                        ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+
+                        });
+                        AlertDialog alertDialog = ad.create();
+                        alertDialog.show();
+                    } else {
+                        showpDialog();
+                        vod_length = tv_vod_length.getText().toString();
+                        selected_category = tv_categoty.getText().toString();
+                        //이미지 파일 만들어주기 (캐시에 생성)
+                        File upload_file;
+                        MultipartBody.Part img_file;
+                        RequestBody file_previous_thumbnail;
+                        if (ischange){
+                            upload_file = saveImage(thumbnail);
+                            RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"),upload_file);
+                            img_file = MultipartBody.Part.createFormData("thumbnail", upload_file.getName(), reqFile);
+
+                            file_previous_thumbnail = RequestBody.create(MediaType.parse("text/plain"),previous_thumbnail);
+                        } else {
+                            upload_file = emptyFile();
+                            RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"),upload_file);
+                            img_file = MultipartBody.Part.createFormData("thumbnail", upload_file.getName(), reqFile);
+
+                            file_previous_thumbnail = RequestBody.create(MediaType.parse("text/plain"),"");
+                        }
+
+                        //영상 제목
+                        String input_title = et_vod_title.getText().toString();
+
+                        HashMap<String, RequestBody> map = new HashMap<>();
+
+
+
+                        RequestBody file_user = RequestBody.create(MediaType.parse("text/plain"),user_id);
+                        RequestBody file_title = RequestBody.create(MediaType.parse("text/plain"),input_title);
+                        RequestBody file_category = RequestBody.create(MediaType.parse("text/plain"),selected_category);
+                        RequestBody file_difficulty = RequestBody.create(MediaType.parse("text/plain"),selected_difficulty);
+                        RequestBody file_vod_id = RequestBody.create(MediaType.parse("text/plain"),getted_vod_id);
+
+
+                        map.put("userId",file_user);
+                        map.put("title",file_title);
+                        map.put("category",file_category);
+                        map.put("difficulty",file_difficulty);
+                        map.put("vod_id",file_vod_id);
+                        map.put("previous",file_previous_thumbnail);
+
+
+                        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+                        Call<VodData> call = apiInterface.editVideoData(map,img_file);
+                        call.enqueue(new Callback<VodData>() {
+                            @Override
+                            public void onResponse(Call<VodData> call, Response<VodData> response) {
+                                if (response.isSuccessful() && response.body() != null){
+                                    if(response.body().isSuccess()){
+                                        hidepDialog();
+
+                                        AlertDialog.Builder ad = new AlertDialog.Builder(VodDetailActivity.this);
+                                        ad.setTitle("알림");
+                                        ad.setMessage("동영상 수정이 완료되었습니다!");
+                                        ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                Intent intent = new Intent(VodDetailActivity.this, TrainerHomeActivity.class);
+                                                intent.setFlags(intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                startActivity(intent);
+                                            }
+
+                                        });
+                                        AlertDialog alertDialog = ad.create();
+                                        alertDialog.show();
+
+                                    } else {
+                                        hidepDialog();
+                                        Toast.makeText(VodDetailActivity.this, "서버단쪽 sql에 문제생김", Toast.LENGTH_SHORT).show();
+                                    }
+                                } else {
+                                    hidepDialog();
+                                    Toast.makeText(VodDetailActivity.this, "영상 업로드에 문제생김", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<VodData> call, Throwable t) {
+                                hidepDialog();
+                                Toast.makeText(VodDetailActivity.this, "동영상 업로드 실패", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
                 }
+            });
+
+
+        } else {
+
+
+            SharedPreferences sharedPreferences= this.getSharedPreferences("video", Context.MODE_PRIVATE);
+            String get_path = sharedPreferences.getString("v_path","");
+            String get_uri = sharedPreferences.getString("v_uri", "");
+
+
+            if (!get_path.equals("")){ //영상 썸네일 설정하기 (자동)
+                MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+                System.out.println("get_path 들어온거 : " + get_path);
+
+                mediaMetadataRetriever.setDataSource(get_path);
+
+                thumbnail = mediaMetadataRetriever.getFrameAtTime(1000000);
+                iv_thumbnail.setImageBitmap(thumbnail);
+                //편집 : 썸네일 바꿔주기
+
+                String time = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+                long timeInmillisec = Long.parseLong(time);
+                //vod_length = timeInmillisec; //데이터 저장용
+                long duration = timeInmillisec / 1000;
+                long hours = duration / 3600;
+                long minutes = (duration - hours * 3600) / 60;
+                long seconds = duration - (hours * 3600 + minutes * 60);
+
+                if(hours > 0){
+                    if(minutes < 10){
+                        if(seconds < 10){
+                            tv_vod_length.setText(hours + ":0" + minutes + ":0"+seconds);
+                        } else {
+                            tv_vod_length.setText(hours + ":0" + minutes + ":"+seconds);
+                        }
+                    }else {
+                        if(seconds < 10){
+                            tv_vod_length.setText(hours + ":" + minutes + ":0"+seconds);
+                        } else {
+                            tv_vod_length.setText(hours + ":" + minutes + ":"+seconds);
+                        }
+                    }
+                } else {
+                    if(seconds < 10){
+                        tv_vod_length.setText(minutes + ":0"+seconds);
+                    } else {
+                        tv_vod_length.setText(minutes + ":"+seconds);
+                    }
+                }
+
+            } else { //path가 제대로 저장 안된경우 다시 홈 화면으로 보낸다.
+                Toast.makeText(this, "영상을 다시 선택해주세요", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(VodDetailActivity.this, TrainerHomeActivity.class);
+                intent.setFlags(intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
 
-        } else { //path가 제대로 저장 안된경우 다시 홈 화면으로 보낸다.
-            Toast.makeText(this, "영상을 다시 선택해주세요", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(VodDetailActivity.this, TrainerHomeActivity.class);
-            intent.setFlags(intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+
+
+
+            btn_upload.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (get_uri.equals("")){ //선택 uri가 제대로 shared에 저장 안된경우 다시 메인으로 보냄
+                        Toast.makeText(VodDetailActivity.this, "영상을 다시 선택해주세요", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(VodDetailActivity.this, TrainerHomeActivity.class);
+                        intent.setFlags(intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    } else { // 제대로 들어간 경우 업로드 진행
+                        if(tv_categoty.getText().toString().equals("") || et_vod_title.getText().toString().equals("")){
+                            AlertDialog.Builder ad = new AlertDialog.Builder(VodDetailActivity.this);
+                            ad.setTitle("알림");
+                            ad.setMessage("세부 정보들을 모두 입력해주세요");
+                            ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                }
+
+                            });
+                            AlertDialog alertDialog = ad.create();
+                            alertDialog.show();
+                        } else {
+                            showpDialog();
+                            vod_length = tv_vod_length.getText().toString();
+                            selected_category = tv_categoty.getText().toString();
+                            //이미지 파일 만들어주기 (캐시에 생성)
+                            File upload_file = saveImage(thumbnail);
+                            RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"),upload_file);
+                            MultipartBody.Part img_file = MultipartBody.Part.createFormData("thumbnail", upload_file.getName(), reqFile);
+
+                            //영상 제목
+                            String input_title = et_vod_title.getText().toString();
+
+                            File file = new File(get_path);
+                            RequestBody requestBody = RequestBody.create(MediaType.parse("*/*"),file);
+
+                            HashMap<String, RequestBody> map = new HashMap<>();
+
+                            String pdname = user_id + "_" + Calendar.getInstance().getTimeInMillis();
+                            RequestBody filename = RequestBody.create(MediaType.parse("text/plain"),pdname);
+                            RequestBody file_length = RequestBody.create(MediaType.parse("text/plain"),vod_length);
+                            RequestBody file_user = RequestBody.create(MediaType.parse("text/plain"),user_id);
+                            RequestBody file_title = RequestBody.create(MediaType.parse("text/plain"),input_title);
+                            RequestBody file_category = RequestBody.create(MediaType.parse("text/plain"),selected_category);
+                            RequestBody file_difficulty = RequestBody.create(MediaType.parse("text/plain"),selected_difficulty);
+                            //RequestBody file_img = RequestBody.create(MediaType.parse("text/plain"),); 이미지
+                            map.put("name",filename);
+                            map.put("length",file_length);
+                            map.put("userId",file_user);
+                            map.put("title",file_title);
+                            map.put("category",file_category);
+                            map.put("difficulty",file_difficulty);
+                            //RequestBody vod = RequestBody.create(MediaType.parse("text/plain"),vod_length)
+
+                            MultipartBody.Part vFile = MultipartBody.Part.createFormData("video_file", file.getName(),requestBody);
+                            System.out.println("파일이름 : " + filename);
+                            System.out.println("만든파일 : " + vFile);
+
+                            ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+                            Call<UserInfo> call = apiInterface.uploadVideoData(vFile,map,img_file);
+                            call.enqueue(new Callback<UserInfo>() {
+                                @Override
+                                public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
+                                    if (response.isSuccessful() && response.body() != null){
+                                        if(response.body().isSuccess()){
+                                            hidepDialog();
+
+                                            AlertDialog.Builder ad = new AlertDialog.Builder(VodDetailActivity.this);
+                                            ad.setTitle("알림");
+                                            ad.setMessage("동영상 업로드가 완료되었습니다!");
+                                            ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    Intent intent = new Intent(VodDetailActivity.this, TrainerHomeActivity.class);
+                                                    intent.setFlags(intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                    startActivity(intent);
+                                                }
+
+                                            });
+                                            AlertDialog alertDialog = ad.create();
+                                            alertDialog.show();
+
+                                        } else {
+                                            hidepDialog();
+                                            Toast.makeText(VodDetailActivity.this, "서버단쪽 sql에 문제생김", Toast.LENGTH_SHORT).show();
+                                        }
+                                    } else {
+                                        hidepDialog();
+                                        Toast.makeText(VodDetailActivity.this, "영상 업로드에 문제생김", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<UserInfo> call, Throwable t) {
+                                    hidepDialog();
+                                    Toast.makeText(VodDetailActivity.this, "동영상 업로드 실패", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+
+            tv_title_limit.setText("0 / 30");
+
         }
 
 
-        tv_title_limit.setText("0 / 30");
+
+        ///////////////////////////////////////////////////////////////////////////////////////////
+
 
 
         //뒷 화살표 클릭시 이전으로 돌아가기
@@ -203,7 +484,6 @@ public class VodDetailActivity extends AppCompatActivity {
             }
         });
 
-        //tv_vod_length.setText("이거 어캐가져옴");
 
         et_vod_title.addTextChangedListener(new TextWatcher() {
             @Override
@@ -309,28 +589,15 @@ public class VodDetailActivity extends AppCompatActivity {
         });
 
 
-//        String[] vod_category = getResources().getStringArray(R.array.category_array);
         String[] vod_difficulty = getResources().getStringArray(R.array.difficulty_array);
 
-//        ArrayAdapter categoryAdapter = ArrayAdapter.createFromResource(this,R.array.category_array, android.R.layout.simple_spinner_item);
-//        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        sp_category.setAdapter(categoryAdapter);
-//
-//        sp_category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                selected_category = vod_category[i];
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> adapterView) {
-//                selected_category = vod_category[0];
-//            }
-//        });
+
 
         ArrayAdapter difficultyAdapter = ArrayAdapter.createFromResource(this,R.array.difficulty_array, android.R.layout.simple_spinner_item);
         difficultyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp_difficulty.setAdapter(difficultyAdapter);
+
+        sp_difficulty.setSelection(spinner_default);
 
         sp_difficulty.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -340,112 +607,7 @@ public class VodDetailActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                selected_difficulty = vod_difficulty[0];
-            }
-        });
-
-
-        btn_upload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (get_uri.equals("")){ //선택 uri가 제대로 shared에 저장 안된경우 다시 메인으로 보냄
-                    Toast.makeText(VodDetailActivity.this, "영상을 다시 선택해주세요", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(VodDetailActivity.this, TrainerHomeActivity.class);
-                    intent.setFlags(intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                } else { // 제대로 들어간 경우 업로드 진행
-                    if(tv_categoty.getText().toString().equals("") || et_vod_title.getText().toString().equals("")){
-                        AlertDialog.Builder ad = new AlertDialog.Builder(VodDetailActivity.this);
-                        ad.setTitle("알림");
-                        ad.setMessage("세부 정보들을 모두 입력해주세요");
-                        ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-
-                        });
-                        AlertDialog alertDialog = ad.create();
-                        alertDialog.show();
-                    } else {
-                        showpDialog();
-                        vod_length = tv_vod_length.getText().toString();
-                        selected_category = tv_categoty.getText().toString();
-                        //이미지 파일 만들어주기 (캐시에 생성)
-                        File upload_file = saveImage(thumbnail);
-                        RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"),upload_file);
-                        MultipartBody.Part img_file = MultipartBody.Part.createFormData("thumbnail", upload_file.getName(), reqFile);
-
-                        //영상 제목
-                        String input_title = et_vod_title.getText().toString();
-
-                        File file = new File(get_path);
-                        RequestBody requestBody = RequestBody.create(MediaType.parse("*/*"),file);
-
-                        HashMap<String, RequestBody> map = new HashMap<>();
-
-                        String pdname = user_id + "_" + Calendar.getInstance().getTimeInMillis();
-                        RequestBody filename = RequestBody.create(MediaType.parse("text/plain"),pdname);
-                        RequestBody file_length = RequestBody.create(MediaType.parse("text/plain"),vod_length);
-                        RequestBody file_user = RequestBody.create(MediaType.parse("text/plain"),user_id);
-                        RequestBody file_title = RequestBody.create(MediaType.parse("text/plain"),input_title);
-                        RequestBody file_category = RequestBody.create(MediaType.parse("text/plain"),selected_category);
-                        RequestBody file_difficulty = RequestBody.create(MediaType.parse("text/plain"),selected_difficulty);
-                        //RequestBody file_img = RequestBody.create(MediaType.parse("text/plain"),); 이미지
-                        map.put("name",filename);
-                        map.put("length",file_length);
-                        map.put("userId",file_user);
-                        map.put("title",file_title);
-                        map.put("category",file_category);
-                        map.put("difficulty",file_difficulty);
-                        //RequestBody vod = RequestBody.create(MediaType.parse("text/plain"),vod_length)
-
-                        MultipartBody.Part vFile = MultipartBody.Part.createFormData("video_file", file.getName(),requestBody);
-                        System.out.println("파일이름 : " + filename);
-                        System.out.println("만든파일 : " + vFile);
-
-                        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-                        Call<UserInfo> call = apiInterface.uploadVideoData(vFile,map,img_file);
-                        call.enqueue(new Callback<UserInfo>() {
-                            @Override
-                            public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
-                                if (response.isSuccessful() && response.body() != null){
-                                    if(response.body().isSuccess()){
-                                        hidepDialog();
-
-                                        AlertDialog.Builder ad = new AlertDialog.Builder(VodDetailActivity.this);
-                                        ad.setTitle("알림");
-                                        ad.setMessage("동영상 업로드가 완료되었습니다!");
-                                        ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                Intent intent = new Intent(VodDetailActivity.this, TrainerHomeActivity.class);
-                                                intent.setFlags(intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                startActivity(intent);
-                                            }
-
-                                        });
-                                        AlertDialog alertDialog = ad.create();
-                                        alertDialog.show();
-
-                                    } else {
-                                        hidepDialog();
-                                        Toast.makeText(VodDetailActivity.this, "서버단쪽 sql에 문제생김", Toast.LENGTH_SHORT).show();
-                                    }
-                                } else {
-                                    hidepDialog();
-                                    Toast.makeText(VodDetailActivity.this, "영상 업로드에 문제생김", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<UserInfo> call, Throwable t) {
-                                hidepDialog();
-                                Toast.makeText(VodDetailActivity.this, "동영상 업로드 실패", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-                }
+                selected_difficulty = vod_difficulty[spinner_default];
             }
         });
 
@@ -467,6 +629,7 @@ public class VodDetailActivity extends AppCompatActivity {
                                     getContentResolver(),galleryIntent.getData()
                             );
                             iv_thumbnail.setImageBitmap(thumbnail);
+                            ischange = true;
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -504,6 +667,20 @@ public class VodDetailActivity extends AppCompatActivity {
         }catch (Exception e){
             e.printStackTrace();
         }
+        return tmp_file;
+    }
+
+
+    private File emptyFile(){
+        String filename = "EMPTY_IMAGE";
+
+        File tmp_file = new File(getApplicationContext().getCacheDir(),filename);
+        try{
+            tmp_file.createNewFile();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         return tmp_file;
     }
 

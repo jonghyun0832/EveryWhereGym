@@ -165,6 +165,16 @@ public interface ApiInterface {
             @Field("vod_path") String vod_path
     );
 
+    //동영상 수정하기
+    @Multipart
+    @POST("editVideoData.php")
+    Call<VodData> editVideoData(
+            @PartMap HashMap<String, RequestBody> data,
+            @Part MultipartBody.Part image
+            //@Part MultipartBody.Part file, @Part("filename") RequestBody name
+
+    );
+
 
     @FormUrlEncoded
     @POST("getVodListInfo.php")

@@ -37,6 +37,9 @@ public class VodData {
     @SerializedName("vod_id") private String vod_id;
 
     @Expose
+    @SerializedName("vod_category") private String vod_category;
+
+    @Expose
     @SerializedName("success") private boolean success;
 
 
@@ -118,5 +121,13 @@ public class VodData {
 
     public void setSuccess(boolean success) {
         this.success = success;
+    }
+
+    public String getVod_category() {
+        return vod_category;
+    }
+
+    public void setVod_category(String vod_category) {
+        this.vod_category = vod_category;
     }
 }

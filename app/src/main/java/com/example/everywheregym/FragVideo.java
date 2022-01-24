@@ -178,8 +178,13 @@ public class FragVideo extends Fragment {
                 TextView tv_more_edit = dialogView.findViewById(R.id.tv_more_edit);
                 TextView tv_more_delete = dialogView.findViewById(R.id.tv_more_delete);
 
-                String vod_id = vodArray.get(position).getVod_id();
-                String vod_thumbnail_path = vodArray.get(position).getVod_thumbnail();
+                //VodData tmp_arr = vodArray.get(position);
+                String vod_id = vodArray.get(position).getVod_id(); //수정에서 보냄
+                String vod_thumbnail_path = vodArray.get(position).getVod_thumbnail(); //수정에서 보냄
+                String vod_time = vodArray.get(position).getVod_time(); //수정에서 보냄
+                String vod_title = vodArray.get(position).getVod_title(); //수정에서 보냄
+                String vod_category = vodArray.get(position).getVod_category(); //수정에서 보냄
+                String vod_difficulty = vodArray.get(position).getVod_difficulty(); //수정에서 보냄
                 String vod_path = vodArray.get(position).getVod_path();
 
                 ad.setView(dialogView);
@@ -208,8 +213,14 @@ public class FragVideo extends Fragment {
                     public void onClick(View view) {
                         alertDialog.dismiss();
                         Intent intent = new Intent(getContext(), VodDetailActivity.class);
+                        intent.putExtra("vod_id",vod_id);
+                        intent.putExtra("vod_thumbnail_path",vod_thumbnail_path);
+                        intent.putExtra("vod_time",vod_time);
+                        intent.putExtra("vod_title",vod_title);
+                        intent.putExtra("vod_category",vod_category);
+                        intent.putExtra("vod_difficulty",vod_difficulty);
+                        intent.putExtra("isEdit",true);
                         startActivity(intent);
-                        //수정으로 갔을때 어떻게든 찾아내서 케이스 나눠서 ㄱㄱ
                     }
                 });
 
