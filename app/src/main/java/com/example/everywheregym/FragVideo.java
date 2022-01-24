@@ -1,23 +1,36 @@
 package com.example.everywheregym;
+import android.content.DialogInterface;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -41,7 +54,7 @@ public class FragVideo extends Fragment {
 
     private String user_id;
 
-
+    private ProgressDialog prDialog;
 
 
 
@@ -69,6 +82,7 @@ public class FragVideo extends Fragment {
         vodAdapter = new VodAdapter(vodArray, getActivity());
         recyclerView.setAdapter(vodAdapter);
 
+        initDialog();
 
         SharedPreferences sharedPreferences= getActivity().getSharedPreferences("info", Context.MODE_PRIVATE);
         user_id = sharedPreferences.getString("user_id","0");
@@ -103,6 +117,8 @@ public class FragVideo extends Fragment {
         }
 
 
+        // 로딩 출력
+        showpDialog();
 
         //리사이클러뷰 데이터 받아오기
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -114,6 +130,9 @@ public class FragVideo extends Fragment {
                     vodArray = response.body().getVodDataArray();
                     vodAdapter.setAdapter(vodArray);
                     vodAdapter.notifyDataSetChanged();
+
+                    //로딩 숨기기
+                    hidepDialog();
                 }
             }
 
@@ -140,10 +159,138 @@ public class FragVideo extends Fragment {
             }
         });
 
+        vodAdapter.setOnClickImgListener(new VodAdapter.myRecyclerViewImgClickListener() {
+            @Override
+            public void whenImgClick(int position) {
+                Intent intent = new Intent(getContext(),ShowProfileActivity.class);
+                intent.putExtra("uploader_id",vodArray.get(position).getVod_uploader_id());
+                getContext().startActivity(intent);
+            }
+        });
+
+        vodAdapter.setOnClickMoreListener(new VodAdapter.myRecyclerViewMoreClickListener() {
+            @Override
+            public void whenMoreClick(int position) {
+                AlertDialog.Builder ad = new AlertDialog.Builder(getContext());
+                LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View dialogView = inflater.inflate(R.layout.dialog_vod_more, null);
+
+                TextView tv_more_edit = dialogView.findViewById(R.id.tv_more_edit);
+                TextView tv_more_delete = dialogView.findViewById(R.id.tv_more_delete);
+
+                String vod_id = vodArray.get(position).getVod_id();
+                String vod_thumbnail_path = vodArray.get(position).getVod_thumbnail();
+                String vod_path = vodArray.get(position).getVod_path();
+
+                ad.setView(dialogView);
+
+                AlertDialog alertDialog = ad.create();
+
+                WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+                Display display = windowManager.getDefaultDisplay();
+                Point deviceSize = new Point();
+                display.getSize(deviceSize);
+
+                WindowManager.LayoutParams params = alertDialog.getWindow().getAttributes();
+                params.width = deviceSize.x;
+                params.horizontalMargin = 0.0f;
+                alertDialog.getWindow().setAttributes(params);
+
+                Window window = alertDialog.getWindow();
+                window.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+
+                window.setGravity(Gravity.BOTTOM);
+                alertDialog.show();
+
+                //동영상 수정하기
+                tv_more_edit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        alertDialog.dismiss();
+                        Intent intent = new Intent(getContext(), VodDetailActivity.class);
+                        startActivity(intent);
+                        //수정으로 갔을때 어떻게든 찾아내서 케이스 나눠서 ㄱㄱ
+                    }
+                });
+
+                //동영상 삭제하기
+                tv_more_delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        alertDialog.dismiss();
+                        AlertDialog.Builder ad2 = new AlertDialog.Builder(getContext());
+                        ad2.setTitle("알림");
+                        ad2.setMessage("동영상을 삭제하시겠습니까?");
+                        ad2.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //삭제 레트로핏
+                                ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+                                Call<VodData> call = apiInterface.deleteVod(vod_id,vod_thumbnail_path,vod_path);
+                                call.enqueue(new Callback<VodData>() {
+                                    @Override
+                                    public void onResponse(Call<VodData> call, Response<VodData> response) {
+                                        if (response.isSuccessful() && response.body() != null){
+                                            if(response.body().isSuccess()){
+
+                                                //리로드 (트레이너만 삭제되니까 걱정안해도됨)
+                                                final FragmentTransaction ftt = getActivity().getSupportFragmentManager().beginTransaction();
+                                                ftt.replace(R.id.main_frame_tr, new FragVideo());
+                                                ftt.commit();
+
+                                                Toast.makeText(getContext(), "삭제가 완료되었습니다.", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<VodData> call, Throwable t) {
+                                        Toast.makeText(getContext(), "삭제 통신 문제.", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+                            }
+                        });
+
+                        ad2.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        });
+
+                        AlertDialog alertDialog2 = ad2.create();
+                        alertDialog2.show();
 
 
+                    }
+                });
+
+
+            }
+        });
 
 
         return view;
+
     }
+
+    protected void initDialog(){
+        prDialog = new ProgressDialog(getContext());
+        prDialog.setMessage("loading");
+        prDialog.setCancelable(true);
+    }
+
+    protected void showpDialog(){
+        if(!prDialog.isShowing()){
+            prDialog.show();
+        }
+    }
+
+    protected void hidepDialog(){
+        if(prDialog.isShowing()){
+            prDialog.dismiss();
+        }
+    }
+
 }

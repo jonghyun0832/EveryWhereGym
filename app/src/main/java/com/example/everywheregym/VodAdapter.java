@@ -40,10 +40,28 @@ public class VodAdapter extends RecyclerView.Adapter<VodAdapter.VodViewHolder> {
         void whenItemClick(int position);
     }
 
+    public interface myRecyclerViewImgClickListener{
+        //내가누른 아이템의 포지션을 외부에서 알수있게 전달하겠다
+        void whenImgClick(int position);
+    }
+
+    public interface myRecyclerViewMoreClickListener{
+        //내가누른 아이템의 포지션을 외부에서 알수있게 전달하겠다
+        void whenMoreClick(int position);
+    }
+
     private myRecyclerViewClickListener myListener;
+    private myRecyclerViewImgClickListener myImgListener;
+    private myRecyclerViewMoreClickListener myMoreListener;
 
     public void setOnClickListener(myRecyclerViewClickListener listener){
         myListener = listener;
+    }
+    public void setOnClickImgListener(myRecyclerViewImgClickListener listener){
+        myImgListener = listener;
+    }
+    public void setOnClickMoreListener(myRecyclerViewMoreClickListener listener){
+        myMoreListener = listener;
     }
 
 
@@ -105,43 +123,6 @@ public class VodAdapter extends RecyclerView.Adapter<VodAdapter.VodViewHolder> {
         holder.tv_title.setText(arrayList.get(position).getVod_title());
         holder.tv_uploader_name.setText(arrayList.get(position).getVod_uploader_name());
 
-        holder.iv_uploader_img.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context,ShowProfileActivity.class);
-                intent.putExtra("uploader_id",arrayList.get(position).getVod_uploader_id());
-                context.startActivity(intent);
-            }
-        });
-
-        holder.iv_more.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder ad = new AlertDialog.Builder(context);
-                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View dialogView = inflater.inflate(R.layout.dialog_vod_more, null);
-                ad.setView(dialogView);
-
-                AlertDialog alertDialog = ad.create();
-
-                WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-                Display display = windowManager.getDefaultDisplay();
-                Point deviceSize = new Point();
-                display.getSize(deviceSize);
-
-                WindowManager.LayoutParams params = alertDialog.getWindow().getAttributes();
-                params.width = deviceSize.x;
-                params.horizontalMargin = 0.0f;
-                alertDialog.getWindow().setAttributes(params);
-
-                Window window = alertDialog.getWindow();
-                window.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
-
-                window.setGravity(Gravity.BOTTOM);
-                alertDialog.show();
-
-            }
-        });
 
     }
 
@@ -177,6 +158,26 @@ public class VodAdapter extends RecyclerView.Adapter<VodAdapter.VodViewHolder> {
                     final int pos = getAbsoluteAdapterPosition();
                     if(pos != RecyclerView.NO_POSITION){
                         myListener.whenItemClick(pos);
+                    }
+                }
+            });
+
+            iv_uploader_img.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final int pos = getAbsoluteAdapterPosition();
+                    if (myImgListener != null){
+                        myImgListener.whenImgClick(pos);
+                    }
+                }
+            });
+
+            iv_more.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final int pos = getAbsoluteAdapterPosition();
+                    if(myMoreListener != null){
+                        myMoreListener.whenMoreClick(pos);
                     }
                 }
             });

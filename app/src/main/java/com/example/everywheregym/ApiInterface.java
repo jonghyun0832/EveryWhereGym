@@ -151,9 +151,20 @@ public interface ApiInterface {
     );
 
 
+    //vod 리스트 만들기 (리사이클러뷰 array)
     @POST("getVodListInfo.php")
     Call<VodDataArray> getvodList(
     );
+
+    //동영상 삭제하기
+    @FormUrlEncoded
+    @POST("deleteVideo.php")
+    Call<VodData> deleteVod(
+            @Field("vod_id") String vod_id,
+            @Field("vod_thumbnail_path") String vod_thumbnail_path,
+            @Field("vod_path") String vod_path
+    );
+
 
     @FormUrlEncoded
     @POST("getVodListInfo.php")

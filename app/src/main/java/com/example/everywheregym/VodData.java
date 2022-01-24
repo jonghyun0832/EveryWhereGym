@@ -33,6 +33,12 @@ public class VodData {
     @Expose
     @SerializedName("vod_uploader_id") private String vod_uploader_id;
 
+    @Expose
+    @SerializedName("vod_id") private String vod_id;
+
+    @Expose
+    @SerializedName("success") private boolean success;
+
 
     public String getVod_difficulty() {
         return vod_difficulty;
@@ -98,4 +104,19 @@ public class VodData {
         this.vod_uploader_id = vod_uploader_id;
     }
 
+    public String getVod_id() {
+        return vod_id;
+    }
+
+    public void setVod_id(String vod_id) {
+        this.vod_id = vod_id;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
 }
