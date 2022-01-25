@@ -40,6 +40,12 @@ public class VodData {
     @SerializedName("vod_category") private String vod_category;
 
     @Expose
+    @SerializedName("vod_explain") private String vod_explain;
+
+    @Expose
+    @SerializedName("vod_material") private String vod_materail;
+
+    @Expose
     @SerializedName("success") private boolean success;
 
 
@@ -129,5 +135,21 @@ public class VodData {
 
     public void setVod_category(String vod_category) {
         this.vod_category = vod_category;
+    }
+
+    public String getVod_explain() {
+        return vod_explain;
+    }
+
+    public void setVod_explain(String vod_explain) {
+        this.vod_explain = vod_explain;
+    }
+
+    public String getVod_materail() {
+        return vod_materail;
+    }
+
+    public void setVod_materail(String vod_materail) {
+        this.vod_materail = vod_materail;
     }
 }

@@ -40,19 +40,28 @@ public class VodAdapter extends RecyclerView.Adapter<VodAdapter.VodViewHolder> {
         void whenItemClick(int position);
     }
 
+    //업로더 프로필 사진 클릭시
     public interface myRecyclerViewImgClickListener{
-        //내가누른 아이템의 포지션을 외부에서 알수있게 전달하겠다
+
         void whenImgClick(int position);
     }
 
+    //more 클릭시
     public interface myRecyclerViewMoreClickListener{
-        //내가누른 아이템의 포지션을 외부에서 알수있게 전달하겠다
+
         void whenMoreClick(int position);
+    }
+
+    //popup 클릭시
+    public interface myRecyclerViewPopUpClickListener{
+
+        void whenPopUpClick(VodViewHolder vh, int position);
     }
 
     private myRecyclerViewClickListener myListener;
     private myRecyclerViewImgClickListener myImgListener;
     private myRecyclerViewMoreClickListener myMoreListener;
+    private myRecyclerViewPopUpClickListener myPopUpListener;
 
     public void setOnClickListener(myRecyclerViewClickListener listener){
         myListener = listener;
@@ -62,6 +71,10 @@ public class VodAdapter extends RecyclerView.Adapter<VodAdapter.VodViewHolder> {
     }
     public void setOnClickMoreListener(myRecyclerViewMoreClickListener listener){
         myMoreListener = listener;
+    }
+
+    public void setOnClickPopupListener(myRecyclerViewPopUpClickListener listener){
+        myPopUpListener = listener;
     }
 
 
@@ -123,6 +136,12 @@ public class VodAdapter extends RecyclerView.Adapter<VodAdapter.VodViewHolder> {
         holder.tv_title.setText(arrayList.get(position).getVod_title());
         holder.tv_uploader_name.setText(arrayList.get(position).getVod_uploader_name());
 
+        System.out.println(arrayList.get(position).getVod_materail());
+
+        if (arrayList.get(position).getVod_materail() == null){
+            holder.iv_popup_material.setVisibility(View.INVISIBLE);
+        }
+
 
     }
 
@@ -140,6 +159,7 @@ public class VodAdapter extends RecyclerView.Adapter<VodAdapter.VodViewHolder> {
         public TextView tv_title;
         public TextView tv_uploader_name;
         public ImageView iv_more;
+        public ImageView iv_popup_material;
 
         public VodViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -151,6 +171,7 @@ public class VodAdapter extends RecyclerView.Adapter<VodAdapter.VodViewHolder> {
             this.tv_title = (TextView) itemView.findViewById(R.id.tv_rv_vod_title);
             this.tv_uploader_name = (TextView) itemView.findViewById(R.id.tv_rv_vod_uploader);
             this.iv_more = (ImageView) itemView.findViewById(R.id.iv_vod_more);
+            this.iv_popup_material = (ImageView) itemView.findViewById(R.id.iv_popup_material);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -178,6 +199,17 @@ public class VodAdapter extends RecyclerView.Adapter<VodAdapter.VodViewHolder> {
                     final int pos = getAbsoluteAdapterPosition();
                     if(myMoreListener != null){
                         myMoreListener.whenMoreClick(pos);
+                    }
+                }
+            });
+
+            iv_popup_material.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final int pos = getAbsoluteAdapterPosition();
+                    if(myPopUpListener != null){
+                        myPopUpListener.whenPopUpClick(VodViewHolder.this,pos);
+
                     }
                 }
             });

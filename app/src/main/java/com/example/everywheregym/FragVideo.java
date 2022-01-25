@@ -27,6 +27,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -35,6 +36,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.skydoves.balloon.ArrowOrientation;
+import com.skydoves.balloon.Balloon;
+import com.skydoves.balloon.BalloonAnimation;
+import com.skydoves.balloon.OnBalloonClickListener;
 
 import java.util.ArrayList;
 
@@ -204,6 +209,8 @@ public class FragVideo extends Fragment {
                 String vod_category = vodArray.get(position).getVod_category(); //수정에서 보냄
                 String vod_difficulty = vodArray.get(position).getVod_difficulty(); //수정에서 보냄
                 String vod_path = vodArray.get(position).getVod_path();
+                String vod_explain = vodArray.get(position).getVod_explain();
+                String vod_material = vodArray.get(position).getVod_materail();
 
                 ad.setView(dialogView);
 
@@ -237,6 +244,8 @@ public class FragVideo extends Fragment {
                         intent.putExtra("vod_title",vod_title);
                         intent.putExtra("vod_category",vod_category);
                         intent.putExtra("vod_difficulty",vod_difficulty);
+                        intent.putExtra("vod_explain",vod_explain);
+                        intent.putExtra("vod_material",vod_material);
                         intent.putExtra("isEdit",true);
                         startActivity(intent);
                     }
@@ -304,6 +313,36 @@ public class FragVideo extends Fragment {
                     }
                 });
 
+            }
+        });
+
+
+
+        vodAdapter.setOnClickPopupListener(new VodAdapter.myRecyclerViewPopUpClickListener() {
+            @Override
+            public void whenPopUpClick(VodAdapter.VodViewHolder vh, int position) {
+                String vod_material = vodArray.get(position).getVod_materail();
+                Balloon balloon = new Balloon.Builder(getContext())
+                        .setArrowSize(10)
+                        .setArrowOrientation(ArrowOrientation.TOP)
+                        .setArrowPosition(0.1f)
+                        .setHeight(70)
+                        .setTextSize(20f)
+                        .setCornerRadius(4f)
+                        .setAlpha(0.7f)
+                        .setText("준비물 : " + vod_material)
+                        .setTextColor(ContextCompat.getColor(getContext(), R.color.white))
+                        .setBackgroundColor(ContextCompat.getColor(getContext(), R.color.fb))
+                        .setBalloonAnimation(BalloonAnimation.FADE)
+                        .build();
+
+                balloon.showAlignBottom(vh.iv_popup_material);
+                balloon.setOnBalloonClickListener(new OnBalloonClickListener() {
+                    @Override
+                    public void onBalloonClick(@NonNull View view) {
+                        balloon.dismiss();
+                    }
+                });
             }
         });
 

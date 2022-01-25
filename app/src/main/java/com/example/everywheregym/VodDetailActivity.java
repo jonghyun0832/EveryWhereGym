@@ -1,4 +1,6 @@
 package com.example.everywheregym;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -88,6 +90,14 @@ public class VodDetailActivity extends AppCompatActivity {
     private CheckBox cb_chest;
     private CheckBox cb_back;
 
+
+    //설명, 준비물 추가
+    private TextView tv_vod_explain;
+    private TextView tv_vod_material;
+    //저장용임
+    private String vod_explain;
+    private String vod_material;
+
     //수정으로 온 데이터 받기
     private boolean isEdit = false;
     private String getted_vod_id;
@@ -96,6 +106,8 @@ public class VodDetailActivity extends AppCompatActivity {
     private String getted_vod_title;
     private String getted_vod_category;
     private String getted_vod_difficulty;
+    private String getted_vod_explain;
+    private String getted_vod_material;
     private String previous_thumbnail;
 
     private int spinner_default = 0;
@@ -105,7 +117,7 @@ public class VodDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_vod_detail);
+        setContentView(R.layout.activity_vod_detail2);
 
         iv_back = (ImageView) findViewById(R.id.imageview_video_detail_back);
         iv_thumbnail = (ImageView) findViewById(R.id.iv_thumbnail);
@@ -122,6 +134,10 @@ public class VodDetailActivity extends AppCompatActivity {
 
         btn_upload = (Button) findViewById(R.id.btn_upload_vod);
 
+        //설명, 준비물 추가
+        tv_vod_explain = (TextView) findViewById(R.id.textveiw_vod_explain);
+        tv_vod_material = (TextView) findViewById(R.id.textview_vod_material);
+
         initDialog(); //프로그래스 다이얼로그 세팅
 
         ///////////////////////////////////////////////////////////////////////////////////////////
@@ -135,6 +151,10 @@ public class VodDetailActivity extends AppCompatActivity {
             getted_vod_title = intentEdit.getStringExtra("vod_title");
             getted_vod_category = intentEdit.getStringExtra("vod_category");
             getted_vod_difficulty = intentEdit.getStringExtra("vod_difficulty");
+            getted_vod_explain = intentEdit.getStringExtra("vod_explain");
+            getted_vod_material = intentEdit.getStringExtra("vod_material");
+
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -145,7 +165,7 @@ public class VodDetailActivity extends AppCompatActivity {
         if(isEdit){
             //썸네일 불러와서 넣어주기
             String getted_thumbnail_url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/" + getted_vod_thumbnail;
-            Glide.with(VodDetailActivity.this).load(getted_thumbnail_url).into(iv_thumbnail);
+            Glide.with(VodDetailActivity.this).load(getted_thumbnail_url).centerCrop().into(iv_thumbnail);
             previous_thumbnail = getted_vod_thumbnail;
 
             //시간 불러와서 넣어주기
@@ -166,6 +186,18 @@ public class VodDetailActivity extends AppCompatActivity {
             } else {
                 spinner_default = 2;
             }
+
+            vod_explain = getted_vod_explain;
+            vod_material = getted_vod_material;
+            String[] split = getted_vod_explain.split("\\n");
+            if(split.length > 1){
+                tv_vod_explain.setText(split[0] + ".....");
+            } else {
+                tv_vod_explain.setText(split[0]);
+            }
+            tv_vod_material.setText(vod_material);
+
+
             //sp_difficulty.setSelection(spinner_default);
             //동영상 업로드 -> 동영상 수정하기로 바꾸고 클릭했을떄도 업데이트 하는걸로 바꾸기
             //썸네일 바꿨을떄는 수정하기 보낼때 비트맵을 변환해서 올리는 과정이 있어야한다 (없을떄는 그냥 보내도됨)
@@ -222,6 +254,8 @@ public class VodDetailActivity extends AppCompatActivity {
                         RequestBody file_category = RequestBody.create(MediaType.parse("text/plain"),selected_category);
                         RequestBody file_difficulty = RequestBody.create(MediaType.parse("text/plain"),selected_difficulty);
                         RequestBody file_vod_id = RequestBody.create(MediaType.parse("text/plain"),getted_vod_id);
+                        RequestBody file_vod_explain = RequestBody.create(MediaType.parse("text/plain"),vod_explain);
+                        RequestBody file_vod_material = RequestBody.create(MediaType.parse("text/plain"),vod_material);
 
 
                         map.put("userId",file_user);
@@ -230,6 +264,8 @@ public class VodDetailActivity extends AppCompatActivity {
                         map.put("difficulty",file_difficulty);
                         map.put("vod_id",file_vod_id);
                         map.put("previous",file_previous_thumbnail);
+                        map.put("explain",file_vod_explain);
+                        map.put("material",file_vod_material);
 
 
                         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -375,6 +411,7 @@ public class VodDetailActivity extends AppCompatActivity {
 
                             HashMap<String, RequestBody> map = new HashMap<>();
 
+
                             String pdname = user_id + "_" + Calendar.getInstance().getTimeInMillis();
                             RequestBody filename = RequestBody.create(MediaType.parse("text/plain"),pdname);
                             RequestBody file_length = RequestBody.create(MediaType.parse("text/plain"),vod_length);
@@ -382,6 +419,8 @@ public class VodDetailActivity extends AppCompatActivity {
                             RequestBody file_title = RequestBody.create(MediaType.parse("text/plain"),input_title);
                             RequestBody file_category = RequestBody.create(MediaType.parse("text/plain"),selected_category);
                             RequestBody file_difficulty = RequestBody.create(MediaType.parse("text/plain"),selected_difficulty);
+                            RequestBody file_explain = RequestBody.create(MediaType.parse("text/plain"),vod_explain);
+                            RequestBody file_material = RequestBody.create(MediaType.parse("text/plain"),vod_material);
                             //RequestBody file_img = RequestBody.create(MediaType.parse("text/plain"),); 이미지
                             map.put("name",filename);
                             map.put("length",file_length);
@@ -389,6 +428,8 @@ public class VodDetailActivity extends AppCompatActivity {
                             map.put("title",file_title);
                             map.put("category",file_category);
                             map.put("difficulty",file_difficulty);
+                            map.put("explain",file_explain);
+                            map.put("material",file_material);
                             //RequestBody vod = RequestBody.create(MediaType.parse("text/plain"),vod_length)
 
                             MultipartBody.Part vFile = MultipartBody.Part.createFormData("video_file", file.getName(),requestBody);
@@ -510,6 +551,47 @@ public class VodDetailActivity extends AppCompatActivity {
             }
         });
 
+        tv_vod_explain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //눌렀을때 다이얼로그 띄우고 거기서 내용 입력해서 첫줄만 가져와서 text에 보여주고 진짜는 넘겨서 저장한다.
+                AlertDialog.Builder ad = new AlertDialog.Builder(VodDetailActivity.this);
+                LayoutInflater inflater = (LayoutInflater) VodDetailActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View dialogView = inflater.inflate(R.layout.dialog_vod_explain, null);
+                ad.setView(dialogView);
+                ad.setTitle("동영상 설명 추가");
+
+                EditText et_explain = dialogView.findViewById(R.id.et_dialog_vod_explain);
+
+                et_explain.setText(vod_explain);
+
+                ad.setPositiveButton("저장", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        vod_explain = et_explain.getText().toString();
+                        String[] split = vod_explain.split("\\n");
+                        if (split.length > 1){
+                            tv_vod_explain.setText(split[0] + ".....");
+                        } else {
+                            tv_vod_explain.setText(split[0]);
+                        }
+
+                    }
+                });
+
+                ad.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+
+                AlertDialog alertDialog = ad.create();
+                alertDialog.show();
+
+            }
+        });
+
 
         tv_categoty.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -612,6 +694,43 @@ public class VodDetailActivity extends AppCompatActivity {
         });
 
 
+        tv_vod_material.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder ad = new AlertDialog.Builder(VodDetailActivity.this);
+                LayoutInflater inflater = (LayoutInflater) VodDetailActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View dialogView = inflater.inflate(R.layout.dialog_vod_material, null);
+                ad.setView(dialogView);
+                ad.setTitle("운동 준비물 추가하기");
+
+                EditText et_material = dialogView.findViewById(R.id.et_dialog_vod_material);
+
+                et_material.setText(vod_material);
+
+                ad.setPositiveButton("저장", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        vod_material = et_material.getText().toString();
+
+                        tv_vod_material.setText(vod_material);
+
+                    }
+                });
+
+                ad.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+
+                AlertDialog alertDialog = ad.create();
+                //alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                alertDialog.show();
+            }
+        });
+
+
 
 
     }
@@ -628,6 +747,11 @@ public class VodDetailActivity extends AppCompatActivity {
                             thumbnail = MediaStore.Images.Media.getBitmap(
                                     getContentResolver(),galleryIntent.getData()
                             );
+                            //화면크기맞춰서 리사이즈
+//                            int width = iv_thumbnail.getWidth();
+//                            int height = iv_thumbnail.getHeight();
+//                            Bitmap resize_bitmap = Bitmap.createScaledBitmap(thumbnail, width, height, true);
+//                            iv_thumbnail.setImageBitmap(resize_bitmap);
                             iv_thumbnail.setImageBitmap(thumbnail);
                             ischange = true;
                         } catch (Exception e) {
@@ -702,6 +826,14 @@ public class VodDetailActivity extends AppCompatActivity {
         if(prDialog.isShowing()){
             prDialog.dismiss();
         }
+    }
+
+    private int getIvWidth(ImageView iv){
+        return iv.getWidth();
+    }
+
+    private int getIvHeight(ImageView iv){
+        return iv.getHeight();
     }
 
 
