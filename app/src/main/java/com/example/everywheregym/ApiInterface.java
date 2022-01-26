@@ -184,6 +184,14 @@ public interface ApiInterface {
             @Field("difficulty") String difficulty
     );
 
+    //vod 리스트 만들기 (리사이클러뷰 array)
+    @FormUrlEncoded
+    @POST("addVideoView.php")
+    Call<VodData> addVideoView(
+            @Field("vod_id") String vod_id,
+            @Field("prev_vod_view") int prev_vod_view
+    );
+
 
 
 //    @Multipart

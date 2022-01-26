@@ -156,11 +156,29 @@ public class FragVideo extends Fragment {
                 String vod_path = item.getVod_path();
                 String vod_title = item.getVod_title();
                 String vod_difficulty = item.getVod_difficulty();
+                String vod_id = item.getVod_id();
+                String vod_calorie = item.getVod_calorie();
+                String vod_category = item.getVod_category();
+                String vod_material = item.getVod_materail();
+                String vod_uploader_name = item.getVod_uploader_name();
+                String vod_explain = item.getVod_explain();
+                String vod_uploader_img = item.getVod_uploader_img();
+                String vod_uploader_id = item.getVod_uploader_id();
+                int vod_view = item.getVod_view();
 
                 Intent intent = new Intent(getContext(),TestActivity.class);
                 intent.putExtra("vod_path",vod_path);
                 intent.putExtra("vod_title",vod_title);
                 intent.putExtra("vod_difficulty",vod_difficulty);
+                intent.putExtra("vod_id",vod_id);
+                intent.putExtra("vod_view",vod_view);
+                intent.putExtra("vod_calorie",vod_calorie);
+                intent.putExtra("vod_category",vod_category);
+                intent.putExtra("vod_material",vod_material);
+                intent.putExtra("vod_uploader_name",vod_uploader_name);
+                intent.putExtra("vod_explain",vod_explain);
+                intent.putExtra("vod_uploader_img",vod_uploader_img);
+                intent.putExtra("vod_uploader_id",vod_uploader_id);
                 startActivity(intent);
 
             }
@@ -211,6 +229,7 @@ public class FragVideo extends Fragment {
                 String vod_path = vodArray.get(position).getVod_path();
                 String vod_explain = vodArray.get(position).getVod_explain();
                 String vod_material = vodArray.get(position).getVod_materail();
+                String vod_calorie = vodArray.get(position).getVod_calorie();
 
                 ad.setView(dialogView);
 
@@ -246,7 +265,9 @@ public class FragVideo extends Fragment {
                         intent.putExtra("vod_difficulty",vod_difficulty);
                         intent.putExtra("vod_explain",vod_explain);
                         intent.putExtra("vod_material",vod_material);
+                        intent.putExtra("vod_calorie",vod_calorie);
                         intent.putExtra("isEdit",true);
+
                         startActivity(intent);
                     }
                 });
@@ -348,6 +369,36 @@ public class FragVideo extends Fragment {
 
 
         return view;
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+
+        showpDialog();
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<VodDataArray> call = apiInterface.getvodList();
+        call.enqueue(new Callback<VodDataArray>() {
+            @Override
+            public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
+                if (response.isSuccessful() && response.body() != null){
+                    vodArray = response.body().getVodDataArray();
+                    vodAdapter.setAdapter(vodArray);
+                    vodAdapter.notifyDataSetChanged();
+
+                    //로딩 숨기기
+                    hidepDialog();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VodDataArray> call, Throwable t) {
+                Toast.makeText(getContext(), "통신 오류", Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 

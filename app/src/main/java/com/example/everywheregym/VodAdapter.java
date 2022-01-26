@@ -134,12 +134,18 @@ public class VodAdapter extends RecyclerView.Adapter<VodAdapter.VodViewHolder> {
 
 
         holder.tv_title.setText(arrayList.get(position).getVod_title());
-        holder.tv_uploader_name.setText(arrayList.get(position).getVod_uploader_name());
 
-        System.out.println(arrayList.get(position).getVod_materail());
+        //업로더 이름 + 조회수
+        String text = arrayList.get(position).getVod_uploader_name() + " -  조회수 : " + arrayList.get(position).getVod_view() + "회";
+        holder.tv_uploader_name.setText(text);
 
-        if (arrayList.get(position).getVod_materail() == null){
-            holder.iv_popup_material.setVisibility(View.INVISIBLE);
+
+        //준비물 있을때만 표시
+        holder.iv_popup_material.setVisibility(View.INVISIBLE);
+
+        //System.out.println(position + " 체크좀 해보자 " + arrayList.get(position).getVod_materail());
+        if (arrayList.get(position).getVod_materail() != null){
+            holder.iv_popup_material.setVisibility(View.VISIBLE);
         }
 
 

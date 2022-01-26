@@ -94,9 +94,11 @@ public class VodDetailActivity extends AppCompatActivity {
     //설명, 준비물 추가
     private TextView tv_vod_explain;
     private TextView tv_vod_material;
+    private TextView tv_vod_calorie;
     //저장용임
-    private String vod_explain;
-    private String vod_material;
+    private String vod_explain = "";
+    private String vod_material = "";
+    private String vod_calorie = "";
 
     //수정으로 온 데이터 받기
     private boolean isEdit = false;
@@ -108,6 +110,7 @@ public class VodDetailActivity extends AppCompatActivity {
     private String getted_vod_difficulty;
     private String getted_vod_explain;
     private String getted_vod_material;
+    private String getted_vod_calorie;
     private String previous_thumbnail;
 
     private int spinner_default = 0;
@@ -134,9 +137,10 @@ public class VodDetailActivity extends AppCompatActivity {
 
         btn_upload = (Button) findViewById(R.id.btn_upload_vod);
 
-        //설명, 준비물 추가
+        //설명, 준비물, 소모칼로리 추가
         tv_vod_explain = (TextView) findViewById(R.id.textveiw_vod_explain);
         tv_vod_material = (TextView) findViewById(R.id.textview_vod_material);
+        tv_vod_calorie = (TextView) findViewById(R.id.textveiw_vod_calorie);
 
         initDialog(); //프로그래스 다이얼로그 세팅
 
@@ -153,6 +157,7 @@ public class VodDetailActivity extends AppCompatActivity {
             getted_vod_difficulty = intentEdit.getStringExtra("vod_difficulty");
             getted_vod_explain = intentEdit.getStringExtra("vod_explain");
             getted_vod_material = intentEdit.getStringExtra("vod_material");
+            getted_vod_calorie = intentEdit.getStringExtra("vod_calorie");
 
 
         }catch (Exception e){
@@ -189,14 +194,19 @@ public class VodDetailActivity extends AppCompatActivity {
 
             vod_explain = getted_vod_explain;
             vod_material = getted_vod_material;
+            vod_calorie = getted_vod_calorie;
+
             String[] split = getted_vod_explain.split("\\n");
             if(split.length > 1){
                 tv_vod_explain.setText(split[0] + ".....");
             } else {
                 tv_vod_explain.setText(split[0]);
             }
+
             tv_vod_material.setText(vod_material);
 
+            String spend_calorie = vod_calorie + " Kcal";
+            tv_vod_calorie.setText(spend_calorie);
 
             //sp_difficulty.setSelection(spinner_default);
             //동영상 업로드 -> 동영상 수정하기로 바꾸고 클릭했을떄도 업데이트 하는걸로 바꾸기
@@ -207,10 +217,13 @@ public class VodDetailActivity extends AppCompatActivity {
             btn_upload.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(tv_categoty.getText().toString().equals("") || et_vod_title.getText().toString().equals("")){
+                    if(tv_categoty.getText().toString().equals("") ||
+                            et_vod_title.getText().toString().equals("") ||
+                            vod_explain.equals("") ||
+                            vod_calorie.equals("")){
                         AlertDialog.Builder ad = new AlertDialog.Builder(VodDetailActivity.this);
                         ad.setTitle("알림");
-                        ad.setMessage("세부 정보들을 모두 입력해주세요");
+                        ad.setMessage("세부 필수 정보들을 모두 입력해주세요\n(필수항목 : 제목,카테고리,소모칼로리,설명)");
                         ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -248,7 +261,6 @@ public class VodDetailActivity extends AppCompatActivity {
                         HashMap<String, RequestBody> map = new HashMap<>();
 
 
-
                         RequestBody file_user = RequestBody.create(MediaType.parse("text/plain"),user_id);
                         RequestBody file_title = RequestBody.create(MediaType.parse("text/plain"),input_title);
                         RequestBody file_category = RequestBody.create(MediaType.parse("text/plain"),selected_category);
@@ -256,6 +268,7 @@ public class VodDetailActivity extends AppCompatActivity {
                         RequestBody file_vod_id = RequestBody.create(MediaType.parse("text/plain"),getted_vod_id);
                         RequestBody file_vod_explain = RequestBody.create(MediaType.parse("text/plain"),vod_explain);
                         RequestBody file_vod_material = RequestBody.create(MediaType.parse("text/plain"),vod_material);
+                        RequestBody file_vod_calorie = RequestBody.create(MediaType.parse("text/plain"),vod_calorie);
 
 
                         map.put("userId",file_user);
@@ -266,6 +279,7 @@ public class VodDetailActivity extends AppCompatActivity {
                         map.put("previous",file_previous_thumbnail);
                         map.put("explain",file_vod_explain);
                         map.put("material",file_vod_material);
+                        map.put("calorie",file_vod_calorie);
 
 
                         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -381,10 +395,14 @@ public class VodDetailActivity extends AppCompatActivity {
                         intent.setFlags(intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     } else { // 제대로 들어간 경우 업로드 진행
-                        if(tv_categoty.getText().toString().equals("") || et_vod_title.getText().toString().equals("")){
+                        if(tv_categoty.getText().toString().equals("") ||
+                                et_vod_title.getText().toString().equals("") ||
+                                vod_explain.equals("") ||
+                                vod_calorie.equals("")
+                                ){
                             AlertDialog.Builder ad = new AlertDialog.Builder(VodDetailActivity.this);
                             ad.setTitle("알림");
-                            ad.setMessage("세부 정보들을 모두 입력해주세요");
+                            ad.setMessage("세부 필수 정보들을 모두 입력해주세요\n(필수항목 : 제목,카테고리,소모칼로리,설명)");
                             ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -412,6 +430,19 @@ public class VodDetailActivity extends AppCompatActivity {
                             HashMap<String, RequestBody> map = new HashMap<>();
 
 
+                            //수정필요 지금은 전부 시작 ""임 이걸로 다시생각 ㄱㄱ
+//                            if(vod_explain == null){
+//                                vod_explain = "";
+//                            }
+//
+//                            if(vod_material == null){
+//                                vod_material = "";
+//                            }
+//
+//                            if(vod_calorie == null){
+//                                vod_calorie = "";
+//                            }
+
                             String pdname = user_id + "_" + Calendar.getInstance().getTimeInMillis();
                             RequestBody filename = RequestBody.create(MediaType.parse("text/plain"),pdname);
                             RequestBody file_length = RequestBody.create(MediaType.parse("text/plain"),vod_length);
@@ -421,6 +452,7 @@ public class VodDetailActivity extends AppCompatActivity {
                             RequestBody file_difficulty = RequestBody.create(MediaType.parse("text/plain"),selected_difficulty);
                             RequestBody file_explain = RequestBody.create(MediaType.parse("text/plain"),vod_explain);
                             RequestBody file_material = RequestBody.create(MediaType.parse("text/plain"),vod_material);
+                            RequestBody file_calorie = RequestBody.create(MediaType.parse("text/plain"),vod_calorie);
                             //RequestBody file_img = RequestBody.create(MediaType.parse("text/plain"),); 이미지
                             map.put("name",filename);
                             map.put("length",file_length);
@@ -430,6 +462,7 @@ public class VodDetailActivity extends AppCompatActivity {
                             map.put("difficulty",file_difficulty);
                             map.put("explain",file_explain);
                             map.put("material",file_material);
+                            map.put("calorie",file_calorie);
                             //RequestBody vod = RequestBody.create(MediaType.parse("text/plain"),vod_length)
 
                             MultipartBody.Part vFile = MultipartBody.Part.createFormData("video_file", file.getName(),requestBody);
@@ -690,6 +723,38 @@ public class VodDetailActivity extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
                 selected_difficulty = vod_difficulty[spinner_default];
+            }
+        });
+
+
+        tv_vod_calorie.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder ad = new AlertDialog.Builder(VodDetailActivity.this);
+                ad.setTitle("소모 칼로리 입력");
+                final EditText et_tmp = new EditText(VodDetailActivity.this);
+                et_tmp.setText(vod_calorie);
+                ad.setMessage("예상되는 소모 칼로리를 입력해주세요 (Kcal)");
+                ad.setView(et_tmp);
+
+                ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        vod_calorie = et_tmp.getText().toString();
+                        tv_vod_calorie.setText(vod_calorie + " Kcal");
+                    }
+
+                });
+
+                ad.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+
+                AlertDialog alertDialog = ad.create();
+                alertDialog.show();
             }
         });
 

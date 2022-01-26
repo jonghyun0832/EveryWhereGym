@@ -30,9 +30,11 @@
             android:exported="true" />
         <activity
             android:name=".TestActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true" />
         <activity
             android:name=".VodDetailActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:exported="true" />
         <activity
             android:name=".VideoCheck"

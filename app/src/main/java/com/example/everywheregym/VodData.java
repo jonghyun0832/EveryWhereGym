@@ -46,6 +46,12 @@ public class VodData {
     @SerializedName("vod_material") private String vod_materail;
 
     @Expose
+    @SerializedName("vod_view") private int vod_view;
+
+    @Expose
+    @SerializedName("vod_calorie") private String vod_calorie;
+
+    @Expose
     @SerializedName("success") private boolean success;
 
 
@@ -151,5 +157,21 @@ public class VodData {
 
     public void setVod_materail(String vod_materail) {
         this.vod_materail = vod_materail;
+    }
+
+    public int getVod_view() {
+        return vod_view;
+    }
+
+    public void setVod_view(int vod_view) {
+        this.vod_view = vod_view;
+    }
+
+    public String getVod_calorie() {
+        return vod_calorie;
+    }
+
+    public void setVod_calorie(String vod_calorie) {
+        this.vod_calorie = vod_calorie;
     }
 }

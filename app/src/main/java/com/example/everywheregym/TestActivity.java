@@ -1,8 +1,7 @@
 package com.example.everywheregym;
-import androidx.appcompat.app.AlertDialog;
 
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -12,24 +11,42 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.bumptech.glide.Glide;
+
 public class TestActivity extends AppCompatActivity {
 
-    VideoView videoView;
-    MediaController mediaController;
+    private VideoView videoView;
+    private MediaController mediaController;
 
-    TextView tv_title;
-    TextView tv_category;
-    TextView tv_difficulty;
+    private TextView tv_category;
+    private TextView tv_title;
+    private TextView tv_view;
+    private TextView tv_difficulty;
+    private TextView tv_calorie;
+    private TextView tv_material;
 
-    String user_id;
+    private ImageView iv_uploader_img;
+    private TextView tv_uploader_name;
+    private ImageView iv_arrow;
+
+    private TextView tv_explain;
+
+    private FrameLayout fr_show_profile;
+
+    private String user_id;
+    private String vod_uploader_img_url;
 
     private ProgressDialog prDialog;
 
@@ -39,15 +56,36 @@ public class TestActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
+//        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+//            setContentView(R.layout.activity_test);
+//        } else {
+//            setContentView(R.layout.activity_test);
+//        }
 
-        videoView = findViewById(R.id.videoView_test);
-        tv_title = findViewById(R.id.textView_test1);
-        //tv_category = findViewById(R.id.textView_test2);
-        tv_difficulty = findViewById(R.id.textView_test3);
 
 
-        SharedPreferences sharedPreferences= this.getSharedPreferences("info", Context.MODE_PRIVATE);
-        user_id = sharedPreferences.getString("user_id","0");
+
+        videoView = findViewById(R.id.videoView_vod_show);
+
+        tv_category = findViewById(R.id.tv_vod_show_category);
+        tv_title = findViewById(R.id.tv_vod_show_title);
+        tv_view = findViewById(R.id.tv_vod_show_view);
+        tv_difficulty = findViewById(R.id.tv_vod_show_difficulty);
+        tv_calorie = findViewById(R.id.tv_vod_show_calorie);
+        tv_material = findViewById(R.id.tv_vod_show_material);
+
+        iv_uploader_img = findViewById(R.id.iv_vod_show_pf_img);
+        tv_uploader_name = findViewById(R.id.tv_vod_show_name);
+        iv_arrow = findViewById(R.id.iv_vod_show_arrow);
+
+        tv_explain = findViewById(R.id.tv_vod_show_explain);
+
+        fr_show_profile = findViewById(R.id.fr_vod_show);
+
+
+//        //아직 안쓰는데 쓰면 이사람 영상가져올떄쓸듯
+//        SharedPreferences sharedPreferences= this.getSharedPreferences("info", Context.MODE_PRIVATE);
+//        user_id = sharedPreferences.getString("user_id","0");
 
         initDialog();
         showpDialog();
@@ -56,15 +94,56 @@ public class TestActivity extends AppCompatActivity {
         String vod_path = intent.getStringExtra("vod_path");
         String vod_title = intent.getStringExtra("vod_title");
         String vod_difficulty = intent.getStringExtra("vod_difficulty");
+        String vod_id = intent.getStringExtra("vod_id");
+        int vod_view = intent.getIntExtra("vod_view",-1);
+        String vod_cal = intent.getStringExtra("vod_calorie");
+        String vod_category = intent.getStringExtra("vod_category");
+        String vod_material = intent.getStringExtra("vod_material");
+        String vod_uploader_img = intent.getStringExtra("vod_uploader_img");
+        String vod_uploader_name = intent.getStringExtra("vod_uploader_name");
+        String vod_explain = intent.getStringExtra("vod_explain");
+        String vod_uploader_id = intent.getStringExtra("vod_uploader_id");
+
+        //제대로된 조회수를 받아왔을때 조회수 증가
+        if (vod_view == -1){
+            Toast.makeText(TestActivity.this, "조회수 오류", Toast.LENGTH_SHORT).show();
+        } else {
+            increaseView(vod_id,vod_view);
+        };
+        String str_category = "집중 부위 : " + vod_category;
+        tv_category.setText(str_category);
+        tv_title.setText(vod_title);
+        String str_view = "조회수 " + vod_view + "회";
+        tv_view.setText(str_view);
+        tv_difficulty.setText(vod_difficulty);
+        String str_cal = vod_cal + " Kcal";
+        tv_calorie.setText(str_cal);
+        tv_material.setText(vod_material);
+
+        tv_uploader_name.setText(vod_uploader_name);
+        tv_explain.setText(vod_explain);
+
+
+        if (vod_uploader_img.equals("")){
+            vod_uploader_img_url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/IMAGE_no_image.jpeg";
+        } else{
+            vod_uploader_img_url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/" + vod_uploader_img;
+        }
+
+        Glide.with(TestActivity.this).load(vod_uploader_img_url).override(50,50).into(iv_uploader_img);
+
 
         SAMPLE_VIDEO_URL = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/video/" + vod_path;
-        tv_title.setText(vod_title);
-        tv_difficulty.setText(vod_difficulty);
+//        tv_title.setText(vod_title);
+//        tv_difficulty.setText(vod_difficulty);
 
-        mediaController = new MediaController(TestActivity.this);
+        //mediaController = new MediaController(TestActivity.this);
+
+//        mediaController.setAnchorView(videoView);
+//        mediaController.setMediaPlayer(videoView);
 
         // 비디오뷰에 컨트롤러 설정
-        videoView.setMediaController(mediaController);
+        //videoView.setMediaController(mediaController);
 
         // 비디오 재생경로
         videoView.setVideoURI(Uri.parse(SAMPLE_VIDEO_URL));
@@ -72,6 +151,14 @@ public class TestActivity extends AppCompatActivity {
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
+                mediaPlayer.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
+                    @Override
+                    public void onVideoSizeChanged(MediaPlayer mediaPlayer, int i, int i1) {
+                        mediaController = new MediaController(TestActivity.this);
+                        videoView.setMediaController(mediaController);
+                        mediaController.setAnchorView(videoView);
+                    }
+                });
                 videoView.seekTo(1);
 
                 videoView.start();
@@ -88,35 +175,41 @@ public class TestActivity extends AppCompatActivity {
             }
         });
 
-//        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-//        Call<VideoInfo> call = apiInterface.getvideoInfo(user_id);
-//        call.enqueue(new Callback<VideoInfo>() {
-//            @Override
-//            public void onResponse(Call<VideoInfo> call, Response<VideoInfo> response) {
-//                if (response.isSuccessful() && response.body() != null){
-//                    if(response.body().isSuccess()){
-//
-//                        String title = response.body().getTitle();
-//                        String category = response.body().getCategory();
-//                        String difficulty = response.body().getDifficulty();
-//                        String video_url = response.body().getVideo_url();
-//
-//                        SAMPLE_VIDEO_URL = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/video/" + video_url;
-//
-//                        tv_title.setText(title);
-//                        tv_category.setText(category);
-//                        tv_difficulty.setText(difficulty);
-//
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<VideoInfo> call, Throwable t) {
-//                Toast.makeText(TestActivity.this, "실패했습니다", Toast.LENGTH_SHORT).show();
-//            }
-//        });
 
+
+        fr_show_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent2 = new Intent(TestActivity.this, ShowProfileActivity.class);
+                intent2.putExtra("uploader_id",vod_uploader_id);
+                startActivity(intent2);
+            }
+        });
+
+
+
+
+    }
+
+
+
+
+
+    //조회수 증가
+    private void increaseView(String vod_id, int prev_vod_view){
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<VodData> call = apiInterface.addVideoView(vod_id,prev_vod_view);
+        call.enqueue(new Callback<VodData>() {
+            @Override
+            public void onResponse(Call<VodData> call, Response<VodData> response) {
+                //조회수 증가 확인
+            }
+
+            @Override
+            public void onFailure(Call<VodData> call, Throwable t) {
+                Toast.makeText(TestActivity.this, "조회수 증가 실패", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     protected void initDialog(){
