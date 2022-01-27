@@ -1,15 +1,27 @@
 package com.example.everywheregym;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -20,10 +32,6 @@ public class ShowProfileActivity extends AppCompatActivity {
     private ImageView iv_showpf_backgroud; //뒷 배경 이미지
     private ImageView iv_showpf_img; // 프로필 이미지
     private TextView tv_showpf_name; //프로필 이름
-    private TextView tv_showpf_intro;//프로필 소개
-    private TextView tv_showpf_expert; //전문분야
-    private TextView tv_showpf_career; //경력사항
-    private TextView tv_showpf_certify; //자격사항
 
 
     private String img_url; //프로필 이미지
@@ -32,27 +40,29 @@ public class ShowProfileActivity extends AppCompatActivity {
     private String user_name;
     private String user_img;
     private String tr_img;
-    private String tr_intro;
-    private String tr_expert;
-    private String tr_career;
-    private String tr_certify;
+    public String tr_intro;
+    public String tr_expert;
+    public String tr_career;
+    public String tr_certify;
 
+    private ViewPager2 viewpager2;
+    private TabLayout tabLayout;
+
+
+    public ArrayList<VodData> getVodArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_show_profile);
+        setContentView(R.layout.activity_show_profile2);
+        Log.d("why", "ActivityonCreate: ");
 
 
         iv_showpf_backgroud = findViewById(R.id.iv_showPF_background);
         iv_showpf_img = findViewById(R.id.iv_showpf_img);
 
         tv_showpf_name = findViewById(R.id.textview_showPF_name);
-        tv_showpf_intro = findViewById(R.id.textview_showPF_intro);
 
-        tv_showpf_expert = findViewById(R.id.textview_showPF_expert);
-        tv_showpf_career = findViewById(R.id.textview_showPF_career);
-        tv_showpf_certify = findViewById(R.id.textview_showPF_certify);
 
 
         iv_showpf_img.setOnClickListener(new View.OnClickListener() {
@@ -88,6 +98,7 @@ public class ShowProfileActivity extends AppCompatActivity {
             public void onResponse(Call<TrainerInfo> call, Response<TrainerInfo> response) {
                 if (response.isSuccessful() && response.body() != null){
                     if(response.body().isSuccess()){
+                        Log.d("why", "ActivityonResponse1: " + tr_intro);
                         user_name = response.body().getUser_name(); //트레이너 이름
                         user_img = response.body().getUser_img(); // 트레이너 프로필사진
                         tr_img = response.body().getTr_img(); //트레이너 배경사진
@@ -98,10 +109,52 @@ public class ShowProfileActivity extends AppCompatActivity {
 
                         //텍스트 설정
                         tv_showpf_name.setText(user_name);
-                        tv_showpf_intro.setText(tr_intro);
-                        tv_showpf_expert.setText(tr_expert);
-                        tv_showpf_career.setText(tr_career);
-                        tv_showpf_certify.setText(tr_certify);
+
+
+                        ApiInterface apiInterface2 = ApiClient.getApiClient().create(ApiInterface.class);
+                        Call<VodDataArray> call2 = apiInterface2.getTrainervodList(uploader_id);
+                        call2.enqueue(new Callback<VodDataArray>() {
+                            @Override
+                            public void onResponse(Call<VodDataArray> call2, Response<VodDataArray> response2) {
+                                if (response2.isSuccessful() && response2.body() != null){
+                                    getVodArray = response2.body().getVodDataArray();
+
+
+                                    //뷰페이저 탭 레이아웃 연결
+                        Log.d("why", "ActivityonResponse2: " + tr_intro);
+                                    ArrayList<Fragment> fragments = new ArrayList<>();
+                                    fragments.add(ViewFragInfo.newInstance(0));
+                                    fragments.add(ViewFragVod.newInstance(1));
+                        Log.d("why", "ActivityonResponse3: " + tr_intro);
+
+                                    viewpager2 = (ViewPager2) findViewById(R.id.viewpager2);
+                                    tabLayout = (TabLayout) findViewById(R.id.tabLayout_show);
+
+                                    ViewFragAdapter viewFragAdapter = new ViewFragAdapter(ShowProfileActivity.this,fragments);
+                                    viewpager2.setAdapter(viewFragAdapter);
+
+                                    final List<String> tabElement = Arrays.asList("트레이너 정보", "업로드한 영상");
+                        Log.d("why", "ActivityonResponse4: " + tr_intro);
+                                    new TabLayoutMediator(tabLayout, viewpager2, new TabLayoutMediator.TabConfigurationStrategy() {
+                                        @Override
+                                        public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
+                                            TextView tv =  new TextView(ShowProfileActivity.this);
+                                            tv.setGravity(Gravity.CENTER);
+                                            tv.setTextColor(Color.BLACK);
+                                            tv.setText(tabElement.get(position));
+                                            tab.setCustomView(tv);
+                                        }
+                                    }).attach();
+                                    //로딩 숨기기
+                                    //hidepDialog();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<VodDataArray> call2, Throwable t) {
+                                Toast.makeText(ShowProfileActivity.this, "통신 오류", Toast.LENGTH_SHORT).show();
+                            }
+                        });
 
                         //이미지 설정
                         if (user_img == null || user_img.equals("")){

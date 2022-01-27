@@ -7,6 +7,8 @@
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/drawable/difficulty_1.xml" value="0.26979166666666665" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/drawable/difficulty_2.xml" value="0.26979166666666665" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/drawable/difficulty_3.xml" value="0.26979166666666665" />
+        <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/drawable/difficulty_small_2.xml" value="0.26564102564102565" />
+        <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/drawable/difficulty_small_3.xml" value="0.26564102564102565" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/drawable/ic_baseline_accessibility_24.xml" value="0.26979166666666665" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.26979166666666665" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/drawable/ic_baseline_add_circle_outline_24.xml" value="0.26979166666666665" />
@@ -33,6 +35,7 @@
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/drawable/round_button_gray.xml" value="0.26979166666666665" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/drawable/round_circle.xml" value="0.26979166666666665" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/drawable/round_text.xml" value="0.26979166666666665" />
+        <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/drawable/small_difficulty_1.xml" value="0.26564102564102565" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/drawable/text_edge_all.xml" value="0.26979166666666665" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/drawable/text_edge_bottom.xml" value="0.26979166666666665" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/drawable/text_edge_tiny.xml" value="0.26979166666666665" />
@@ -50,8 +53,9 @@
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/activity_setting.xml" value="0.264" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/activity_show_image.xml" value="0.1933876811594203" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/activity_show_profile.xml" value="0.264" />
+        <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/activity_show_profile2.xml" value="0.264" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/activity_sign_up.xml" value="0.264" />
-        <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/activity_test.xml" value="0.264" />
+        <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/activity_test.xml" value="0.2" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/activity_trainer_edit_profile.xml" value="0.264" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/activity_trainer_home.xml" value="0.264" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/activity_trainer_home2.xml" value="0.17527173913043478" />
@@ -75,6 +79,9 @@
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/fragment_trainer_home.xml" value="0.264" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/fragment_trainer_mypage.xml" value="0.2" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/fragment_trainer_mypage22.xml" value="0.20471014492753623" />
+        <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/fragment_view_frag_info.xml" value="0.264" />
+        <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/fragment_view_frag_vod.xml" value="0.21422101449275363" />
+        <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/recycler_upload_vod.xml" value="0.4" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/recycler_vod.xml" value="0.264" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/toolbar.xml" value="0.21693840579710144" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/menu/bottom_menu.xml" value="0.25364583333333335" />

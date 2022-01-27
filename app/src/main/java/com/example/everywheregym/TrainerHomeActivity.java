@@ -127,7 +127,6 @@ public class TrainerHomeActivity extends AppCompatActivity {
         fab_video.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(TrainerHomeActivity.this, "비디오 추가", Toast.LENGTH_SHORT).show();
 
                 ted();
 
@@ -161,7 +160,7 @@ public class TrainerHomeActivity extends AppCompatActivity {
                     case R.id.action_live:
                         setFrag(1);
                         break;
-                    case R.id.action_add:
+                    //case R.id.action_add:
 
 //                        AlertDialog.Builder ad = new AlertDialog.Builder(TrainerHomeActivity.this);
 //                        ad.setTitle("알림");
@@ -178,8 +177,8 @@ public class TrainerHomeActivity extends AppCompatActivity {
                         //여기에다가 두개 추가해서 쓰기
 
 
-                        setFrag(2);
-                        break;
+                        //setFrag(2);
+                        //break;
                     case R.id.action_mypage:
                         setFrag(3);
                         break;
@@ -211,10 +210,10 @@ public class TrainerHomeActivity extends AppCompatActivity {
                 ft.replace(R.id.main_frame_tr,frag_live);
                 ft.commit();
                 break;
-            case 2:
-                ft.replace(R.id.main_frame_tr,frag_tr_home);
-                ft.commit();
-                break;
+//            case 2:
+//                ft.replace(R.id.main_frame_tr,frag_tr_home);
+//                ft.commit();
+//                break;
             case 3:
                 ft.replace(R.id.main_frame_tr,frag_tr_mypage);
                 ft.commit();

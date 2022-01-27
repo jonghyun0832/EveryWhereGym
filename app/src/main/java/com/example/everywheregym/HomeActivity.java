@@ -75,10 +75,10 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch(item.getItemId()){
-                    case R.id.action_live:
+                    case R.id.action_video:
                         setFrag(0);
                         break;
-                    case R.id.action_video:
+                    case R.id.action_live:
                         setFrag(1);
                         break;
                     case R.id.action_mypage:
@@ -114,11 +114,11 @@ public class HomeActivity extends AppCompatActivity {
         ft = fm.beginTransaction();
         switch (n){
             case 0:
-                ft.replace(R.id.main_frame,frag_live);
+                ft.replace(R.id.main_frame,frag_video);
                 ft.commit();
                 break;
             case 1:
-                ft.replace(R.id.main_frame,frag_video);
+                ft.replace(R.id.main_frame,frag_live);
                 ft.commit();
                 break;
             case 2:

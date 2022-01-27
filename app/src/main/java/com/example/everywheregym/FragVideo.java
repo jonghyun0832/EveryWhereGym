@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,6 +63,11 @@ public class FragVideo extends Fragment {
 
     private ProgressDialog prDialog;
 
+
+    private String filtered_category;
+    private String filtered_time;
+    private String filtered_difficulty;
+    private String[] filter_array = new String[3];
 
 
     @Override
@@ -109,7 +115,7 @@ public class FragVideo extends Fragment {
                             } else{
                                 user_img_url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/" + user_img;
                             }
-                            Glide.with(getContext()).load(user_img_url).override(40,40).into(iv_user_img);
+                            Glide.with(getActivity()).load(user_img_url).override(40,40).into(iv_user_img);
                         }
                     }
                 }
@@ -164,6 +170,7 @@ public class FragVideo extends Fragment {
                 String vod_explain = item.getVod_explain();
                 String vod_uploader_img = item.getVod_uploader_img();
                 String vod_uploader_id = item.getVod_uploader_id();
+                String vod_thumbnail = item.getVod_thumbnail();
                 int vod_view = item.getVod_view();
 
                 Intent intent = new Intent(getContext(),TestActivity.class);
@@ -179,7 +186,9 @@ public class FragVideo extends Fragment {
                 intent.putExtra("vod_explain",vod_explain);
                 intent.putExtra("vod_uploader_img",vod_uploader_img);
                 intent.putExtra("vod_uploader_id",vod_uploader_id);
+                intent.putExtra("vod_thumbnail",vod_thumbnail);
                 startActivity(intent);
+
 
             }
         });
@@ -364,8 +373,126 @@ public class FragVideo extends Fragment {
                         balloon.dismiss();
                     }
                 });
+                balloon.dismissWithDelay(2500L);
             }
         });
+
+//        filter_category.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                // 카테고리 필터
+//                AlertDialog.Builder ad = new AlertDialog.Builder(getContext());
+//                ad.setTitle("카테고리 필터");
+//                LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//                View dialogView = inflater.inflate(R.layout.dialog_category_box, null);
+//                ad.setView(dialogView);
+//
+//                CheckBox cb_whole = dialogView.findViewById(R.id.checkBox_whole);
+//                CheckBox cb_abs = dialogView.findViewById(R.id.checkBox_abs);
+//                CheckBox cb_leg = dialogView.findViewById(R.id.checkBox_leg);
+//                CheckBox cb_chest = dialogView.findViewById(R.id.checkBox_chest);
+//                CheckBox cb_back = dialogView.findViewById(R.id.checkBox_back);
+//
+//                if (filtered_category != null){
+//                    String[] split = filtered_category.split(", ");
+//                    if(split.length != 0){ //수정용
+//                        for (int i = 0; i < split.length; i++){
+//                            if(split[i].equals("전신"))
+//                                cb_whole.setChecked(true);
+//                            if(split[i].equals("복근"))
+//                                cb_abs.setChecked(true);
+//                            if(split[i].equals("하체"))
+//                                cb_leg.setChecked(true);
+//                            if(split[i].equals("가슴"))
+//                                cb_chest.setChecked(true);
+//                            if(split[i].equals("등"))
+//                                cb_back.setChecked(true);
+//                        }
+//                    }
+//                }
+//
+//
+//
+//
+//                ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        StringBuffer select = new StringBuffer();
+//                        if(cb_whole.isChecked()) {
+//                            select.append("전신, ");
+//                        }
+//                        if(cb_abs.isChecked()){
+//                            select.append("복근, ");
+//                        }
+//                        if(cb_leg.isChecked())
+//                            select.append("하체, ");
+//                        if(cb_chest.isChecked())
+//                            select.append("가슴, ");
+//                        if(cb_back.isChecked())
+//                            select.append("등, ");
+//
+//                        if(select.length() != 0){
+//                            System.out.println(select);
+//                            String result = select.substring(0,select.length()-2);
+//                            filtered_category = result;
+//                        } else {
+//                            filtered_category = "";
+//                        }
+//
+//                        filter_array[0] = filtered_category;
+//
+//                        //통신으로 보내기
+//                        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+//                        Call<VodDataArray> call = apiInterface.filterVod(filter_array);
+//                        call.enqueue(new Callback<VodDataArray>() {
+//                            @Override
+//                            public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
+//                                if (response.isSuccessful() && response.body() != null){
+//                                    vodArray = response.body().getVodDataArray();
+//                                    vodAdapter.setAdapter(vodArray);
+//                                    vodAdapter.notifyDataSetChanged();
+//                                } else {
+//                                //json 오류
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onFailure(Call<VodDataArray> call, Throwable t) {
+//                                    //실패
+//                            }
+//                        });
+//
+//
+//                    }
+//
+//                });
+//
+//                ad.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        //취소했을때 할게없음
+//                    }
+//                });
+//
+//
+//                AlertDialog alertDialog = ad.create();
+//                alertDialog.show();
+//            }
+//        });
+//
+//        filter_difficulty.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                // 난이도 필터
+//            }
+//        });
+//
+//        filter_time.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                // 시간 필터
+//            }
+//        });
 
 
         return view;

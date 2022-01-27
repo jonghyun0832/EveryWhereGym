@@ -193,6 +193,21 @@ public interface ApiInterface {
     );
 
 
+    //특정 트레이너의 vod 리스트 가져오기
+    @FormUrlEncoded
+    @POST("getTrainerVodInfo.php")
+    Call<VodDataArray> getTrainervodList(
+            @Field("user_id") String user_id
+    );
+
+    //필터 (길게보내서 잘라서 쓰면될듯)
+    @FormUrlEncoded
+    @POST("filterVod.php")
+    Call<VodDataArray> filterVod(
+            @Field("filter") String[] filter
+    );
+
+
 
 //    @Multipart
 //    @POST("getTrainerInfo.php")

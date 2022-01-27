@@ -145,7 +145,9 @@ public class VodAdapter extends RecyclerView.Adapter<VodAdapter.VodViewHolder> {
 
         //System.out.println(position + " 체크좀 해보자 " + arrayList.get(position).getVod_materail());
         if (arrayList.get(position).getVod_materail() != null){
-            holder.iv_popup_material.setVisibility(View.VISIBLE);
+            if (!arrayList.get(position).getVod_materail().equals("")){
+                holder.iv_popup_material.setVisibility(View.VISIBLE);
+            }
         }
 
 

@@ -260,6 +260,12 @@ public class VodDetailActivity extends AppCompatActivity {
 
                         HashMap<String, RequestBody> map = new HashMap<>();
 
+                        System.out.println(vod_material);
+                        System.out.println(vod_calorie);
+
+                        if(vod_material == null){
+                            vod_material = "";
+                        }
 
                         RequestBody file_user = RequestBody.create(MediaType.parse("text/plain"),user_id);
                         RequestBody file_title = RequestBody.create(MediaType.parse("text/plain"),input_title);
@@ -442,6 +448,10 @@ public class VodDetailActivity extends AppCompatActivity {
 //                            if(vod_calorie == null){
 //                                vod_calorie = "";
 //                            }
+
+                            if(vod_material == null){
+                                vod_material = "";
+                            }
 
                             String pdname = user_id + "_" + Calendar.getInstance().getTimeInMillis();
                             RequestBody filename = RequestBody.create(MediaType.parse("text/plain"),pdname);
@@ -682,7 +692,7 @@ public class VodDetailActivity extends AppCompatActivity {
                             String result = select.substring(0,select.length()-2);
                             tv_categoty.setText(result);
                         } else {
-                            tv_categoty.setText(null);
+                            tv_categoty.setText("");
                         }
 
                     }
