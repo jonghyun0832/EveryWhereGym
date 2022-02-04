@@ -204,7 +204,9 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("filterVod.php")
     Call<VodDataArray> filterVod(
-            @Field("filter") String[] filter
+            @Field("filter_category") String filter_category,
+            @Field("filter_difficulty") String filter_difficulty,
+            @Field("filter_time") String filter_time
     );
 
 

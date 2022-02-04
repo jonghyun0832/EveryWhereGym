@@ -51,6 +51,7 @@ public class FragVideo extends Fragment {
     private TextView filter_category;
     private TextView filter_time;
     private TextView filter_difficulty;
+    private TextView filter_cancel;
 
 
     private RecyclerView recyclerView;
@@ -67,7 +68,8 @@ public class FragVideo extends Fragment {
     private String filtered_category;
     private String filtered_time;
     private String filtered_difficulty;
-    private String[] filter_array = new String[3];
+
+    private String tmp_difficulty;
 
 
     @Override
@@ -80,6 +82,9 @@ public class FragVideo extends Fragment {
         filter_category = (TextView) view.findViewById(R.id.filter_category);
         filter_time = (TextView) view.findViewById(R.id.filter_time);
         filter_difficulty = (TextView) view.findViewById(R.id.filter_difficulty);
+        filter_cancel = (TextView) view.findViewById(R.id.filter_cancel);
+
+        filter_cancel.setVisibility(View.GONE);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.rv_vod);
         linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -377,122 +382,261 @@ public class FragVideo extends Fragment {
             }
         });
 
-//        filter_category.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                // 카테고리 필터
-//                AlertDialog.Builder ad = new AlertDialog.Builder(getContext());
-//                ad.setTitle("카테고리 필터");
-//                LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//                View dialogView = inflater.inflate(R.layout.dialog_category_box, null);
-//                ad.setView(dialogView);
-//
-//                CheckBox cb_whole = dialogView.findViewById(R.id.checkBox_whole);
-//                CheckBox cb_abs = dialogView.findViewById(R.id.checkBox_abs);
-//                CheckBox cb_leg = dialogView.findViewById(R.id.checkBox_leg);
-//                CheckBox cb_chest = dialogView.findViewById(R.id.checkBox_chest);
-//                CheckBox cb_back = dialogView.findViewById(R.id.checkBox_back);
-//
-//                if (filtered_category != null){
-//                    String[] split = filtered_category.split(", ");
-//                    if(split.length != 0){ //수정용
-//                        for (int i = 0; i < split.length; i++){
-//                            if(split[i].equals("전신"))
-//                                cb_whole.setChecked(true);
-//                            if(split[i].equals("복근"))
-//                                cb_abs.setChecked(true);
-//                            if(split[i].equals("하체"))
-//                                cb_leg.setChecked(true);
-//                            if(split[i].equals("가슴"))
-//                                cb_chest.setChecked(true);
-//                            if(split[i].equals("등"))
-//                                cb_back.setChecked(true);
-//                        }
-//                    }
-//                }
-//
-//
-//
-//
-//                ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        StringBuffer select = new StringBuffer();
-//                        if(cb_whole.isChecked()) {
-//                            select.append("전신, ");
-//                        }
-//                        if(cb_abs.isChecked()){
-//                            select.append("복근, ");
-//                        }
-//                        if(cb_leg.isChecked())
-//                            select.append("하체, ");
-//                        if(cb_chest.isChecked())
-//                            select.append("가슴, ");
-//                        if(cb_back.isChecked())
-//                            select.append("등, ");
-//
-//                        if(select.length() != 0){
-//                            System.out.println(select);
-//                            String result = select.substring(0,select.length()-2);
-//                            filtered_category = result;
-//                        } else {
-//                            filtered_category = "";
-//                        }
-//
-//                        filter_array[0] = filtered_category;
-//
-//                        //통신으로 보내기
-//                        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-//                        Call<VodDataArray> call = apiInterface.filterVod(filter_array);
-//                        call.enqueue(new Callback<VodDataArray>() {
-//                            @Override
-//                            public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
-//                                if (response.isSuccessful() && response.body() != null){
-//                                    vodArray = response.body().getVodDataArray();
-//                                    vodAdapter.setAdapter(vodArray);
-//                                    vodAdapter.notifyDataSetChanged();
-//                                } else {
-//                                //json 오류
-//                                }
-//                            }
-//
-//                            @Override
-//                            public void onFailure(Call<VodDataArray> call, Throwable t) {
-//                                    //실패
-//                            }
-//                        });
-//
-//
-//                    }
-//
-//                });
-//
-//                ad.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        //취소했을때 할게없음
-//                    }
-//                });
-//
-//
-//                AlertDialog alertDialog = ad.create();
-//                alertDialog.show();
-//            }
-//        });
-//
-//        filter_difficulty.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                // 난이도 필터
-//            }
-//        });
-//
-//        filter_time.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                // 시간 필터
-//            }
-//        });
+        filter_category.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 카테고리 필터
+                AlertDialog.Builder ad = new AlertDialog.Builder(getContext());
+                ad.setTitle("카테고리 필터");
+                LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View dialogView = inflater.inflate(R.layout.dialog_category_box, null);
+                ad.setView(dialogView);
+
+                CheckBox cb_whole = dialogView.findViewById(R.id.checkBox_whole);
+                CheckBox cb_abs = dialogView.findViewById(R.id.checkBox_abs);
+                CheckBox cb_leg = dialogView.findViewById(R.id.checkBox_leg);
+                CheckBox cb_chest = dialogView.findViewById(R.id.checkBox_chest);
+                CheckBox cb_back = dialogView.findViewById(R.id.checkBox_back);
+
+                if (filtered_category != null){
+                    String[] split = filtered_category.split(", ");
+                    if(split.length != 0){ //수정용
+                        for (int i = 0; i < split.length; i++){
+                            if(split[i].equals("전신"))
+                                cb_whole.setChecked(true);
+                            if(split[i].equals("복근"))
+                                cb_abs.setChecked(true);
+                            if(split[i].equals("하체"))
+                                cb_leg.setChecked(true);
+                            if(split[i].equals("가슴"))
+                                cb_chest.setChecked(true);
+                            if(split[i].equals("등"))
+                                cb_back.setChecked(true);
+                        }
+                    }
+                }
+
+
+                ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        StringBuffer select = new StringBuffer();
+                        if(cb_whole.isChecked()) {
+                            select.append("전신, ");
+                        }
+                        if(cb_abs.isChecked()){
+                            select.append("복근, ");
+                        }
+                        if(cb_leg.isChecked())
+                            select.append("하체, ");
+                        if(cb_chest.isChecked())
+                            select.append("가슴, ");
+                        if(cb_back.isChecked())
+                            select.append("등, ");
+
+                        if(select.length() != 0){
+                            System.out.println(select);
+                            String result = select.substring(0,select.length()-2);
+                            filtered_category = result;
+                        } else {
+                            filtered_category = "";
+                        }
+
+                        //통신으로 보내기
+                        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+                        Call<VodDataArray> call = apiInterface.filterVod(filtered_category,filtered_difficulty,filtered_time);
+                        call.enqueue(new Callback<VodDataArray>() {
+                            @Override
+                            public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
+                                if (response.isSuccessful() && response.body() != null){
+                                    if(!filtered_category.equals("")){
+                                        filter_category.setText(filtered_category + " ▼");
+                                        filter_category.setTextColor(Color.WHITE);
+                                        filter_category.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text_blue));
+
+                                        filter_cancel.setVisibility(View.VISIBLE);
+
+                                    }
+                                    vodArray = response.body().getVodDataArray();
+                                    vodAdapter.setAdapter(vodArray);
+                                    vodAdapter.notifyDataSetChanged();
+                                } else {
+                                //json 오류
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<VodDataArray> call, Throwable t) {
+                                    //실패
+                            }
+                        });
+
+
+                    }
+
+                });
+
+                ad.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //취소했을때 할게없음
+                    }
+                });
+
+
+                AlertDialog alertDialog = ad.create();
+                alertDialog.show();
+            }
+        });
+
+        filter_difficulty.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 난이도 필터
+                AlertDialog.Builder ad = new AlertDialog.Builder(getContext());
+                ad.setTitle("카테고리 필터");
+                LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View dialogView = inflater.inflate(R.layout.dialog_difficulty_box, null);
+                ad.setView(dialogView);
+
+                CheckBox cb_diff_1 = dialogView.findViewById(R.id.checkBox_diff_1);
+                CheckBox cb_diff_2 = dialogView.findViewById(R.id.checkBox_diff_2);
+                CheckBox cb_diff_3 = dialogView.findViewById(R.id.checkBox_diff_3);
+
+
+                if (filtered_difficulty != null){
+                    String[] split = filtered_difficulty.split(", ");
+                    if(split.length != 0){ //수정용
+                        for (int i = 0; i < split.length; i++){
+                            if(split[i].equals("입문"))
+                                cb_diff_1.setChecked(true);
+                            if(split[i].equals("초급"))
+                                cb_diff_2.setChecked(true);
+                            if(split[i].equals("중급"))
+                                cb_diff_3.setChecked(true);
+                        }
+                    }
+                }
+
+
+
+                ad.setPositiveButton("설정", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        StringBuffer select = new StringBuffer();
+                        if(cb_diff_1.isChecked()) {
+                            select.append("입문, ");
+                        }
+                        if(cb_diff_2.isChecked()){
+                            select.append("초급, ");
+                        }
+                        if(cb_diff_3.isChecked())
+                            select.append("중급, ");
+
+                        if(select.length() != 0){
+                            System.out.println(select);
+                            String result = select.substring(0,select.length()-2);
+                            filtered_difficulty = result;
+                        } else {
+                            filtered_category = "";
+                        }
+
+                        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+                        Call<VodDataArray> call = apiInterface.filterVod(filtered_category,filtered_difficulty,filtered_time);
+                        call.enqueue(new Callback<VodDataArray>() {
+                            @Override
+                            public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
+                                if (response.isSuccessful() && response.body() != null){
+                                    if(!filtered_difficulty.equals("")){
+                                        filter_difficulty.setText(filtered_difficulty + " ▼");
+                                        filter_difficulty.setTextColor(Color.WHITE);
+                                        filter_difficulty.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text_blue));
+
+                                        filter_cancel.setVisibility(View.VISIBLE);
+
+                                    }
+                                    vodArray = response.body().getVodDataArray();
+                                    vodAdapter.setAdapter(vodArray);
+                                    vodAdapter.notifyDataSetChanged();
+                                } else {
+                                    //json 오류
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<VodDataArray> call, Throwable t) {
+                                //실패
+                            }
+                        });
+                    }
+                });
+
+                ad.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        filtered_difficulty = "";
+                    }
+                });
+
+                AlertDialog alertDialog = ad.create();
+                alertDialog.show();
+
+
+            }
+        });
+
+        filter_time.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 시간 필터
+            }
+        });
+
+
+
+        filter_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //눌렀을때 초기화시키기
+
+                showpDialog();
+                filtered_category = "";
+                filtered_difficulty = "";
+                filtered_time = "";
+
+                //처음에 했던 레트로핏써서 다시 원래 데이터 받아오기
+                ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+                Call<VodDataArray> call = apiInterface.getvodList();
+                call.enqueue(new Callback<VodDataArray>() {
+                    @Override
+                    public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
+                        if (response.isSuccessful() && response.body() != null){
+                            vodArray = response.body().getVodDataArray();
+                            vodAdapter.setAdapter(vodArray);
+                            vodAdapter.notifyDataSetChanged();
+
+                            filter_category.setText("집중부위 ▽");
+                            filter_category.setTextColor(Color.BLACK);
+                            filter_category.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text));
+
+                            filter_difficulty.setText("난이도 ▽");
+                            filter_difficulty.setTextColor(Color.BLACK);
+                            filter_difficulty.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text));
+
+                            filter_cancel.setVisibility(View.GONE);
+
+                            //로딩 숨기기
+                            hidepDialog();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<VodDataArray> call, Throwable t) {
+                        Toast.makeText(getContext(), "통신 오류", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
 
 
         return view;

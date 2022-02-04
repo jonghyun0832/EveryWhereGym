@@ -352,7 +352,7 @@
                 android:paddingLeft="10dp"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                android:inputType="numberDecimal"
+                android:inputType="numberSigned"
                 app:layout_constraintBottom_toBottomOf="@+id/hardtext_vod_calorie"
                 app:layout_constraintEnd_toEndOf="@+id/textveiw_vod_explain"
                 app:layout_constraintStart_toStartOf="@+id/textveiw_vod_explain"

@@ -216,6 +216,7 @@ public class TestActivity extends AppCompatActivity {
                 Intent intent2 = new Intent(TestActivity.this, ShowProfileActivity.class);
                 intent2.putExtra("uploader_id",vod_uploader_id);
                 startActivity(intent2);
+                finish();
             }
         });
 
