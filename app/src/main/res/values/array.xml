@@ -13,4 +13,9 @@
         <item>초급</item>
         <item>중급</item>
     </string-array>
+
+    <array name="initial_slider_values">
+        <item>0.0</item>
+        <item>100.0</item>
+    </array>
 </resources>

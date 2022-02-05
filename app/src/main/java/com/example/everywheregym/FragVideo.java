@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -37,12 +38,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.slider.LabelFormatter;
+import com.google.android.material.slider.RangeSlider;
 import com.skydoves.balloon.ArrowOrientation;
 import com.skydoves.balloon.Balloon;
 import com.skydoves.balloon.BalloonAnimation;
 import com.skydoves.balloon.OnBalloonClickListener;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class FragVideo extends Fragment {
 
@@ -71,11 +75,33 @@ public class FragVideo extends Fragment {
 
     private String tmp_difficulty;
 
+    private String minVal;
+    private String maxVal;
+
+
+    private final RangeSlider.OnSliderTouchListener rangeSliderTouchListener =
+            new RangeSlider.OnSliderTouchListener() {
+                @Override
+                public void onStartTrackingTouch(@NonNull RangeSlider slider) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(@NonNull RangeSlider slider) {
+//                    int minNumber = Float.toString(slider.getValues().get(0)).indexOf(".");
+//                    int maxNumber = Float.toString(slider.getValues().get(1)).indexOf(".");
+//                    minVal = Float.toString(slider.getValues().get(0)).substring(0, minNumber);
+//                    maxVal = Float.toString(slider.getValues().get(1)).substring(0, maxNumber);
+                }
+            };
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_frag_video,container,false);
+
+        Log.d("11111", "onCreateView: 생성생성" + filtered_category + filtered_time + filtered_difficulty);
 
         iv_search = (ImageView) view.findViewById(R.id.iv_vod_search);
         iv_user_img = (ImageView) view.findViewById(R.id.iv_vod_user_img);
@@ -104,6 +130,8 @@ public class FragVideo extends Fragment {
         SharedPreferences sharedPreferences= getActivity().getSharedPreferences("info", Context.MODE_PRIVATE);
         user_id = sharedPreferences.getString("user_id","0");
         is_trainer = sharedPreferences.getString("is_trainer","");
+        //isFilter = sharedPreferences.getBoolean("is_filter",false);
+
 
         if(!user_id.equals("0")){
             ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -138,27 +166,77 @@ public class FragVideo extends Fragment {
         // 로딩 출력
         showpDialog();
 
-        //리사이클러뷰 데이터 받아오기
-        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<VodDataArray> call = apiInterface.getvodList();
-        call.enqueue(new Callback<VodDataArray>() {
-            @Override
-            public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
-                if (response.isSuccessful() && response.body() != null){
-                    vodArray = response.body().getVodDataArray();
-                    vodAdapter.setAdapter(vodArray);
-                    vodAdapter.notifyDataSetChanged();
+        if (filtered_category != null){
+            filter_category.setText(filtered_category + " ▼");
+            filter_category.setTextColor(Color.WHITE);
+            filter_category.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text_blue));
 
-                    //로딩 숨기기
-                    hidepDialog();
+            filter_cancel.setVisibility(View.VISIBLE);
+        }
+        if (filtered_difficulty != null){
+
+            filter_difficulty.setText(filtered_difficulty + " ▼");
+            filter_difficulty.setTextColor(Color.WHITE);
+            filter_difficulty.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text_blue));
+
+            filter_cancel.setVisibility(View.VISIBLE);
+        }
+        if (filtered_time != null){
+            filter_time.setText(filtered_time + " ▼");
+            filter_time.setTextColor(Color.WHITE);
+            filter_time.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text_blue));
+
+            filter_cancel.setVisibility(View.VISIBLE);
+        }
+
+        if (filtered_category != null || filtered_difficulty != null || filtered_time != null){
+            ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+            Call<VodDataArray> call = apiInterface.filterVod(filtered_category,filtered_difficulty,filtered_time);
+            call.enqueue(new Callback<VodDataArray>() {
+                @Override
+                public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
+                    if (response.isSuccessful() && response.body() != null){
+                        vodArray = response.body().getVodDataArray();
+                        vodAdapter.setAdapter(vodArray);
+                        vodAdapter.notifyDataSetChanged();
+
+                        hidepDialog();
+                    }
                 }
-            }
+                @Override
+                public void onFailure(Call<VodDataArray> call, Throwable t) {
+                    //실패
+                }
+            });
+        } else {
+            Log.d("11111", "onCreateView: 필터없음");
+            //리사이클러뷰 데이터 받아오기
+            ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+            Call<VodDataArray> call = apiInterface.getvodList();
+            call.enqueue(new Callback<VodDataArray>() {
+                @Override
+                public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
+                    if (response.isSuccessful() && response.body() != null){
+                        vodArray = response.body().getVodDataArray();
+                        vodAdapter.setAdapter(vodArray);
+                        vodAdapter.notifyDataSetChanged();
 
-            @Override
-            public void onFailure(Call<VodDataArray> call, Throwable t) {
-                Toast.makeText(getContext(), "통신 오류", Toast.LENGTH_SHORT).show();
-            }
-        });
+                        //로딩 숨기기
+                        hidepDialog();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<VodDataArray> call, Throwable t) {
+                    Toast.makeText(getContext(), "통신 오류", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+
+
+
+
 
         vodAdapter.setOnClickListener(new VodAdapter.myRecyclerViewClickListener() {
             @Override
@@ -450,6 +528,10 @@ public class FragVideo extends Fragment {
                             public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
                                 if (response.isSuccessful() && response.body() != null){
                                     if(!filtered_category.equals("")){
+//                                        SharedPreferences sharedPreferences= getActivity().getSharedPreferences("info", Context.MODE_PRIVATE);
+//                                        SharedPreferences.Editor editor= sharedPreferences.edit();
+//                                        editor.putBoolean("is_filter",true);
+//                                        editor.commit();
                                         filter_category.setText(filtered_category + " ▼");
                                         filter_category.setTextColor(Color.WHITE);
                                         filter_category.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text_blue));
@@ -494,7 +576,7 @@ public class FragVideo extends Fragment {
             public void onClick(View view) {
                 // 난이도 필터
                 AlertDialog.Builder ad = new AlertDialog.Builder(getContext());
-                ad.setTitle("카테고리 필터");
+                ad.setTitle("난이도를 선택해주세요");
                 LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 View dialogView = inflater.inflate(R.layout.dialog_difficulty_box, null);
                 ad.setView(dialogView);
@@ -548,6 +630,10 @@ public class FragVideo extends Fragment {
                             public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
                                 if (response.isSuccessful() && response.body() != null){
                                     if(!filtered_difficulty.equals("")){
+//                                        SharedPreferences sharedPreferences= getActivity().getSharedPreferences("info", Context.MODE_PRIVATE);
+//                                        SharedPreferences.Editor editor= sharedPreferences.edit();
+//                                        editor.putBoolean("is_filter",true);
+//                                        editor.commit();
                                         filter_difficulty.setText(filtered_difficulty + " ▼");
                                         filter_difficulty.setTextColor(Color.WHITE);
                                         filter_difficulty.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text_blue));
@@ -574,7 +660,6 @@ public class FragVideo extends Fragment {
                 ad.setNegativeButton("취소", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        filtered_difficulty = "";
                     }
                 });
 
@@ -589,6 +674,87 @@ public class FragVideo extends Fragment {
             @Override
             public void onClick(View view) {
                 // 시간 필터
+                AlertDialog.Builder ad = new AlertDialog.Builder(getContext());
+                ad.setTitle("영상길이를 선택해주세요");
+                LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View dialogView = inflater.inflate(R.layout.dialog_time_box, null);
+                ad.setView(dialogView);
+
+                RangeSlider rangeSlider = dialogView.findViewById(R.id.rangeSlider);
+                rangeSlider.setLabelBehavior(LabelFormatter.LABEL_FLOATING);
+
+                if(maxVal != null){
+                    rangeSlider.setValues(Float.parseFloat(minVal),Float.parseFloat(maxVal));
+                }
+
+                rangeSlider.setLabelFormatter(new LabelFormatter() {
+                    @NonNull
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return String.format(Locale.US,"%.0f",value);
+
+                    }
+                });
+
+                rangeSlider.addOnSliderTouchListener(rangeSliderTouchListener);
+
+
+
+                ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        int minNumber = Float.toString(rangeSlider.getValues().get(0)).indexOf(".");
+                        int maxNumber = Float.toString(rangeSlider.getValues().get(1)).indexOf(".");
+                        minVal = Float.toString(rangeSlider.getValues().get(0)).substring(0, minNumber);
+                        maxVal = Float.toString(rangeSlider.getValues().get(1)).substring(0, maxNumber);
+
+                        filtered_time = minVal + " ~ " + maxVal;
+
+                        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+                        Call<VodDataArray> call = apiInterface.filterVod(filtered_category,filtered_difficulty,filtered_time);
+                        call.enqueue(new Callback<VodDataArray>() {
+                            @Override
+                            public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
+                                if (response.isSuccessful() && response.body() != null){
+//                                    SharedPreferences sharedPreferences= getActivity().getSharedPreferences("info", Context.MODE_PRIVATE);
+//                                    SharedPreferences.Editor editor= sharedPreferences.edit();
+//                                    editor.putBoolean("is_filter",true);
+//                                    editor.commit();
+                                    filter_time.setText(filtered_time + " ▼");
+                                    filter_time.setTextColor(Color.WHITE);
+                                    filter_time.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text_blue));
+
+                                    filter_cancel.setVisibility(View.VISIBLE);
+
+
+                                    vodArray = response.body().getVodDataArray();
+                                    vodAdapter.setAdapter(vodArray);
+                                    vodAdapter.notifyDataSetChanged();
+                                } else {
+                                    //json 오류
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<VodDataArray> call, Throwable t) {
+                                //실패
+                            }
+                        });
+                    }
+                });
+
+
+                ad.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //
+                    }
+                });
+
+
+                AlertDialog alertDialog = ad.create();
+                alertDialog.show();
             }
         });
 
@@ -600,9 +766,9 @@ public class FragVideo extends Fragment {
                 //눌렀을때 초기화시키기
 
                 showpDialog();
-                filtered_category = "";
-                filtered_difficulty = "";
-                filtered_time = "";
+                filtered_category = null;
+                filtered_difficulty = null;
+                filtered_time = null;
 
                 //처음에 했던 레트로핏써서 다시 원래 데이터 받아오기
                 ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -622,6 +788,11 @@ public class FragVideo extends Fragment {
                             filter_difficulty.setText("난이도 ▽");
                             filter_difficulty.setTextColor(Color.BLACK);
                             filter_difficulty.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text));
+
+                            filter_time.setText("운동시간 ▽");
+                            filter_time.setTextColor(Color.BLACK);
+                            filter_time.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text));
+                            maxVal = null;
 
                             filter_cancel.setVisibility(View.GONE);
 
@@ -648,28 +819,28 @@ public class FragVideo extends Fragment {
         super.onResume();
 
 
-        showpDialog();
+//        showpDialog();
 
-        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<VodDataArray> call = apiInterface.getvodList();
-        call.enqueue(new Callback<VodDataArray>() {
-            @Override
-            public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
-                if (response.isSuccessful() && response.body() != null){
-                    vodArray = response.body().getVodDataArray();
-                    vodAdapter.setAdapter(vodArray);
-                    vodAdapter.notifyDataSetChanged();
-
-                    //로딩 숨기기
-                    hidepDialog();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<VodDataArray> call, Throwable t) {
-                Toast.makeText(getContext(), "통신 오류", Toast.LENGTH_SHORT).show();
-            }
-        });
+//        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+//        Call<VodDataArray> call = apiInterface.getvodList();
+//        call.enqueue(new Callback<VodDataArray>() {
+//            @Override
+//            public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
+//                if (response.isSuccessful() && response.body() != null){
+//                    vodArray = response.body().getVodDataArray();
+//                    vodAdapter.setAdapter(vodArray);
+//                    vodAdapter.notifyDataSetChanged();
+//
+//                    //로딩 숨기기
+//                    hidepDialog();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<VodDataArray> call, Throwable t) {
+//                Toast.makeText(getContext(), "통신 오류", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
     }
 

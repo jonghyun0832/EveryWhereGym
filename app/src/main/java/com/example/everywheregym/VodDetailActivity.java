@@ -81,6 +81,7 @@ public class VodDetailActivity extends AppCompatActivity {
     private ProgressDialog prDialog;
 
     private String vod_length;
+    private long totaltime;
 
     private String user_id;
 
@@ -359,6 +360,7 @@ public class VodDetailActivity extends AppCompatActivity {
                 long hours = duration / 3600;
                 long minutes = (duration - hours * 3600) / 60;
                 long seconds = duration - (hours * 3600 + minutes * 60);
+                totaltime = hours * 3600 + minutes * 60 + seconds;
 
                 if(hours > 0){
                     if(minutes < 10){
@@ -456,6 +458,7 @@ public class VodDetailActivity extends AppCompatActivity {
                             String pdname = user_id + "_" + Calendar.getInstance().getTimeInMillis();
                             RequestBody filename = RequestBody.create(MediaType.parse("text/plain"),pdname);
                             RequestBody file_length = RequestBody.create(MediaType.parse("text/plain"),vod_length);
+                            RequestBody file_time = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(totaltime));
                             RequestBody file_user = RequestBody.create(MediaType.parse("text/plain"),user_id);
                             RequestBody file_title = RequestBody.create(MediaType.parse("text/plain"),input_title);
                             RequestBody file_category = RequestBody.create(MediaType.parse("text/plain"),selected_category);
@@ -466,6 +469,7 @@ public class VodDetailActivity extends AppCompatActivity {
                             //RequestBody file_img = RequestBody.create(MediaType.parse("text/plain"),); 이미지
                             map.put("name",filename);
                             map.put("length",file_length);
+                            map.put("time",file_time);
                             map.put("userId",file_user);
                             map.put("title",file_title);
                             map.put("category",file_category);
