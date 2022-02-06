@@ -36,6 +36,7 @@ public class FragTrMypage extends Fragment {
     TextView tv_tr_certify; //자격사항
     Button btn_my_live; //내 라이브 일정
     Button btn_my_upload; //내 업로드 영상
+    Button btn_my_bookmark; //내 북마크
     Button btn_tr_logout; //로그아웃
 
 
@@ -67,6 +68,7 @@ public class FragTrMypage extends Fragment {
 
         btn_my_live = view.findViewById(R.id.btn_my_live);
         btn_my_upload = view.findViewById(R.id.btn_my_upload);
+        btn_my_bookmark = view.findViewById(R.id.btn_my_bookmark_tr);
         btn_tr_logout = view.findViewById(R.id.btn_tr_logout);
 
 
@@ -121,9 +123,21 @@ public class FragTrMypage extends Fragment {
         btn_my_upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getContext(), "업로드 만들어야함", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getContext(),TrainerMyVodActivity.class);
+                startActivity(intent);
             }
         });
+
+        //내 북마크
+        btn_my_bookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(),MyBookMarkActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
 
         //로그아웃 버튼
         btn_tr_logout.setOnClickListener(new View.OnClickListener() {

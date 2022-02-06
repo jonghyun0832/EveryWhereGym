@@ -29,6 +29,7 @@ public class FragMypage extends Fragment {
     private Button btn_edit_profile;
     private TextView tv_profile_name;
     private ImageView iv_profile;
+    private Button btn_bookmark;
 
     private String user_name;
     private String user_img;
@@ -44,6 +45,7 @@ public class FragMypage extends Fragment {
         btn_edit_profile = view.findViewById(R.id.button_edit_profile);
         tv_profile_name = view.findViewById(R.id.textview_profile_name);
         iv_profile = view.findViewById(R.id.iv_mypage_user_img);
+        btn_bookmark = view.findViewById(R.id.button_bookmark);
 
 
         iv_profile.setOnClickListener(new View.OnClickListener() {
@@ -62,6 +64,14 @@ public class FragMypage extends Fragment {
                 Intent intent = new Intent(getContext(), EditProfileActivity.class);
                 intent.putExtra("user_name",user_name);
                 intent.putExtra("user_img",user_img);
+                startActivity(intent);
+            }
+        });
+
+        btn_bookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(),MyBookMarkActivity.class);
                 startActivity(intent);
             }
         });

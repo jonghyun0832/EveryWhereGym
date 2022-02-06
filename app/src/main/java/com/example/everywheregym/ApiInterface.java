@@ -210,6 +210,38 @@ public interface ApiInterface {
     );
 
 
+    //북마크 추가
+    @FormUrlEncoded
+    @POST("bookmarkVod.php")
+    Call<VodData> bookmarkVod(
+            @Field("user_id") String filter_category,
+            @Field("vod_id") String filter_difficulty
+    );
+
+    //북마크 삭제
+    @FormUrlEncoded
+    @POST("bookmarkDelete.php")
+    Call<VodData> bookmarkDelete(
+            @Field("user_id") String filter_category,
+            @Field("vod_id") String filter_difficulty
+    );
+
+    //북마크 체크
+    @FormUrlEncoded
+    @POST("checkBookMark.php")
+    Call<VodData> checkBookMark(
+            @Field("user_id") String filter_category,
+            @Field("vod_id") String filter_difficulty
+    );
+
+    //북마크된 영상리스트 불러오기
+    @FormUrlEncoded
+    @POST("getBookMarkList.php")
+    Call<VodDataArray> getBookMarkList(
+            @Field("user_id") String user_id
+    );
+
+
 
 //    @Multipart
 //    @POST("getTrainerInfo.php")

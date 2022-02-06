@@ -6,9 +6,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -45,6 +48,8 @@ public class TestActivity extends AppCompatActivity {
     private TextView tv_uploader_name;
     private ImageView iv_arrow;
 
+    private ImageView iv_bookmark;
+
     private ImageView iv_loading_thumbnail;
 
     private TextView tv_explain;
@@ -53,6 +58,8 @@ public class TestActivity extends AppCompatActivity {
 
     private String user_id;
     private String vod_uploader_img_url;
+
+    private boolean isMark;
 
 
 
@@ -87,6 +94,8 @@ public class TestActivity extends AppCompatActivity {
         tv_uploader_name = findViewById(R.id.tv_vod_show_name);
         iv_arrow = findViewById(R.id.iv_vod_show_arrow);
 
+        iv_bookmark = findViewById(R.id.iv_btn_bookmark);
+
         tv_explain = findViewById(R.id.tv_vod_show_explain);
 
         fr_show_profile = findViewById(R.id.fr_vod_show);
@@ -96,11 +105,12 @@ public class TestActivity extends AppCompatActivity {
 
 
 //        //아직 안쓰는데 쓰면 이사람 영상가져올떄쓸듯
-//        SharedPreferences sharedPreferences= this.getSharedPreferences("info", Context.MODE_PRIVATE);
-//        user_id = sharedPreferences.getString("user_id","0");
+        SharedPreferences sharedPreferences= this.getSharedPreferences("info", Context.MODE_PRIVATE);
+        user_id = sharedPreferences.getString("user_id","0");
 
 //        initDialog();
 //        showpDialog();
+
 
         Intent intent = getIntent();
         String vod_path = intent.getStringExtra("vod_path");
@@ -122,12 +132,17 @@ public class TestActivity extends AppCompatActivity {
         Log.d("IMG", "onCreate전: ");
         Glide.with(TestActivity.this).load(vod_thumbnail_url).into(iv_loading_thumbnail);
         Log.d("IMG", "onCreate후: ");
+
         //제대로된 조회수를 받아왔을때 조회수 증가
         if (vod_view == -1){
             Toast.makeText(TestActivity.this, "조회수 오류", Toast.LENGTH_SHORT).show();
         } else {
             increaseView(vod_id,vod_view);
         };
+
+        //북마크 체크하기
+        isBookMark(user_id,vod_id);
+
         String str_category = "집중 부위 : " + vod_category;
         tv_category.setText(str_category);
         tv_title.setText(vod_title);
@@ -220,6 +235,21 @@ public class TestActivity extends AppCompatActivity {
             }
         });
 
+        iv_bookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isMark){
+                    //한번더 누르면 북마크 해제
+                    deleteBookMark(user_id,vod_id);
+                    iv_bookmark.setImageDrawable(ContextCompat.getDrawable(TestActivity.this,R.drawable.ic_baseline_bookmark_empty));
+                } else {
+                    //한번더 누르면 북마크 추가
+                    addBookMark(user_id,vod_id);
+                    iv_bookmark.setImageDrawable(ContextCompat.getDrawable(TestActivity.this,R.drawable.ic_baseline_bookmark_24));
+                }
+            }
+        });
+
 
 
 
@@ -240,6 +270,102 @@ public class TestActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<VodData> call, Throwable t) {
                 Toast.makeText(TestActivity.this, "조회수 증가 실패", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void isBookMark(String user_id, String vod_id){
+        //북마크 확인
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<VodData> call = apiInterface.checkBookMark(user_id,vod_id);
+        call.enqueue(new Callback<VodData>() {
+            @Override
+            public void onResponse(Call<VodData> call, Response<VodData> response) {
+                if (response.isSuccessful() && response.body() != null){
+                    if(response.body().isSuccess()){
+                        //북마크 없을때
+                        iv_bookmark.setImageDrawable(ContextCompat.getDrawable(TestActivity.this,R.drawable.ic_baseline_bookmark_empty));
+                        isMark = false;
+                    } else {
+                        //이미 북마크 된경우
+                        iv_bookmark.setImageDrawable(ContextCompat.getDrawable(TestActivity.this,R.drawable.ic_baseline_bookmark_24));
+                        isMark = true;
+
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VodData> call, Throwable t) {
+                //실패
+            }
+        });
+    }
+
+    private void addBookMark(String user_id, String vod_id){
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<VodData> call = apiInterface.bookmarkVod(user_id,vod_id);
+        call.enqueue(new Callback<VodData>() {
+            @Override
+            public void onResponse(Call<VodData> call, Response<VodData> response) {
+                if (response.isSuccessful() && response.body() != null){
+                    if(response.body().isSuccess()){
+                        AlertDialog.Builder ad = new AlertDialog.Builder(TestActivity.this);
+                        ad.setTitle("알림");
+                        ad.setMessage("동영상이 북마크에 추가되었습니다");
+                        ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+
+                        });
+                        AlertDialog alertDialog = ad.create();
+                        alertDialog.show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VodData> call, Throwable t) {
+                //실패
+            }
+        });
+    }
+
+    private void deleteBookMark(String user_id, String vod_id){
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<VodData> call = apiInterface.bookmarkDelete(user_id,vod_id);
+        call.enqueue(new Callback<VodData>() {
+            @Override
+            public void onResponse(Call<VodData> call, Response<VodData> response) {
+                if (response.isSuccessful() && response.body() != null){
+                    if(response.body().isSuccess()){
+                        AlertDialog.Builder ad = new AlertDialog.Builder(TestActivity.this);
+                        ad.setTitle("알림");
+                        ad.setMessage("해당 동영상의 북마크를 해제했습니다");
+                        ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                finish();
+                                overridePendingTransition(0,0);
+                                Intent intent = getIntent();
+                                startActivity(intent);
+                                overridePendingTransition(0,0);
+                            }
+
+                        });
+                        AlertDialog alertDialog = ad.create();
+                        alertDialog.show();
+                    }else {
+                        Toast.makeText(TestActivity.this, "서버에서 삭제실패", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VodData> call, Throwable t) {
+                //실패
             }
         });
     }

@@ -1,6 +1,7 @@
 package com.example.everywheregym;
 
 import android.content.Context;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +25,20 @@ public class VodUploaderAdapter extends RecyclerView.Adapter<VodUploaderAdapter.
         void whenItemClick(int position);
     }
 
+    public interface vodUploaderAdapterMoreClickListener{
+
+        void whenMoreClick(int position);
+    }
+
     private VodUploaderAdapter.vodUploaderAdapterClickListener myListener;
+    private VodUploaderAdapter.vodUploaderAdapterMoreClickListener myMoreListener;
 
     public void setOnClickListener(VodUploaderAdapter.vodUploaderAdapterClickListener listener){
         myListener = listener;
+    }
+
+    public void setOnMoreClickListener(VodUploaderAdapter.vodUploaderAdapterMoreClickListener listener){
+        myMoreListener = listener;
     }
 
     private ArrayList<VodData> arrayList;
@@ -67,6 +78,8 @@ public class VodUploaderAdapter extends RecyclerView.Adapter<VodUploaderAdapter.
         holder.tv_length.setText(arrayList.get(position).getVod_time());
         holder.tv_title.setText(arrayList.get(position).getVod_title());
 
+        holder.tv_uploader.setText(arrayList.get(position).getVod_uploader_name());
+
         String get_view = "조회수 " + arrayList.get(position).getVod_view() + "회";
         holder.tv_view.setText(get_view);
 
@@ -93,6 +106,8 @@ public class VodUploaderAdapter extends RecyclerView.Adapter<VodUploaderAdapter.
         public TextView tv_title;
         public TextView tv_view;
         public TextView tv_difficulty;
+        public ImageView iv_more;
+        public TextView tv_uploader;
 
 
         public VodUploaderViewHolder(@NonNull View itemView) {
@@ -103,6 +118,8 @@ public class VodUploaderAdapter extends RecyclerView.Adapter<VodUploaderAdapter.
             this.tv_title = (TextView) itemView.findViewById(R.id.rv_tv_uploader_vod_title);
             this.tv_view = (TextView) itemView.findViewById(R.id.rv_tv_uploader_vod_view);
             this.tv_difficulty = (TextView) itemView.findViewById(R.id.rv_tv_uploader_vod_difficulty);
+            this.iv_more = (ImageView) itemView.findViewById(R.id.iv_more_upload_list);
+            this.tv_uploader = (TextView) itemView.findViewById(R.id.rv_tv_uploader_vod_uploader);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -110,6 +127,16 @@ public class VodUploaderAdapter extends RecyclerView.Adapter<VodUploaderAdapter.
                     final int pos = getAbsoluteAdapterPosition();
                     if(pos != RecyclerView.NO_POSITION){
                         myListener.whenItemClick(pos);
+                    }
+                }
+            });
+
+            iv_more.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final int pos = getAbsoluteAdapterPosition();
+                    if(myMoreListener != null){
+                        myMoreListener.whenMoreClick(pos);
                     }
                 }
             });

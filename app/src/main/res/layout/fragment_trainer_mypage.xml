@@ -8,8 +8,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="-66dp"
-        tools:layout_editor_absoluteY="60dp">
+        tools:layout_editor_absoluteX="26dp"
+        tools:layout_editor_absoluteY="-90dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -151,8 +151,8 @@
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:text="TextView"
-                android:textSize="14sp"
                 android:textColor="@color/black"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toStartOf="@+id/guideline34"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/guideline33"
@@ -168,8 +168,8 @@
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:text="TextView"
-                android:textSize="14sp"
                 android:textColor="@color/black"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toStartOf="@+id/guideline34"
                 app:layout_constraintStart_toStartOf="@+id/guideline33"
                 app:layout_constraintTop_toBottomOf="@+id/textview_tr_expert" />
@@ -184,8 +184,8 @@
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:text="TextView"
-                android:textSize="14sp"
                 android:textColor="@color/black"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toStartOf="@+id/guideline34"
                 app:layout_constraintStart_toStartOf="@+id/guideline33"
                 app:layout_constraintTop_toBottomOf="@+id/textview_tr_career" />
@@ -256,6 +256,19 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_my_bookmark_tr" />
+
+            <Button
+                android:id="@+id/btn_my_bookmark_tr"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="20dp"
+                android:text="내 북마크"
+                android:textAlignment="textStart"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/btn_my_upload" />
 

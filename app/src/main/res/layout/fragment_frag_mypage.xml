@@ -75,7 +75,8 @@
                 android:layout_height="60dp"
                 android:layout_marginTop="20dp"
                 android:background="@android:color/transparent"
-                android:text="               내 시청기록"
+                android:paddingLeft="80dp"
+                android:text="내 시청기록"
                 android:textAlignment="textStart"
                 android:textColor="@color/black"
                 android:textSize="24sp"
@@ -99,14 +100,15 @@
                 android:layout_height="60dp"
                 android:layout_marginTop="20dp"
                 android:background="@android:color/transparent"
-                android:text="               설정"
+                android:text="설정"
+                android:paddingLeft="80dp"
                 android:textAlignment="textStart"
                 android:textColor="@color/black"
                 android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/button_history" />
+                app:layout_constraintTop_toBottomOf="@+id/button_bookmark" />
 
             <ImageView
                 android:id="@+id/imageview_setting"
@@ -117,6 +119,31 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/button_setting"
                 app:srcCompat="@drawable/ic_baseline_settings" />
+
+            <Button
+                android:id="@+id/button_bookmark"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="20dp"
+                android:text="내 북마크"
+                android:paddingLeft="80dp"
+                android:textAlignment="textStart"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:background="@android:color/transparent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/button_history" />
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                app:layout_constraintBottom_toBottomOf="@+id/button_bookmark"
+                app:layout_constraintStart_toStartOf="@+id/button_bookmark"
+                app:layout_constraintTop_toTopOf="@+id/button_bookmark"
+                app:srcCompat="@drawable/ic_baseline_bookmark_50" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 

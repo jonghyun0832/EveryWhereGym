@@ -102,6 +102,7 @@ public class VodDetailActivity extends AppCompatActivity {
     private String vod_calorie = "";
 
     //수정으로 온 데이터 받기
+    private boolean from_list = false;
     private boolean isEdit = false;
     private String getted_vod_id;
     private String getted_vod_thumbnail;
@@ -149,6 +150,7 @@ public class VodDetailActivity extends AppCompatActivity {
         //수정인지 판단하기
         try{
             Intent intentEdit = getIntent();
+            from_list = intentEdit.getBooleanExtra("fromList",false);
             isEdit = intentEdit.getBooleanExtra("isEdit",false);
             getted_vod_id = intentEdit.getStringExtra("vod_id");
             getted_vod_thumbnail = intentEdit.getStringExtra("vod_thumbnail_path");
@@ -159,7 +161,6 @@ public class VodDetailActivity extends AppCompatActivity {
             getted_vod_explain = intentEdit.getStringExtra("vod_explain");
             getted_vod_material = intentEdit.getStringExtra("vod_material");
             getted_vod_calorie = intentEdit.getStringExtra("vod_calorie");
-
 
         }catch (Exception e){
             e.printStackTrace();
@@ -304,9 +305,13 @@ public class VodDetailActivity extends AppCompatActivity {
                                         ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialogInterface, int i) {
-                                                Intent intent = new Intent(VodDetailActivity.this, TrainerHomeActivity.class);
-                                                intent.setFlags(intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                startActivity(intent);
+                                                if (from_list){
+                                                    finish();
+                                                } else {
+                                                    Intent intent = new Intent(VodDetailActivity.this, TrainerHomeActivity.class);
+                                                    intent.setFlags(intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                    startActivity(intent);
+                                                }
                                             }
 
                                         });

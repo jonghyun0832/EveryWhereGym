@@ -27,6 +27,12 @@
         android:theme="@style/Theme.EveryWhereGym"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".MyBookMarkActivity"
+            android:exported="true" />
+        <activity
+            android:name=".TrainerMyVodActivity"
+            android:exported="true" />
+        <activity
             android:name=".ShowProfileActivity"
             android:exported="true" />
         <activity
@@ -35,8 +41,8 @@
             android:exported="true" />
         <activity
             android:name=".VodDetailActivity"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:exported="true" />
+            android:exported="true"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".VideoCheck"
             android:exported="true" />

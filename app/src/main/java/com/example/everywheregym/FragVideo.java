@@ -289,6 +289,20 @@ public class FragVideo extends Fragment {
             @Override
             public void whenMoreClick(int position) {
 
+                String vod_id = vodArray.get(position).getVod_id(); //수정에서 보냄
+                String vod_thumbnail_path = vodArray.get(position).getVod_thumbnail(); //수정에서 보냄
+                String vod_time = vodArray.get(position).getVod_time(); //수정에서 보냄
+                String vod_title = vodArray.get(position).getVod_title(); //수정에서 보냄
+                String vod_category = vodArray.get(position).getVod_category(); //수정에서 보냄
+                String vod_difficulty = vodArray.get(position).getVod_difficulty(); //수정에서 보냄
+                String vod_path = vodArray.get(position).getVod_path();
+                String vod_explain = vodArray.get(position).getVod_explain();
+                String vod_material = vodArray.get(position).getVod_materail();
+                String vod_calorie = vodArray.get(position).getVod_calorie();
+
+
+
+
                 AlertDialog.Builder ad = new AlertDialog.Builder(getContext());
                 LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 View dialogView = inflater.inflate(R.layout.dialog_vod_more, null);
@@ -298,7 +312,35 @@ public class FragVideo extends Fragment {
                 TextView tv_more_register = dialogView.findViewById(R.id.tv_more_register);
                 ImageView iv_more_edit = dialogView.findViewById(R.id.iv_more_edit);
                 ImageView iv_more_delete = dialogView.findViewById(R.id.iv_more_delete);
-                //ImageView iv_more_register = dialogView.findViewById(R.id.iv_more_register);
+                ImageView iv_more_register = dialogView.findViewById(R.id.iv_more_register);
+
+
+                //북마크 확인
+                ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+                Call<VodData> call = apiInterface.checkBookMark(user_id,vod_id);
+                call.enqueue(new Callback<VodData>() {
+                    @Override
+                    public void onResponse(Call<VodData> call, Response<VodData> response) {
+                        if (response.isSuccessful() && response.body() != null){
+                            if(response.body().isSuccess()){
+                                //북마크 없을때
+                                tv_more_register.setText("북마크 추가");
+                            } else {
+                                //이미 북마크 된경우
+                                tv_more_register.setText("북마크 해제");
+                                iv_more_register.setImageDrawable(ContextCompat.getDrawable(getContext(),R.drawable.ic_baseline_cancel_24));
+
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<VodData> call, Throwable t) {
+                        //실패
+                    }
+                });
+
+
 
                 tv_more_edit.setVisibility(View.GONE);
                 tv_more_delete.setVisibility(View.GONE);
@@ -312,16 +354,7 @@ public class FragVideo extends Fragment {
                     iv_more_delete.setVisibility(View.VISIBLE);
                 }
 
-                String vod_id = vodArray.get(position).getVod_id(); //수정에서 보냄
-                String vod_thumbnail_path = vodArray.get(position).getVod_thumbnail(); //수정에서 보냄
-                String vod_time = vodArray.get(position).getVod_time(); //수정에서 보냄
-                String vod_title = vodArray.get(position).getVod_title(); //수정에서 보냄
-                String vod_category = vodArray.get(position).getVod_category(); //수정에서 보냄
-                String vod_difficulty = vodArray.get(position).getVod_difficulty(); //수정에서 보냄
-                String vod_path = vodArray.get(position).getVod_path();
-                String vod_explain = vodArray.get(position).getVod_explain();
-                String vod_material = vodArray.get(position).getVod_materail();
-                String vod_calorie = vodArray.get(position).getVod_calorie();
+
 
                 ad.setView(dialogView);
 
@@ -422,7 +455,78 @@ public class FragVideo extends Fragment {
                 tv_more_register.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        //즐겨찾기 테이블에 저장하기 ㄱㄱ
+
+                        alertDialog.dismiss();
+
+                        if(tv_more_register.getText().toString().equals("북마크 추가")){
+
+                            //즐겨찾기 테이블에 저장하기 ㄱㄱ
+                            //레트로핏으로 해당 영상 정보 보내기
+                            //리스트에 있으면 북마크 해제, 없으면 북마크 설정하기
+                            ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+                            Call<VodData> call = apiInterface.bookmarkVod(user_id,vod_id);
+                            call.enqueue(new Callback<VodData>() {
+                                @Override
+                                public void onResponse(Call<VodData> call, Response<VodData> response) {
+                                    if (response.isSuccessful() && response.body() != null){
+                                        if(response.body().isSuccess()){
+                                            AlertDialog.Builder ad = new AlertDialog.Builder(getContext());
+                                            ad.setTitle("알림");
+                                            ad.setMessage("동영상이 북마크에 추가되었습니다");
+                                            ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                }
+
+                                            });
+                                            AlertDialog alertDialog = ad.create();
+                                            alertDialog.show();
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<VodData> call, Throwable t) {
+                                    //실패
+                                }
+                            });
+
+                        } else {
+                            //북마크 해제
+                            ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+                            Call<VodData> call = apiInterface.bookmarkDelete(user_id,vod_id);
+                            call.enqueue(new Callback<VodData>() {
+                                @Override
+                                public void onResponse(Call<VodData> call, Response<VodData> response) {
+                                    if (response.isSuccessful() && response.body() != null){
+                                        if(response.body().isSuccess()){
+                                            AlertDialog.Builder ad = new AlertDialog.Builder(getContext());
+                                            ad.setTitle("알림");
+                                            ad.setMessage("해당 동영상의 북마크를 해제했습니다");
+                                            ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                }
+
+                                            });
+                                            AlertDialog alertDialog = ad.create();
+                                            alertDialog.show();
+                                        }else {
+                                            Toast.makeText(getContext(), "서버에서 삭제실패", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<VodData> call, Throwable t) {
+                                    //실패
+                                }
+                            });
+
+                        }
+
                     }
                 });
 

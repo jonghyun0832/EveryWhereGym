@@ -263,6 +263,15 @@
 
             </FrameLayout>
 
+            <ImageView
+                android:id="@+id/iv_btn_bookmark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/guideline39"
+                app:srcCompat="@drawable/ic_baseline_bookmark_empty" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
