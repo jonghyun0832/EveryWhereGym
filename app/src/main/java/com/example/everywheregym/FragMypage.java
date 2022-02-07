@@ -30,6 +30,7 @@ public class FragMypage extends Fragment {
     private TextView tv_profile_name;
     private ImageView iv_profile;
     private Button btn_bookmark;
+    private Button btn_history;
 
     private String user_name;
     private String user_img;
@@ -46,6 +47,7 @@ public class FragMypage extends Fragment {
         tv_profile_name = view.findViewById(R.id.textview_profile_name);
         iv_profile = view.findViewById(R.id.iv_mypage_user_img);
         btn_bookmark = view.findViewById(R.id.button_bookmark);
+        btn_history = view.findViewById(R.id.button_history);
 
 
         iv_profile.setOnClickListener(new View.OnClickListener() {
@@ -57,7 +59,7 @@ public class FragMypage extends Fragment {
             }
         });
 
-
+        //프로필 편집하기
         btn_edit_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,6 +70,16 @@ public class FragMypage extends Fragment {
             }
         });
 
+        //내 시청기록
+        btn_history.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(),MyHistoryActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        //내 북마크
         btn_bookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -76,7 +88,7 @@ public class FragMypage extends Fragment {
             }
         });
 
-
+        //설정
         btn_setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

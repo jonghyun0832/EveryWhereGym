@@ -185,6 +185,7 @@ public interface ApiInterface {
     );
 
     //vod 리스트 만들기 (리사이클러뷰 array)
+    //조회수증가
     @FormUrlEncoded
     @POST("addVideoView.php")
     Call<VodData> addVideoView(
@@ -214,24 +215,24 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("bookmarkVod.php")
     Call<VodData> bookmarkVod(
-            @Field("user_id") String filter_category,
-            @Field("vod_id") String filter_difficulty
+            @Field("user_id") String user_id,
+            @Field("vod_id") String vod_id
     );
 
     //북마크 삭제
     @FormUrlEncoded
     @POST("bookmarkDelete.php")
     Call<VodData> bookmarkDelete(
-            @Field("user_id") String filter_category,
-            @Field("vod_id") String filter_difficulty
+            @Field("user_id") String user_id,
+            @Field("vod_id") String vod_id
     );
 
     //북마크 체크
     @FormUrlEncoded
     @POST("checkBookMark.php")
     Call<VodData> checkBookMark(
-            @Field("user_id") String filter_category,
-            @Field("vod_id") String filter_difficulty
+            @Field("user_id") String user_id,
+            @Field("vod_id") String vod_id
     );
 
     //북마크된 영상리스트 불러오기
@@ -239,6 +240,30 @@ public interface ApiInterface {
     @POST("getBookMarkList.php")
     Call<VodDataArray> getBookMarkList(
             @Field("user_id") String user_id
+    );
+
+
+    //시청기록 남기기
+    @FormUrlEncoded
+    @POST("addHistory.php")
+    Call<VodData> addHistory(
+            @Field("user_id") String user_id,
+            @Field("vod_id") String vod_id
+    );
+
+    //시청기록 가져오기
+    @FormUrlEncoded
+    @POST("getHistory.php")
+    Call<VodHistoryDataArray> getHistory(
+            @Field("user_id") String user_id
+    );
+
+    //시청기록 삭제
+    @FormUrlEncoded
+    @POST("deleteHistory.php")
+    Call<VodData> deleteHistory(
+            @Field("user_id") String user_id,
+            @Field("vod_id") String vod_id
     );
 
 

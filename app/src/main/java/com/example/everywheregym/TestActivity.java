@@ -140,6 +140,9 @@ public class TestActivity extends AppCompatActivity {
             increaseView(vod_id,vod_view);
         };
 
+        //시청기록에 추가하기
+        addHistory(user_id,vod_id);
+
         //북마크 체크하기
         isBookMark(user_id,vod_id);
 
@@ -366,6 +369,22 @@ public class TestActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<VodData> call, Throwable t) {
                 //실패
+            }
+        });
+    }
+
+    private void addHistory(String user_id, String vod_id){
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<VodData> call = apiInterface.addHistory(user_id,vod_id);
+        call.enqueue(new Callback<VodData>() {
+            @Override
+            public void onResponse(Call<VodData> call, Response<VodData> response) {
+                //시청기록 추가완료
+            }
+
+            @Override
+            public void onFailure(Call<VodData> call, Throwable t) {
+                Toast.makeText(TestActivity.this, "시청기록 추가 실패", Toast.LENGTH_SHORT).show();
             }
         });
     }
