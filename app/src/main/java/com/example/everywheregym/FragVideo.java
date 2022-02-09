@@ -115,10 +115,6 @@ public class FragVideo extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.rv_vod);
         linearLayoutManager = new LinearLayoutManager(getActivity());
 
-        //최신것이 제일 위에 올 수 있도록 설정
-//        linearLayoutManager.setReverseLayout(true);
-//        linearLayoutManager.setStackFromEnd(true);
-
         recyclerView.setLayoutManager(linearLayoutManager);
 
         vodArray = new ArrayList<>();
@@ -232,6 +228,15 @@ public class FragVideo extends Fragment {
                 }
             });
         }
+
+
+        iv_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(),SearchActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
 

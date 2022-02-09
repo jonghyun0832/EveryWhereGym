@@ -266,6 +266,43 @@ public interface ApiInterface {
             @Field("vod_id") String vod_id
     );
 
+    //검색기록 가져오기
+    @FormUrlEncoded
+    @POST("getSearchHistory.php")
+    Call<SearchDataArray> getSearchHistory(
+            @Field("user_id") String user_id
+    );
+
+    //검색기록 모두삭제
+    @FormUrlEncoded
+    @POST("deleteSearchHistoryAll.php")
+    Call<SearchDataArray> deleteSearchHistoryAll(
+            @Field("user_id") String user_id
+    );
+
+    //특정 검색기록 삭제
+    @FormUrlEncoded
+    @POST("deleteSearchHistory.php")
+    Call<SearchDataArray> deleteSearchHistory(
+            @Field("user_id") String user_id,
+            @Field("sh_id") String sh_id
+    );
+
+    //검색기록 저장
+    @FormUrlEncoded
+    @POST("addSearchHistory.php")
+    Call<SearchDataArray> addSearchHistory(
+            @Field("user_id") String user_id,
+            @Field("search_text") String search_text
+    );
+
+    //검색결과 불러오기
+    @FormUrlEncoded
+    @POST("getSearchList.php")
+    Call<VodDataArray> getSearchList(
+            @Field("search_text") String search_text
+    );
+
 
 
 //    @Multipart
