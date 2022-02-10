@@ -27,9 +27,15 @@
         android:theme="@style/Theme.EveryWhereGym"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".SearchResultActivity"
-            android:windowSoftInputMode="adjustPan"
+            android:name=".LiveCreateActivity_2"
             android:exported="true" />
+        <activity
+            android:name=".LiveCreateActivity_1"
+            android:exported="true" />
+        <activity
+            android:name=".SearchResultActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".SearchActivity"
             android:exported="true" />

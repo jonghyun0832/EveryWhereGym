@@ -143,6 +143,8 @@ public class TrainerHomeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Toast.makeText(TrainerHomeActivity.this, "라이브 추가", Toast.LENGTH_SHORT).show();
 
+                Intent live_intent = new Intent(TrainerHomeActivity.this,LiveCreateActivity_1.class);
+                startActivity(live_intent);
 
                 toggleFab();
             }

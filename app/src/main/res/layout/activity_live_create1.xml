@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LiveCreateActivity_1">
+
+    <CalendarView
+        android:id="@+id/cv_c1_live"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/hd_tv_c1_live_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="40dp"
+        android:text="선택한 날짜 :"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cv_c1_live" />
+
+    <TextView
+        android:id="@+id/tv_c1_live_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="50dp"
+        android:text="TextView"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/hd_tv_c1_live_date"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/hd_tv_c1_live_date" />
+
+    <TextView
+        android:id="@+id/hd_tv_c1_live_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="선택한 날짜의 내 수업 :"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@+id/hd_tv_c1_live_date"
+        app:layout_constraintTop_toBottomOf="@+id/hd_tv_c1_live_date" />
+
+    <TextView
+        android:id="@+id/tv_c1_live_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/hd_tv_c1_live_count"
+        app:layout_constraintEnd_toEndOf="@+id/tv_c1_live_date"
+        app:layout_constraintTop_toTopOf="@+id/hd_tv_c1_live_count" />
+
+    <Button
+        android:id="@+id/btn_c1_live_next"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/round_button_gray"
+        android:text="다 음"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_c1_live_btn_detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/round_text_gray"
+        android:minHeight="30dp"
+        android:paddingLeft="15dp"
+        android:paddingBottom="8dp"
+        android:paddingRight="15dp"
+        android:paddingTop="8dp"
+        android:text="자세히"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/tv_c1_live_count"
+        app:layout_constraintStart_toStartOf="@+id/tv_c1_live_count"
+        app:layout_constraintTop_toBottomOf="@+id/tv_c1_live_count" />
+</androidx.constraintlayout.widget.ConstraintLayout>
