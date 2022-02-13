@@ -303,6 +303,13 @@ public interface ApiInterface {
             @Field("search_text") String search_text
     );
 
+    //라이브 일정 데이터 업로드
+    @Multipart
+    @POST("uploadLiveData.php")
+    Call<LiveData> uploadLiveData(
+            @PartMap HashMap<String, RequestBody> data
+    );
+
 
 
 //    @Multipart

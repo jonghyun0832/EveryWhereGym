@@ -28,7 +28,8 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".LiveCreateActivity_2"
-            android:exported="true" />
+            android:exported="true"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".LiveCreateActivity_1"
             android:exported="true" />

@@ -85,13 +85,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/et_c2_live_title" />
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline42"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_begin="900dp" />
-
             <TextView
                 android:id="@+id/textView22"
                 android:layout_width="wrap_content"
@@ -150,21 +143,28 @@
                 android:layout_marginStart="40dp"
                 android:layout_marginTop="70dp"
                 android:layout_marginEnd="40dp"
+                android:layout_marginBottom="40dp"
                 android:background="@drawable/round_button_gray"
                 android:text="라이브 일정 등록하기"
                 android:textColor="@color/white"
                 android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView25" />
 
-            <Spinner
-                android:id="@+id/sp_c2_live_spend_time"
+            <TextView
+                android:id="@+id/tv_c2_live_spend_time"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="70dp"
                 android:layout_marginEnd="20dp"
                 android:minHeight="48dp"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:hint="소요 시간 설정"
+                android:gravity="center"
+                android:background="@drawable/text_edge_all"
                 app:layout_constraintBottom_toBottomOf="@+id/textView23"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView23"
@@ -181,8 +181,8 @@
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@+id/textView22"
-                app:layout_constraintEnd_toEndOf="@+id/sp_c2_live_spend_time"
-                app:layout_constraintStart_toStartOf="@+id/sp_c2_live_spend_time"
+                app:layout_constraintEnd_toEndOf="@+id/tv_c2_live_spend_time"
+                app:layout_constraintStart_toStartOf="@+id/tv_c2_live_spend_time"
                 app:layout_constraintTop_toTopOf="@+id/textView22" />
 
             <TextView
@@ -198,8 +198,8 @@
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@+id/textView24"
-                app:layout_constraintEnd_toEndOf="@+id/sp_c2_live_spend_time"
-                app:layout_constraintStart_toStartOf="@+id/sp_c2_live_spend_time"
+                app:layout_constraintEnd_toEndOf="@+id/tv_c2_live_spend_time"
+                app:layout_constraintStart_toStartOf="@+id/tv_c2_live_spend_time"
                 app:layout_constraintTop_toTopOf="@+id/textView24" />
 
 

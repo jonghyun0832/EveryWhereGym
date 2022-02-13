@@ -6,14 +6,24 @@
     android:layout_height="match_parent"
     tools:context=".LiveCreateActivity_1">
 
-    <CalendarView
+<!--    <CalendarView-->
+<!--        android:id="@+id/cv_c1_live"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         android:id="@+id/cv_c1_live"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:mcv_selectionColor="#00F"
+        app:mcv_showOtherDates="all" />
 
     <TextView
         android:id="@+id/hd_tv_c1_live_date"
@@ -22,6 +32,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="40dp"
         android:text="선택한 날짜 :"
+        android:textColor="@color/black"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cv_c1_live" />
@@ -32,6 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="50dp"
         android:text="TextView"
+        android:textColor="@color/black"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@+id/hd_tv_c1_live_date"
         app:layout_constraintEnd_toEndOf="parent"
@@ -43,6 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:text="선택한 날짜의 내 수업 :"
+        android:textColor="@color/black"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="@+id/hd_tv_c1_live_date"
         app:layout_constraintTop_toBottomOf="@+id/hd_tv_c1_live_date" />
@@ -52,6 +65,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"
+        android:textColor="@color/black"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@+id/hd_tv_c1_live_count"
         app:layout_constraintEnd_toEndOf="@+id/tv_c1_live_date"
