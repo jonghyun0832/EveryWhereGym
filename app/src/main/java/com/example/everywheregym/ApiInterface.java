@@ -310,6 +310,62 @@ public interface ApiInterface {
             @PartMap HashMap<String, RequestBody> data
     );
 
+    //live 리스트 만들기 (리사이클러뷰 array)
+    @FormUrlEncoded
+    @POST("getLiveListInfo.php")
+    Call<LiveDataArray> getliveList(
+            @Field("select_date") String select_date
+    );
+
+    // 내 live 리스트 가져오기 (리사이클러뷰 array)
+    @FormUrlEncoded
+    @POST("getMyLiveListInfo.php")
+    Call<LiveDataArray> getMyliveList(
+            @Field("select_date") String select_date,
+            @Field("user_id") String user_id
+    );
+
+    // 내 live 날짜 리스트 가져오기 (string [])
+    @FormUrlEncoded
+    @POST("getMyLiveListDateInfo.php")
+    Call<LiveDataArray> getMyliveDateList(
+            @Field("user_id") String user_id
+    );
+
+    //라이브 일정 삭제하기
+    @FormUrlEncoded
+    @POST("deleteLive.php")
+    Call<LiveData> deleteLive(
+            @Field("li_id") String vod_id
+    );
+
+    //알림 일정 확인하기
+    @FormUrlEncoded
+    @POST("checkLiveAlarm.php")
+    Call<LiveData> checkLiveAlarm(
+            @Field("user_id") String user_id,
+            @Field("live_id") String live_id,
+            @Field("uploader_id") String uploader_id
+    );
+
+    //알림 일정 추가하기
+    @FormUrlEncoded
+    @POST("addLiveAlarm.php")
+    Call<LiveData> addLiveAlarm(
+            @Field("user_id") String user_id,
+            @Field("live_id") String live_id,
+            @Field("uploader_id") String uploader_id
+    );
+
+    //알림 일정 삭제하기
+    @FormUrlEncoded
+    @POST("deleteLiveAlarm.php")
+    Call<LiveData> deleteLiveAlarm(
+            @Field("user_id") String user_id,
+            @Field("live_id") String live_id,
+            @Field("uploader_id") String uploader_id
+    );
+
 
 
 //    @Multipart

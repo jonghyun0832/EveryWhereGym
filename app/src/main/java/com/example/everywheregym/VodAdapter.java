@@ -42,7 +42,6 @@ public class VodAdapter extends RecyclerView.Adapter<VodAdapter.VodViewHolder> {
 
     //업로더 프로필 사진 클릭시
     public interface myRecyclerViewImgClickListener{
-
         void whenImgClick(int position);
     }
 

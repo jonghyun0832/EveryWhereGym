@@ -9,6 +9,9 @@ import okhttp3.RequestBody;
 public class LiveData {
 
     @Expose
+    @SerializedName("live_id") private String live_id;
+
+    @Expose
     @SerializedName("live_date") private String live_date;
 
     @Expose
@@ -27,17 +30,42 @@ public class LiveData {
     @SerializedName("live_calorie") private String live_calorie;
 
     @Expose
+    @SerializedName("live_join") private String live_join;
+
+    @Expose
     @SerializedName("live_limit_join") private String live_limit_join;
 
     @Expose
     @SerializedName("live_material") private String live_material;
 
     @Expose
-    @SerializedName("user_id") private String user_id;
+    @SerializedName("uploader_id") private String uploader_id;
+
+    @Expose
+    @SerializedName("uploader_name") private String uploader_name;
+
+    @Expose
+    @SerializedName("uploader_img") private String uploader_img;
+
+    @Expose
+    @SerializedName("alarm_num") private String alarm_num;
+
+    @Expose
+    @SerializedName("open") private String open;
+
+    @Expose
+    @SerializedName("enable") private String enable;
 
     @Expose
     @SerializedName("success") private boolean success;
 
+    public String getLive_id() {
+        return live_id;
+    }
+
+    public void setLive_id(String live_id) {
+        this.live_id = live_id;
+    }
 
     public String getLive_date() {
         return live_date;
@@ -87,6 +115,14 @@ public class LiveData {
         this.live_calorie = live_calorie;
     }
 
+    public String getLive_join() {
+        return live_join;
+    }
+
+    public void setLive_join(String live_join) {
+        this.live_join = live_join;
+    }
+
     public String getLive_limit_join() {
         return live_limit_join;
     }
@@ -103,12 +139,52 @@ public class LiveData {
         this.live_material = live_material;
     }
 
-    public String getUser_id() {
-        return user_id;
+    public String getUploader_id() {
+        return uploader_id;
     }
 
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
+    public void setUploader_id(String uploader_id) {
+        this.uploader_id = uploader_id;
+    }
+
+    public String getUploader_name() {
+        return uploader_name;
+    }
+
+    public void setUploader_name(String uploader_name) {
+        this.uploader_name = uploader_name;
+    }
+
+    public String getUploader_img() {
+        return uploader_img;
+    }
+
+    public void setUploader_img(String uploader_img) {
+        this.uploader_img = uploader_img;
+    }
+
+    public String getAlarm_num() {
+        return alarm_num;
+    }
+
+    public void setAlarm_num(String alarm_num) {
+        this.alarm_num = alarm_num;
+    }
+
+    public String getEnable() {
+        return enable;
+    }
+
+    public void setEnable(String enable) {
+        this.enable = enable;
+    }
+
+    public String getOpen() {
+        return open;
+    }
+
+    public void setOpen(String open) {
+        this.open = open;
     }
 
     public boolean isSuccess() {

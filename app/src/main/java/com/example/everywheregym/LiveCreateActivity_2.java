@@ -2,6 +2,8 @@ package com.example.everywheregym;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
@@ -31,6 +33,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -77,6 +80,10 @@ public class LiveCreateActivity_2 extends AppCompatActivity {
 
     private boolean isToday;
     private boolean isOkay = true;
+
+    private Context context;
+
+    private ArrayList<LiveData> liveArray;
 
     //타임피커 리스너
     TimePickerDialog.OnTimeSetListener startlistener = new TimePickerDialog.OnTimeSetListener() {
@@ -146,20 +153,27 @@ public class LiveCreateActivity_2 extends AppCompatActivity {
         SharedPreferences sharedPreferences= getSharedPreferences("info", MODE_PRIVATE);
         user_id = sharedPreferences.getString("user_id","");
 
+        context = this;
+        liveArray= new ArrayList<>();
+
         initDialog();
 
-
-        tv_btn_detail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //클릭시 리사이클러뷰로 오늘 날짜의 수업들 전부 보여주기
-            }
-        });
 
         Intent get_intent = getIntent();
         getted_date = get_intent.getStringExtra("selected_date");
         tv_date.setText(getted_date);
 
+        //선택한 일에 해당하는 라이브 arraylist 불러오기
+        getAllLive(getted_date);
+
+        tv_btn_detail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                makeDialog(liveArray);
+            }
+        });
+
+        //선택일자와 오늘이 같은 날인지 확인 (시작시간 제한용)
         isToday = checkTime();
 
 //        if(year == Integer.parseInt(split[0]) && min == Integer.parseInt(split[1]) && day == Integer.parseInt(split[2])){
@@ -498,6 +512,57 @@ public class LiveCreateActivity_2 extends AppCompatActivity {
 //        }
 
     }
+
+    private void getAllLive(String put_date){
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<LiveDataArray> call = apiInterface.getliveList(put_date);
+        call.enqueue(new Callback<LiveDataArray>() {
+            @Override
+            public void onResponse(Call<LiveDataArray> call, Response<LiveDataArray> response) {
+                if (response.isSuccessful() && response.body() != null){
+                    liveArray = response.body().getLiveDataArray();
+//                    liveAdapter.setArrayList(liveArray);
+//                    liveAdapter.notifyDataSetChanged();
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LiveDataArray> call, Throwable t) {
+                Toast.makeText(LiveCreateActivity_2.this, "통신 오류", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void makeDialog(ArrayList<LiveData> array){
+        AlertDialog.Builder ad = new AlertDialog.Builder(LiveCreateActivity_2.this);
+        LayoutInflater inflater = (LayoutInflater) LiveCreateActivity_2.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View dialogView = inflater.inflate(R.layout.dialog_show_live, null);
+
+        RecyclerView recyclerView;
+        LiveSubAdapter liveSubAdapter;
+        LinearLayoutManager linearLayoutManager;
+
+        recyclerView = dialogView.findViewById(R.id.rv_show_live);
+        linearLayoutManager = new LinearLayoutManager(context);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        liveSubAdapter = new LiveSubAdapter(array, context);
+        recyclerView.setAdapter(liveSubAdapter);
+
+        ad.setView(dialogView);
+        ad.setTitle("내 라이브 일정");
+        ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+
+        });
+        AlertDialog alertDialog = ad.create();
+        alertDialog.show();
+    }
+
 
 //    public void spendTimePicker(){
 //        TimePickerDialog dialog = new TimePickerDialog(LiveCreateActivity_2.this,

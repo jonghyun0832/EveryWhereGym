@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/guideline43"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <TextView
+                android:id="@+id/tv_rv_live_sub_start_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="30dp"
+                android:text="00 : 00"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_rv_live_sub_spend_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="00 분"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="@+id/imageView3"
+                app:layout_constraintStart_toStartOf="@+id/imageView3"
+                app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                app:layout_constraintEnd_toEndOf="@+id/tv_rv_live_sub_start_time"
+                app:layout_constraintStart_toStartOf="@+id/tv_rv_live_sub_start_time"
+                app:layout_constraintTop_toBottomOf="@+id/tv_rv_live_sub_start_time"
+                app:srcCompat="@drawable/ic_baseline_access_time_30" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/iv_rv_live_sub_uploader_img"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="15dp"
+                android:layout_marginBottom="30dp"
+                android:background="@android:color/transparent"
+                app:civ_border_color="#000000"
+                app:civ_border_overlay="false"
+                app:civ_border_width="3dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tv_rv_live_sub_start_time"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.462" />
+
+            <TextView
+                android:id="@+id/tv_rv_live_sub_uploader_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="강사 이름"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="@+id/iv_rv_live_sub_uploader_img"
+                app:layout_constraintStart_toStartOf="@+id/iv_rv_live_sub_uploader_img"
+                app:layout_constraintTop_toBottomOf="@+id/iv_rv_live_sub_uploader_img" />
+
+            <TextView
+                android:id="@+id/tv_rv_live_sub_title"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="12dp"
+                android:text="운동 프로그램 제목"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_rv_live_sub_start_time"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/iv_rv_live_sub_uploader_img" />
+
+            <TextView
+                android:id="@+id/tv_rv_live_sub_calorie"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:text="000 kcal"
+                android:textColor="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/tv_rv_live_sub_title"
+                app:layout_constraintTop_toBottomOf="@+id/tv_rv_live_sub_title" />
+
+            <TextView
+                android:id="@+id/tv_rv_live_sub_material"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:text="운동 준비물 표시"
+                android:textColor="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/tv_rv_live_sub_calorie"
+                app:layout_constraintTop_toBottomOf="@+id/tv_rv_live_sub_calorie" />
+
+            <TextView
+                android:id="@+id/tv_rv_live_sub_limit"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:text="제한 : 0 명"
+                android:textColor="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/tv_rv_live_sub_alarm"
+                app:layout_constraintTop_toBottomOf="@+id/tv_rv_live_sub_alarm" />
+
+            <TextView
+                android:id="@+id/tv_rv_live_sub_alarm"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:text="알림등록 : 0명"
+                android:textColor="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/tv_rv_live_sub_material"
+                app:layout_constraintTop_toBottomOf="@+id/tv_rv_live_sub_material" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline43"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="200dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>
