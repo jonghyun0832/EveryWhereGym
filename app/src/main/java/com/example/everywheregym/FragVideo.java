@@ -23,6 +23,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -45,6 +47,7 @@ import com.skydoves.balloon.Balloon;
 import com.skydoves.balloon.BalloonAnimation;
 import com.skydoves.balloon.OnBalloonClickListener;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -63,6 +66,8 @@ public class FragVideo extends Fragment {
     private VodAdapter vodAdapter;
     private LinearLayoutManager linearLayoutManager;
 
+    private ProgressBar pbBar;
+
     private String user_id;
     private String is_trainer;
 
@@ -77,6 +82,11 @@ public class FragVideo extends Fragment {
 
     private String minVal;
     private String maxVal;
+
+    private NestedScrollView nsv;
+    private int page = 1, limit = 3;
+    private String cursor = "0";
+    private boolean isEnd = false;
 
 
     private final RangeSlider.OnSliderTouchListener rangeSliderTouchListener =
@@ -121,15 +131,38 @@ public class FragVideo extends Fragment {
         vodAdapter = new VodAdapter(vodArray, getActivity());
         recyclerView.setAdapter(vodAdapter);
 
+        nsv = (NestedScrollView) view.findViewById(R.id.scroll_view_vod_main);
+        pbBar = (ProgressBar) view.findViewById(R.id.progressBar_vod_main);
+
+        nsv.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if(!nsv.canScrollVertically(1)){
+                    Log.d("왜안됨", "더는아래로 못가요 " + cursor);
+                    if(filtered_category != null || filtered_difficulty != null || filtered_time != null){
+                        page++;
+                        //pbBar.setVisibility(View.VISIBLE);
+                        getFilterData();
+                    } else {
+                        page++;
+                        //pbBar.setVisibility(View.VISIBLE);
+                        getData(page,limit,cursor);
+                    }
+                }
+            }
+        });
+
+        //getData(page,limit);
+
         initDialog();
 
         SharedPreferences sharedPreferences= getActivity().getSharedPreferences("info", Context.MODE_PRIVATE);
         user_id = sharedPreferences.getString("user_id","0");
         is_trainer = sharedPreferences.getString("is_trainer","");
-        //isFilter = sharedPreferences.getBoolean("is_filter",false);
 
 
         if(!user_id.equals("0")){
+            //사용자의 프로필 이미지 불러오기
             ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
             Call<UserInfo> call = apiInterface.getInfo(user_id);
             call.enqueue(new Callback<UserInfo>() {
@@ -186,13 +219,26 @@ public class FragVideo extends Fragment {
         }
 
         if (filtered_category != null || filtered_difficulty != null || filtered_time != null){
+            //필터 기준으로 vodarray 불러오기
+            pbBar.setVisibility(View.VISIBLE);
+            page = 1;
+            cursor = "0";
+
             ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-            Call<VodDataArray> call = apiInterface.filterVod(filtered_category,filtered_difficulty,filtered_time);
+            Call<VodDataArray> call = apiInterface.filterVod(filtered_category,filtered_difficulty,filtered_time,page,limit,cursor);
             call.enqueue(new Callback<VodDataArray>() {
                 @Override
                 public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
                     if (response.isSuccessful() && response.body() != null){
-                        vodArray = response.body().getVodDataArray();
+                        isEnd = response.body().isEnd();
+                        if(isEnd){
+                            pbBar.setVisibility(View.GONE);
+                        }
+                        cursor = response.body().getCursor();
+                        ArrayList<VodData> vodArray_tmp = response.body().getVodDataArray();
+                        vodArray.addAll(vodArray_tmp);
+
+                        //vodArray = response.body().getVodDataArray();
                         vodAdapter.setAdapter(vodArray);
                         vodAdapter.notifyDataSetChanged();
 
@@ -207,26 +253,30 @@ public class FragVideo extends Fragment {
         } else {
             Log.d("11111", "onCreateView: 필터없음");
             //리사이클러뷰 데이터 받아오기
-            ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-            Call<VodDataArray> call = apiInterface.getvodList();
-            call.enqueue(new Callback<VodDataArray>() {
-                @Override
-                public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
-                    if (response.isSuccessful() && response.body() != null){
-                        vodArray = response.body().getVodDataArray();
-                        vodAdapter.setAdapter(vodArray);
-                        vodAdapter.notifyDataSetChanged();
+            //원본 vodarray 불러오기
 
-                        //로딩 숨기기
-                        hidepDialog();
-                    }
-                }
+            getData(page,limit,cursor);
 
-                @Override
-                public void onFailure(Call<VodDataArray> call, Throwable t) {
-                    Toast.makeText(getContext(), "통신 오류", Toast.LENGTH_SHORT).show();
-                }
-            });
+//            ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+//            Call<VodDataArray> call = apiInterface.getvodList();
+//            call.enqueue(new Callback<VodDataArray>() {
+//                @Override
+//                public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
+//                    if (response.isSuccessful() && response.body() != null){
+//                        vodArray = response.body().getVodDataArray();
+//                        vodAdapter.setAdapter(vodArray);
+//                        vodAdapter.notifyDataSetChanged();
+//
+//                        //로딩 숨기기
+//                        hidepDialog();
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(Call<VodDataArray> call, Throwable t) {
+//                    Toast.makeText(getContext(), "통신 오류", Toast.LENGTH_SHORT).show();
+//                }
+//            });
         }
 
 
@@ -630,8 +680,14 @@ public class FragVideo extends Fragment {
                         }
 
                         //통신으로 보내기
+                        //필터 기준으로 vodarray 불러오기
+                        pbBar.setVisibility(View.VISIBLE);
+                        page = 1;
+                        cursor = "0";
+                        vodArray = new ArrayList<>();
+
                         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-                        Call<VodDataArray> call = apiInterface.filterVod(filtered_category,filtered_difficulty,filtered_time);
+                        Call<VodDataArray> call = apiInterface.filterVod(filtered_category,filtered_difficulty,filtered_time,page,limit,cursor);
                         call.enqueue(new Callback<VodDataArray>() {
                             @Override
                             public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
@@ -647,8 +703,23 @@ public class FragVideo extends Fragment {
 
                                         filter_cancel.setVisibility(View.VISIBLE);
 
+                                    } else {
+                                        filter_category.setText("집중부위 ▽");
+                                        filter_category.setTextColor(Color.BLACK);
+                                        filter_category.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text));
+
+                                        filter_cancel.setVisibility(View.GONE);
                                     }
-                                    vodArray = response.body().getVodDataArray();
+                                    isEnd = response.body().isEnd();
+                                    if(isEnd){
+                                        pbBar.setVisibility(View.GONE);
+                                    }
+                                    cursor = response.body().getCursor();
+                                    ArrayList<VodData> vodArray_tmp = response.body().getVodDataArray();
+                                    vodArray.addAll(vodArray_tmp);
+
+
+                                    //vodArray = response.body().getVodDataArray();
                                     vodAdapter.setAdapter(vodArray);
                                     vodAdapter.notifyDataSetChanged();
                                 } else {
@@ -729,11 +800,16 @@ public class FragVideo extends Fragment {
                             String result = select.substring(0,select.length()-2);
                             filtered_difficulty = result;
                         } else {
-                            filtered_category = "";
+                            filtered_difficulty = "";
                         }
 
+                        pbBar.setVisibility(View.VISIBLE);
+                        page = 1;
+                        cursor = "0";
+                        vodArray = new ArrayList<>();
+
                         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-                        Call<VodDataArray> call = apiInterface.filterVod(filtered_category,filtered_difficulty,filtered_time);
+                        Call<VodDataArray> call = apiInterface.filterVod(filtered_category,filtered_difficulty,filtered_time,page,limit,cursor);
                         call.enqueue(new Callback<VodDataArray>() {
                             @Override
                             public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
@@ -748,9 +824,22 @@ public class FragVideo extends Fragment {
                                         filter_difficulty.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text_blue));
 
                                         filter_cancel.setVisibility(View.VISIBLE);
+                                    } else {
+                                        filter_difficulty.setText("난이도 ▽");
+                                        filter_difficulty.setTextColor(Color.BLACK);
+                                        filter_difficulty.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text));
 
+                                        filter_cancel.setVisibility(View.GONE);
                                     }
-                                    vodArray = response.body().getVodDataArray();
+                                    isEnd = response.body().isEnd();
+                                    if(isEnd){
+                                        pbBar.setVisibility(View.GONE);
+                                    }
+                                    cursor = response.body().getCursor();
+                                    ArrayList<VodData> vodArray_tmp = response.body().getVodDataArray();
+                                    vodArray.addAll(vodArray_tmp);
+
+                                    //vodArray = response.body().getVodDataArray();
                                     vodAdapter.setAdapter(vodArray);
                                     vodAdapter.notifyDataSetChanged();
                                 } else {
@@ -820,8 +909,13 @@ public class FragVideo extends Fragment {
 
                         filtered_time = minVal + " ~ " + maxVal;
 
+                        pbBar.setVisibility(View.VISIBLE);
+                        page = 1;
+                        cursor = "0";
+                        vodArray = new ArrayList<>();
+
                         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-                        Call<VodDataArray> call = apiInterface.filterVod(filtered_category,filtered_difficulty,filtered_time);
+                        Call<VodDataArray> call = apiInterface.filterVod(filtered_category,filtered_difficulty,filtered_time,page,limit,cursor);
                         call.enqueue(new Callback<VodDataArray>() {
                             @Override
                             public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
@@ -836,8 +930,15 @@ public class FragVideo extends Fragment {
 
                                     filter_cancel.setVisibility(View.VISIBLE);
 
+                                    isEnd = response.body().isEnd();
+                                    if(isEnd){
+                                        pbBar.setVisibility(View.GONE);
+                                    }
+                                    cursor = response.body().getCursor();
+                                    ArrayList<VodData> vodArray_tmp = response.body().getVodDataArray();
+                                    vodArray.addAll(vodArray_tmp);
 
-                                    vodArray = response.body().getVodDataArray();
+                                    //vodArray = response.body().getVodDataArray();
                                     vodAdapter.setAdapter(vodArray);
                                     vodAdapter.notifyDataSetChanged();
                                 } else {
@@ -874,47 +975,50 @@ public class FragVideo extends Fragment {
             public void onClick(View view) {
                 //눌렀을때 초기화시키기
 
-                showpDialog();
-                filtered_category = null;
-                filtered_difficulty = null;
-                filtered_time = null;
+                resetData();
 
-                //처음에 했던 레트로핏써서 다시 원래 데이터 받아오기
-                ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-                Call<VodDataArray> call = apiInterface.getvodList();
-                call.enqueue(new Callback<VodDataArray>() {
-                    @Override
-                    public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
-                        if (response.isSuccessful() && response.body() != null){
-                            vodArray = response.body().getVodDataArray();
-                            vodAdapter.setAdapter(vodArray);
-                            vodAdapter.notifyDataSetChanged();
-
-                            filter_category.setText("집중부위 ▽");
-                            filter_category.setTextColor(Color.BLACK);
-                            filter_category.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text));
-
-                            filter_difficulty.setText("난이도 ▽");
-                            filter_difficulty.setTextColor(Color.BLACK);
-                            filter_difficulty.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text));
-
-                            filter_time.setText("운동시간 ▽");
-                            filter_time.setTextColor(Color.BLACK);
-                            filter_time.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text));
-                            maxVal = null;
-
-                            filter_cancel.setVisibility(View.GONE);
-
-                            //로딩 숨기기
-                            hidepDialog();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<VodDataArray> call, Throwable t) {
-                        Toast.makeText(getContext(), "통신 오류", Toast.LENGTH_SHORT).show();
-                    }
-                });
+//                showpDialog();
+//                filtered_category = null;
+//                filtered_difficulty = null;
+//                filtered_time = null;
+//
+//                //처음에 했던 레트로핏써서 다시 원래 데이터 받아오기
+//                //원본 vodarray 불러오기
+//                ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+//                Call<VodDataArray> call = apiInterface.getvodList();
+//                call.enqueue(new Callback<VodDataArray>() {
+//                    @Override
+//                    public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
+//                        if (response.isSuccessful() && response.body() != null){
+//                            vodArray = response.body().getVodDataArray();
+//                            vodAdapter.setAdapter(vodArray);
+//                            vodAdapter.notifyDataSetChanged();
+//
+//                            filter_category.setText("집중부위 ▽");
+//                            filter_category.setTextColor(Color.BLACK);
+//                            filter_category.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text));
+//
+//                            filter_difficulty.setText("난이도 ▽");
+//                            filter_difficulty.setTextColor(Color.BLACK);
+//                            filter_difficulty.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text));
+//
+//                            filter_time.setText("운동시간 ▽");
+//                            filter_time.setTextColor(Color.BLACK);
+//                            filter_time.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text));
+//                            maxVal = null;
+//
+//                            filter_cancel.setVisibility(View.GONE);
+//
+//                            //로딩 숨기기
+//                            hidepDialog();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<VodDataArray> call, Throwable t) {
+//                        Toast.makeText(getContext(), "통신 오류", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
             }
         });
 
@@ -969,6 +1073,122 @@ public class FragVideo extends Fragment {
         if(prDialog.isShowing()){
             prDialog.dismiss();
         }
+    }
+
+    private void getData(int page, int limit, String cur_num){
+
+        //pbBar.setVisibility(View.GONE);
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<VodDataArray> call = apiInterface.getvodList(page,limit,cur_num);
+        call.enqueue(new Callback<VodDataArray>() {
+            @Override
+            public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
+                if (response.isSuccessful() && response.body() != null){
+                    isEnd = response.body().isEnd();
+                    if(isEnd){
+                        pbBar.setVisibility(View.GONE);
+                    }
+                    cursor = response.body().getCursor();
+                    ArrayList<VodData> vodArray_tmp = response.body().getVodDataArray();
+                    vodArray.addAll(vodArray_tmp);
+                    vodAdapter.setAdapter(vodArray);
+                    vodAdapter.notifyDataSetChanged();
+
+                    //로딩 숨기기
+                    hidepDialog();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VodDataArray> call, Throwable t) {
+                Toast.makeText(getContext(), "통신 오류", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void getFilterData(){
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<VodDataArray> call = apiInterface.filterVod(filtered_category,filtered_difficulty,filtered_time,page,limit,cursor);
+        call.enqueue(new Callback<VodDataArray>() {
+            @Override
+            public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
+                if (response.isSuccessful() && response.body() != null){
+                    isEnd = response.body().isEnd();
+                    if(isEnd){
+                        pbBar.setVisibility(View.GONE);
+                    }
+                    cursor = response.body().getCursor();
+                    ArrayList<VodData> vodArray_tmp = response.body().getVodDataArray();
+                    vodArray.addAll(vodArray_tmp);
+
+                    //vodArray = response.body().getVodDataArray();
+                    vodAdapter.setAdapter(vodArray);
+                    vodAdapter.notifyDataSetChanged();
+                } else {
+                    //json 오류
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VodDataArray> call, Throwable t) {
+                //실패
+            }
+        });
+    }
+
+
+    private void resetData(){
+        page = 1;
+        cursor = "0";
+        vodArray = new ArrayList<>();
+
+
+        pbBar.setVisibility(View.VISIBLE);
+
+        showpDialog();
+        filtered_category = null;
+        filtered_difficulty = null;
+        filtered_time = null;
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<VodDataArray> call = apiInterface.getvodList(page,limit,cursor);
+        call.enqueue(new Callback<VodDataArray>() {
+            @Override
+            public void onResponse(Call<VodDataArray> call, Response<VodDataArray> response) {
+                if (response.isSuccessful() && response.body() != null){
+                    cursor = response.body().getCursor();
+
+                    vodArray = response.body().getVodDataArray();
+                    vodAdapter.setAdapter(vodArray);
+                    vodAdapter.notifyDataSetChanged();
+
+                    filter_category.setText("집중부위 ▽");
+                    filter_category.setTextColor(Color.BLACK);
+                    filter_category.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text));
+
+                    filter_difficulty.setText("난이도 ▽");
+                    filter_difficulty.setTextColor(Color.BLACK);
+                    filter_difficulty.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text));
+
+                    filter_time.setText("운동시간 ▽");
+                    filter_time.setTextColor(Color.BLACK);
+                    filter_time.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text));
+                    maxVal = null;
+
+                    filter_cancel.setVisibility(View.GONE);
+
+                    //로딩 숨기기
+                    hidepDialog();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VodDataArray> call, Throwable t) {
+                Toast.makeText(getContext(), "통신 오류", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
 }

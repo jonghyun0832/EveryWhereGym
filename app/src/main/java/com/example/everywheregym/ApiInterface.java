@@ -152,8 +152,12 @@ public interface ApiInterface {
 
 
     //vod 리스트 만들기 (리사이클러뷰 array)
+    @FormUrlEncoded
     @POST("getVodListInfo.php")
     Call<VodDataArray> getvodList(
+            @Field("page") int page,
+            @Field("limit") int limit,
+            @Field("cursor") String cursor
     );
 
     //동영상 삭제하기
@@ -207,7 +211,10 @@ public interface ApiInterface {
     Call<VodDataArray> filterVod(
             @Field("filter_category") String filter_category,
             @Field("filter_difficulty") String filter_difficulty,
-            @Field("filter_time") String filter_time
+            @Field("filter_time") String filter_time,
+            @Field("page") int page,
+            @Field("limit") int limit,
+            @Field("cursor") String cursor
     );
 
 
@@ -308,6 +315,16 @@ public interface ApiInterface {
     @POST("uploadLiveData.php")
     Call<LiveData> uploadLiveData(
             @PartMap HashMap<String, RequestBody> data
+    );
+
+    //live 리스트 만들기 (리사이클러뷰 array 페이징 포함)
+    @FormUrlEncoded
+    @POST("getLiveListInfoPaging.php")
+    Call<LiveDataArray> getliveList(
+            @Field("select_date") String select_date,
+            @Field("page") int page,
+            @Field("limit") int limit,
+            @Field("cursor") String cursor
     );
 
     //live 리스트 만들기 (리사이클러뷰 array)

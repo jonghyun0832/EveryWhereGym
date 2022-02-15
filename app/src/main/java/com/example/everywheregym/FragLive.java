@@ -13,14 +13,18 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,8 +58,15 @@ public class FragLive extends Fragment {
     private LinearLayoutManager linearLayoutManager;
 
     private String user_id;
+    private String is_trainer;
 
     private String selected_date;
+
+    private NestedScrollView nsv;
+    private int page = 1, limit = 3;
+    private String cursor = "0";
+    private boolean isEnd = false;
+    private ProgressBar pbBar;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,6 +81,20 @@ public class FragLive extends Fragment {
         calendar = (MaterialCalendarView) view.findViewById(R.id.live_calendar);
         recyclerView = (RecyclerView) view.findViewById(R.id.rv_live);
 
+        nsv = (NestedScrollView) view.findViewById(R.id.scrollview_live_main);
+        pbBar = (ProgressBar) view.findViewById(R.id.progressBar_live_main);
+
+        nsv.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if(!nsv.canScrollVertically(1)){
+                    Log.d("왜안됨", "더는아래로 못가요 ");
+                    page++;
+                    callList(selected_date);
+                }
+            }
+        });
+
         linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(linearLayoutManager);
 
@@ -79,6 +104,7 @@ public class FragLive extends Fragment {
 
         SharedPreferences sharedPreferences= getActivity().getSharedPreferences("info", Context.MODE_PRIVATE);
         user_id = sharedPreferences.getString("user_id","0");
+        is_trainer = sharedPreferences.getString("is_trainer","0");
 
         SimpleDateFormat format = new SimpleDateFormat("yy . M");
 
@@ -133,6 +159,11 @@ public class FragLive extends Fragment {
                 int day = widget.getSelectedDate().getDay();
 
                 selected_date = year + "." +  (month+1) + "." + day;
+
+                liveArray= new ArrayList<>();
+                page = 1;
+                cursor = "0";
+                pbBar.setVisibility(View.VISIBLE);
 
                 callList(selected_date);
 
@@ -271,10 +302,19 @@ public class FragLive extends Fragment {
                 if(vh.btn_push.getText().toString().equals("알림받기")){
                     //알림 테이블에 저장
                     setAlarm(user_id,li_id,uploader_id);
+                    vh.btn_push.setText("알림해제");
+                    vh.btn_push.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text_alarm_off));
+                    vh.btn_push.setTextColor(Color.BLACK);
+                    //reload(is_trainer);
 
                 } else if (vh.btn_push.getText().toString().equals("알림해제")){
-                    //라이브 시작하기
+                    //알림 테이블에서 삭제
                     deleteAlarm(user_id,li_id,uploader_id);
+                    vh.btn_push.setText("알림받기");
+                    vh.btn_push.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text_light_green));
+                    vh.btn_push.setTextColor(Color.BLACK);
+                    //reload(is_trainer);
+
                 } else if (vh.btn_push.getText().toString().equals("라이브 시작")){
                     //라이브 시작하기
                 }
@@ -295,12 +335,20 @@ public class FragLive extends Fragment {
 
     private void callList(String put_date){
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<LiveDataArray> call = apiInterface.getliveList(put_date);
+        Call<LiveDataArray> call = apiInterface.getliveList(put_date,page,limit,cursor);
         call.enqueue(new Callback<LiveDataArray>() {
             @Override
             public void onResponse(Call<LiveDataArray> call, Response<LiveDataArray> response) {
                 if (response.isSuccessful() && response.body() != null){
-                    liveArray = response.body().getLiveDataArray();
+                    isEnd = response.body().isEnd();
+                    if(isEnd){
+                        pbBar.setVisibility(View.GONE);
+                    }
+                    cursor = response.body().getCursor();
+                    ArrayList<LiveData> liveArray_tmp = response.body().getLiveDataArray();
+                    liveArray.addAll(liveArray_tmp);
+
+                    //liveArray = response.body().getLiveDataArray();
                     liveAdapter.setArrayList(liveArray);
                     liveAdapter.notifyDataSetChanged();
 
@@ -400,6 +448,18 @@ public class FragLive extends Fragment {
                 Toast.makeText(getContext(), "통신 오류", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void reload(String is_tr){
+        if (is_tr.equals("1")){ //트레이너
+            final FragmentTransaction ftt = getActivity().getSupportFragmentManager().beginTransaction();
+            ftt.replace(R.id.main_frame_tr, new FragLive());
+            ftt.commit();
+        } else { //회원
+            final FragmentTransaction ftt = getActivity().getSupportFragmentManager().beginTransaction();
+            ftt.replace(R.id.main_frame, new FragLive());
+            ftt.commit();
+        }
     }
 
 }

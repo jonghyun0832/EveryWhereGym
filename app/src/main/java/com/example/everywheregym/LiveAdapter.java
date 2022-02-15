@@ -135,6 +135,7 @@ public class LiveAdapter extends RecyclerView.Adapter<LiveAdapter.LiveViewHolder
 
         String live_id = arrayList.get(position).getLive_id();
         String uploader_id = arrayList.get(position).getUploader_id();
+        String limit_join = arrayList.get(position).getLive_limit_join();
 
         if(user_id.equals(arrayList.get(position).getUploader_id())){
             if(arrayList.get(position).getEnable().equals("1")){
@@ -170,13 +171,13 @@ public class LiveAdapter extends RecyclerView.Adapter<LiveAdapter.LiveViewHolder
                     public void onResponse(Call<LiveData> call, Response<LiveData> response) {
                         if (response.isSuccessful() && response.body() != null){
                             if(response.body().isSuccess()){
-                                String limit = "제한 : " + arrayList.get(position).getLive_limit_join() + "명";
+                                String limit = "제한 : " + limit_join + "명";
                                 holder.tv_limit.setText(limit);
                                 holder.btn_push.setText("알림해제");
-                                holder.btn_push.setBackground(ContextCompat.getDrawable(context,R.drawable.round_text_light_green));
+                                holder.btn_push.setBackground(ContextCompat.getDrawable(context,R.drawable.round_text_alarm_off));
                                 holder.btn_push.setTextColor(Color.BLACK);
                             } else {
-                                String limit = "제한 : " + arrayList.get(position).getLive_limit_join() + "명";
+                                String limit = "제한 : " + limit_join + "명";
                                 holder.tv_limit.setText(limit);
                                 holder.btn_push.setText("알림받기");
                                 holder.btn_push.setBackground(ContextCompat.getDrawable(context,R.drawable.round_text_light_green));
@@ -271,44 +272,6 @@ public class LiveAdapter extends RecyclerView.Adapter<LiveAdapter.LiveViewHolder
 
 
 
-        }
-    }
-
-    private boolean checkTime(String getted_date){
-        int y = CalendarDay.today().getYear();
-        int m = CalendarDay.today().getMonth() + 1;
-        int d = CalendarDay.today().getDay();
-
-        String[] split = getted_date.split("\\.");
-
-        if(y == Integer.parseInt(split[0]) && m == Integer.parseInt(split[1]) && d == Integer.parseInt(split[2])){
-            //현재시간보다 빠르면 안됨
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean checkTimeLimit(int starthour, int startminute){
-        //현재시간보다 빠르면 안됨
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            LocalTime now = LocalTime.now(ZoneId.of("Asia/Seoul"));
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH");
-            DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("mm");
-
-            int nowHour = Integer.parseInt(now.format(formatter));
-            int nowMinute = Integer.parseInt(now.format(formatter2));
-
-            if(starthour < nowHour){
-                return false;
-            } else if(starthour == nowHour && startminute < nowMinute){
-                return false;
-            } else {
-                //통과
-                return true;
-            }
-        } else {
-            return false;
         }
     }
 }

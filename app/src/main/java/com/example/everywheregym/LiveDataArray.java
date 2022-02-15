@@ -16,6 +16,12 @@ public class LiveDataArray {
     @Expose
     @SerializedName("isSuccess") private boolean success;
 
+    @Expose
+    @SerializedName("cursor") private String cursor;
+
+    @Expose
+    @SerializedName("end") private boolean end;
+
     public ArrayList<LiveData> getLiveDataArray() {
         return liveDataArray;
     }
@@ -38,5 +44,21 @@ public class LiveDataArray {
 
     public void setSuccess(boolean success) {
         this.success = success;
+    }
+
+    public String getCursor() {
+        return cursor;
+    }
+
+    public void setCursor(String cursor) {
+        this.cursor = cursor;
+    }
+
+    public boolean isEnd() {
+        return end;
+    }
+
+    public void setEnd(boolean end) {
+        this.end = end;
     }
 }
