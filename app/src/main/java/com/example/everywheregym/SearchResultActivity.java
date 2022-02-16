@@ -100,47 +100,68 @@ public class SearchResultActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
-        et_search.setOnKeyListener(new View.OnKeyListener() {
+        et_search.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                if((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && i == KeyEvent.KEYCODE_ENTER){
-
+            public void onFocusChange(View view, boolean b) {
+                if(b){
+                    Intent intent = new Intent(SearchResultActivity.this,SearchActivity.class);
                     String search_text = et_search.getText().toString();
-
-                    if(!search_text.equals("")){
-                        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-                        Call<SearchDataArray> call = apiInterface.addSearchHistory(user_id,search_text);
-                        call.enqueue(new Callback<SearchDataArray>() {
-                            @Override
-                            public void onResponse(Call<SearchDataArray> call, Response<SearchDataArray> response) {
-                                if (response.isSuccessful() && response.body() != null){
-                                    if(response.body().isSuccess()){
-                                        send_search_text = search_text;
-                                        getSearchResult(send_search_text);
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<SearchDataArray> call, Throwable t) {
-                                //실패
-                            }
-                        });
-                        hideKeyboard();
-                        return true;
-
-                    } else {
-                        hideKeyboard();
-                        return false;
-                    }
-
-                } else {
-                    return false;
+                    intent.putExtra("search_text",search_text);
+                    startActivity(intent);
                 }
-
             }
         });
+
+//        et_search.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(SearchResultActivity.this,SearchActivity.class);
+//                String search_text = et_search.getText().toString();
+//                intent.putExtra("search_text",search_text);
+//                startActivity(intent);
+//            }
+//        });
+
+//        et_search.setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+//                if((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && i == KeyEvent.KEYCODE_ENTER){
+//
+//                    String search_text = et_search.getText().toString();
+//
+//                    if(!search_text.equals("")){
+//                        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+//                        Call<SearchDataArray> call = apiInterface.addSearchHistory(user_id,search_text);
+//                        call.enqueue(new Callback<SearchDataArray>() {
+//                            @Override
+//                            public void onResponse(Call<SearchDataArray> call, Response<SearchDataArray> response) {
+//                                if (response.isSuccessful() && response.body() != null){
+//                                    if(response.body().isSuccess()){
+//                                        send_search_text = search_text;
+//                                        getSearchResult(send_search_text);
+//                                    }
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onFailure(Call<SearchDataArray> call, Throwable t) {
+//                                //실패
+//                            }
+//                        });
+//                        hideKeyboard();
+//                        return true;
+//
+//                    } else {
+//                        hideKeyboard();
+//                        return false;
+//                    }
+//
+//                } else {
+//                    return false;
+//                }
+//
+//            }
+//        });
 
         vodAdapter.setOnClickListener(new VodAdapter.myRecyclerViewClickListener() {
             @Override

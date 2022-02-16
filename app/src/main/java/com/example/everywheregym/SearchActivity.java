@@ -48,8 +48,6 @@ public class SearchActivity extends AppCompatActivity {
 
         tv_empty.setVisibility(View.INVISIBLE);
 
-        et_search.requestFocus();
-
         iv_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,6 +67,17 @@ public class SearchActivity extends AppCompatActivity {
         user_id = sharedPreferences.getString("user_id","0");
 
         //resume에서 리스트 받아옴
+
+        try{
+            Intent get_intent = getIntent();
+            String getted_text = get_intent.getStringExtra("search_text");
+            et_search.setText(getted_text);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+        et_search.requestFocus();
 
         et_search.setOnKeyListener(new View.OnKeyListener() {
             @Override
