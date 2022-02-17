@@ -100,8 +100,14 @@ public class LiveSubAdapter extends RecyclerView.Adapter<LiveSubAdapter.LiveSubV
         String limit = "제한 : " + arrayList.get(position).getLive_limit_join() + "명";
         holder.tv_limit.setText(limit);
 
-        String str_alarm = "알림등록 : " + arrayList.get(position).getAlarm_num() + "명";
-        holder.tv_alarm.setText(str_alarm);
+        if(arrayList.get(position).getAlarm_num() != null){
+            String str_alarm = "알림등록 : " + arrayList.get(position).getAlarm_num() + "명";
+            holder.tv_alarm.setText(str_alarm);
+        } else {
+            String str_alarm = "알림등록 : 없음";
+            holder.tv_alarm.setText(str_alarm);
+        }
+
 
     }
 

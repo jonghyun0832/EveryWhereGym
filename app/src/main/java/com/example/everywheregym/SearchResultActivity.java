@@ -501,6 +501,12 @@ public class SearchResultActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        et_search.clearFocus();
+    }
+
     private void getSearchResult(String search_text){
 
         showpDialog();

@@ -551,7 +551,7 @@ public class LiveCreateActivity_2 extends AppCompatActivity {
         recyclerView.setAdapter(liveSubAdapter);
 
         ad.setView(dialogView);
-        ad.setTitle("내 라이브 일정");
+        ad.setTitle("전체 라이브 일정");
         ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {

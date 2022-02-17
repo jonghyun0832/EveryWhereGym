@@ -384,6 +384,16 @@ public interface ApiInterface {
     );
 
 
+    //삭제 알림 보내기
+    @FormUrlEncoded
+    @POST("sendDeleteAlarm.php")
+    Call<LiveData> sendDeleteAlarm(
+            @Field("user_id") String user_id,
+            @Field("live_id") String live_id,
+            @Field("message") String message
+    );
+
+
 
 //    @Multipart
 //    @POST("getTrainerInfo.php")

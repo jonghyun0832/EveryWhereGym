@@ -24,11 +24,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -71,6 +74,8 @@ public class FragLive extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        page = 1;
+        cursor = "0";
     }
 
     @Override
@@ -92,6 +97,14 @@ public class FragLive extends Fragment {
                     page++;
                     callList(selected_date);
                 }
+            }
+        });
+
+        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(new OnSuccessListener<String>() {
+            @Override
+            public void onSuccess(String s) {
+                Log.d("fcm", "onSuccess: " + s);
+
             }
         });
 
@@ -142,9 +155,7 @@ public class FragLive extends Fragment {
         calendar.addDecorators(
                 new DecoratorSaturday(),
                 new DecoratorSunday(),
-                new DecoratorSelector(getActivity()),
-                new DecoratorToday(),
-                new DecoratorEvent(Color.RED, dates)
+                new DecoratorSelector(getActivity())
         );
 
         calendar.setShowOtherDates(MaterialCalendarView.SHOW_OUT_OF_RANGE);
@@ -237,44 +248,73 @@ public class FragLive extends Fragment {
 
                         AlertDialog.Builder ad2 = new AlertDialog.Builder(getContext());
                         ad2.setTitle("알림");
-                        ad2.setMessage("해당 라이브 일정을 삭제하시겠습니까?\n라이브 삭제는 패널티가 적용됩니다");
-                        ad2.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+                        ad2.setMessage("해당 라이브 일정을 삭제하시겠습니까?");
+                        ad2.setPositiveButton("예", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //삭제 레트로핏
-                                ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-                                Call<LiveData> call = apiInterface.deleteLive(li_id);
-                                call.enqueue(new Callback<LiveData>() {
+
+                                AlertDialog.Builder ad4 = new AlertDialog.Builder(getContext());
+                                LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                View dialogView2 = inflater.inflate(R.layout.dialog_notify_message, null);
+                                ad4.setView(dialogView2);
+                                ad4.setTitle("삭제 사유 작성");
+
+                                EditText et_message = dialogView2.findViewById(R.id.et_dialog_notify_message);
+
+                                ad4.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void onResponse(Call<LiveData> call, Response<LiveData> response) {
-                                        if (response.isSuccessful() && response.body() != null){
-                                            if(response.body().isSuccess()){
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        String get_message = et_message.getText().toString();
 
-                                                //삭제하는 이유가 뭔지 작성하게하고
-                                                //작성한 내용을 알림등록 해놓은 회원들한테
-                                                //notification으로 알려줘야한다.
-                                                //수정의 경우에도 마찬가지다.
+                                        sendNoti(user_id,li_id,get_message,getContext());
 
-                                                //리로드 (트레이너만 삭제되니까 걱정안해도됨)
-                                                final FragmentTransaction ftt = getActivity().getSupportFragmentManager().beginTransaction();
-                                                ftt.replace(R.id.main_frame_tr, new FragLive());
-                                                ftt.commit();
+                                        final FragmentTransaction ftt = getActivity().getSupportFragmentManager().beginTransaction();
+                                        ftt.replace(R.id.main_frame_tr, new FragLive());
+                                        ftt.commit();
 
-                                                Toast.makeText(getContext(), "삭제가 완료되었습니다.", Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                    }
+//                                        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+//                                        Call<LiveData> call = apiInterface.deleteLive(li_id);
+//                                        call.enqueue(new Callback<LiveData>() {
+//                                            @Override
+//                                            public void onResponse(Call<LiveData> call, Response<LiveData> response) {
+//                                                if (response.isSuccessful() && response.body() != null){
+//                                                    if(response.body().isSuccess()){
+//
+//                                                        sendNoti(user_id,li_id,get_message,getContext());
+//
+//                                                        final FragmentTransaction ftt = getActivity().getSupportFragmentManager().beginTransaction();
+//                                                        ftt.replace(R.id.main_frame_tr, new FragLive());
+//                                                        ftt.commit();
+//
+//                                                        Toast.makeText(getContext(), "삭제가 완료되었습니다.", Toast.LENGTH_SHORT).show();
+//                                                    }
+//                                                }
+//                                            }
+//
+//                                            @Override
+//                                            public void onFailure(Call<LiveData> call, Throwable t) {
+//                                                Toast.makeText(getContext(), "삭제 통신 문제.", Toast.LENGTH_SHORT).show();
+//                                            }
+//                                        });
 
-                                    @Override
-                                    public void onFailure(Call<LiveData> call, Throwable t) {
-                                        Toast.makeText(getContext(), "삭제 통신 문제.", Toast.LENGTH_SHORT).show();
                                     }
                                 });
+
+                                ad4.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                                    }
+                                });
+
+                                AlertDialog alertDialog4 = ad4.create();
+                                alertDialog4.show();
 
                             }
                         });
 
-                        ad2.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                        ad2.setNegativeButton("아니요", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -330,6 +370,7 @@ public class FragLive extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        callList(selected_date);
 
     }
 
@@ -460,6 +501,37 @@ public class FragLive extends Fragment {
             ftt.replace(R.id.main_frame, new FragLive());
             ftt.commit();
         }
+    }
+
+    private void sendNoti(String trainer_id, String live_id, String message,Context context){
+        ApiInterface apiInterface2 = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<LiveData> call2 = apiInterface2.sendDeleteAlarm(trainer_id,live_id,message);
+        call2.enqueue(new Callback<LiveData>() {
+            @Override
+            public void onResponse(Call<LiveData> call2, Response<LiveData> response2) {
+                if (response2.isSuccessful() && response2.body() != null){
+                    if(response2.body().isSuccess()){
+                        AlertDialog.Builder ad3 = new AlertDialog.Builder(context);
+                        ad3.setTitle("전송 완료");
+                        ad3.setMessage("알림 신청한 회원들에게 삭제 알림을 보냈습니다");
+                        ad3.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+
+                        });
+                        AlertDialog alertDialog3 = ad3.create();
+                        alertDialog3.show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LiveData> call2, Throwable t) {
+                Toast.makeText(getContext(), "통신 오류", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 }

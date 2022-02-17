@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "972493049351",
+    "project_id": "pushnoti-1d935",
+    "storage_bucket": "pushnoti-1d935.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:972493049351:android:46db1f149992c4bfd424a2",
+        "android_client_info": {
+          "package_name": "com.example.everywheregym"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "972493049351-kptgfkugs0c4o9803ep436bonp96101i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZww-i0UkNY4i_Gw_sjzJEI1Zp0wRvn8s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "972493049351-kptgfkugs0c4o9803ep436bonp96101i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
