@@ -51,6 +51,8 @@ public class FragTrMypage extends Fragment {
     String tr_career;
     String tr_certify;
 
+    private String user_id;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_trainer_mypage,container,false);
@@ -71,6 +73,8 @@ public class FragTrMypage extends Fragment {
         btn_my_bookmark = view.findViewById(R.id.btn_my_bookmark_tr);
         btn_tr_logout = view.findViewById(R.id.btn_tr_logout);
 
+        SharedPreferences sharedPreferences= getContext().getSharedPreferences("info", Context.MODE_PRIVATE);
+        user_id = sharedPreferences.getString("user_id","");
 
 
         iv_profile_img.setOnClickListener(new View.OnClickListener() {
@@ -156,6 +160,8 @@ public class FragTrMypage extends Fragment {
                         editor.remove("user_id");
                         editor.remove("is_trainer");
                         editor.commit();
+                        //저장된 토큰 삭제
+                        deleteToken(user_id);
 
                         Intent intent = new Intent(getContext(), LoginActivity.class);
                         intent.setFlags(intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -237,5 +243,22 @@ public class FragTrMypage extends Fragment {
 
         //여기서 불러오자
 
+    }
+    private void deleteToken(String userId){
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<LiveData> call = apiInterface.deleteToken(userId);
+        call.enqueue(new Callback<LiveData>() {
+            @Override
+            public void onResponse(Call<LiveData> call, Response<LiveData> response) {
+                if (response.isSuccessful() && response.body() != null){
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LiveData> call, Throwable t) {
+                Toast.makeText(getContext(), "통신 오류", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

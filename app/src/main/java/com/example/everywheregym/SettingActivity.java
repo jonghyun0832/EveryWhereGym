@@ -28,6 +28,7 @@ public class SettingActivity extends AppCompatActivity {
     Button btn_logout;
     Button btn_destroy_account;
 
+    private String user_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,9 @@ public class SettingActivity extends AppCompatActivity {
         sh_push = (Switch) findViewById(R.id.switch_push);
         btn_logout = (Button) findViewById(R.id.button_logout);
         btn_destroy_account = (Button) findViewById(R.id.button_delete_account);
+
+        SharedPreferences sharedPreferences= getSharedPreferences("info", MODE_PRIVATE);
+        user_id = sharedPreferences.getString("user_id","");
 
 
 
@@ -78,6 +82,8 @@ public class SettingActivity extends AppCompatActivity {
                         editor.remove("user_id");
                         editor.remove("is_trainer");
                         editor.commit();
+                        //저장된 토큰 삭제
+                        deleteToken(user_id);
 
                         Intent intent = new Intent(SettingActivity.this, LoginActivity.class);
                         intent.setFlags(intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -170,4 +176,23 @@ public class SettingActivity extends AppCompatActivity {
         super.onDestroy();
         Log.d("TAG", "SETTINGonDestroy: ");
     }
+
+    private void deleteToken(String userId){
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<LiveData> call = apiInterface.deleteToken(userId);
+        call.enqueue(new Callback<LiveData>() {
+            @Override
+            public void onResponse(Call<LiveData> call, Response<LiveData> response) {
+                if (response.isSuccessful() && response.body() != null){
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LiveData> call, Throwable t) {
+                Toast.makeText(SettingActivity.this, "통신 오류", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 }

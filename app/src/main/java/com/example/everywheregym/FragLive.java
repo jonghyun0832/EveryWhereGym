@@ -370,6 +370,9 @@ public class FragLive extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        liveArray= new ArrayList<>();
+        page = 1;
+        cursor = "0";
         callList(selected_date);
 
     }

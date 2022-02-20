@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -202,6 +206,12 @@ public class LoginActivity extends AppCompatActivity {
                             editor.putString("user_id",user_id);
                             editor.putString("is_trainer",user_trainer);
                             editor.commit();
+                            FirebaseMessaging.getInstance().getToken().addOnSuccessListener(new OnSuccessListener<String>() {
+                                @Override
+                                public void onSuccess(String s) {
+                                    saveToken(user_id,s);
+                                }
+                            });
 
                             if (user_trainer.equals("1")){
                                 Intent intent = new Intent(LoginActivity.this, TrainerHomeActivity.class);
@@ -366,6 +376,24 @@ public class LoginActivity extends AppCompatActivity {
         } else { //인증번호 틀릴때
             return false;
         }
+    }
+
+    private void saveToken(String userId, String getted_token){
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<LiveData> call = apiInterface.updateToken(userId,getted_token);
+        call.enqueue(new Callback<LiveData>() {
+            @Override
+            public void onResponse(Call<LiveData> call, Response<LiveData> response) {
+                if (response.isSuccessful() && response.body() != null){
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LiveData> call, Throwable t) {
+                Toast.makeText(LoginActivity.this, "통신 오류", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 }

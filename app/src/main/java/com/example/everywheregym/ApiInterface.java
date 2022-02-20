@@ -383,6 +383,21 @@ public interface ApiInterface {
             @Field("uploader_id") String uploader_id
     );
 
+    //로그인시 토큰 재저장
+    @FormUrlEncoded
+    @POST("updateToken.php")
+    Call<LiveData> updateToken(
+            @Field("user_id") String user_id,
+            @Field("token") String token
+    );
+
+    //로그아웃시 토큰 삭제
+    @FormUrlEncoded
+    @POST("deleteToken.php")
+    Call<LiveData> deleteToken(
+            @Field("user_id") String user_id
+    );
+
 
     //삭제 알림 보내기
     @FormUrlEncoded
