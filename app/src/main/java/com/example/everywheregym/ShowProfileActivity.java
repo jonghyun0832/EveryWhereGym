@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +46,8 @@ public class ShowProfileActivity extends AppCompatActivity {
     public String tr_career;
     public String tr_certify;
 
+    private RatingBar rb;
+
     private ViewPager2 viewpager2;
     private TabLayout tabLayout;
 
@@ -62,6 +65,8 @@ public class ShowProfileActivity extends AppCompatActivity {
         iv_showpf_img = findViewById(R.id.iv_showpf_img);
 
         tv_showpf_name = findViewById(R.id.textview_showPF_name);
+
+        rb = findViewById(R.id.ratingBar_show);
 
 
 
@@ -106,6 +111,14 @@ public class ShowProfileActivity extends AppCompatActivity {
                         tr_expert = response.body().getTr_expert(); //트레이너 전문영역
                         tr_career = response.body().getTr_career(); //트레이너 경력
                         tr_certify = response.body().getTr_certify(); //트레이너 전문사항
+                        int tr_score = response.body().getTr_score();
+                        if(tr_score < 0){
+                            tr_score = 0;
+                        }
+
+                        float result = (float)tr_score/100 * 5;
+
+                        rb.setRating(result);
 
                         //텍스트 설정
                         tv_showpf_name.setText(user_name);

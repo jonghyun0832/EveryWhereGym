@@ -30,6 +30,9 @@ public class TrainerInfo {
     @SerializedName("tr_certify") private String tr_certify;
 
     @Expose
+    @SerializedName("tr_score") private int tr_score;
+
+    @Expose
     @SerializedName("success") private boolean success;
 
 
@@ -96,6 +99,14 @@ public class TrainerInfo {
 
     public void setTr_certify(String tr_certify) {
         this.tr_certify = tr_certify;
+    }
+
+    public int getTr_score() {
+        return tr_score;
+    }
+
+    public void setTr_score(int tr_score) {
+        this.tr_score = tr_score;
     }
 
     public boolean isSuccess() {

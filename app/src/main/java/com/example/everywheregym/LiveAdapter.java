@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.Image;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -153,7 +154,18 @@ public class LiveAdapter extends RecyclerView.Adapter<LiveAdapter.LiveViewHolder
                 holder.btn_push.setEnabled(false);
                 holder.btn_push.setTextColor(Color.WHITE);
             }
-            holder.iv_more.setVisibility(View.VISIBLE);
+            int y = CalendarDay.today().getYear();
+            int m = CalendarDay.today().getMonth() + 1;
+            int d = CalendarDay.today().getDay();
+
+            String[] split = arrayList.get(position).getLive_date().split("\\.");
+
+            if(y == Integer.parseInt(split[0]) && m == Integer.parseInt(split[1]) && d == Integer.parseInt(split[2])){
+                Log.d("왜지", "onBindViewHolder: ");
+                holder.iv_more.setVisibility(View.INVISIBLE);
+            } else {
+                holder.iv_more.setVisibility(View.VISIBLE);
+            }
         } else {
             //트레이너가 열었을때 부터 참석가능해야함
             if(arrayList.get(position).getEnable().equals("1")){
@@ -199,6 +211,7 @@ public class LiveAdapter extends RecyclerView.Adapter<LiveAdapter.LiveViewHolder
 //                holder.btn_push.setBackground(ContextCompat.getDrawable(context,R.drawable.round_text_light_green));
 //                holder.btn_push.setTextColor(Color.BLACK);
             }
+            holder.iv_more.setVisibility(View.INVISIBLE);
         }
 
 

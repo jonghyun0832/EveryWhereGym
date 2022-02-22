@@ -41,9 +41,11 @@ import com.prolificinteractive.materialcalendarview.format.DateFormatTitleFormat
 import com.prolificinteractive.materialcalendarview.format.MonthArrayTitleFormatter;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.zip.DataFormatException;
 
@@ -70,6 +72,7 @@ public class FragLive extends Fragment {
     private String cursor = "0";
     private boolean isEnd = false;
     private ProgressBar pbBar;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -136,7 +139,7 @@ public class FragLive extends Fragment {
         int first_day = todaysDay(dayOfWeek);
 
         selected_date = y + "." +  (m+1) + "." + d;
-        callList(selected_date);
+        //callList(selected_date);
 
         calendar.state().edit()
                 .setMinimumDate(CalendarDay.from(y,m,d))
@@ -196,6 +199,15 @@ public class FragLive extends Fragment {
             public void whenMoreClick(int position) {
 
                 String li_id = liveArray.get(position).getLive_id();
+                String li_date = liveArray.get(position).getLive_date();
+                String li_title = liveArray.get(position).getLive_title();
+                String li_start_hour = liveArray.get(position).getLive_start_hour();
+                String li_start_minute = liveArray.get(position).getLive_start_minute();
+                String li_spend_time = liveArray.get(position).getLive_spend_time();
+                String li_calorie = liveArray.get(position).getLive_calorie();
+                String li_limit_join = liveArray.get(position).getLive_limit_join();
+                String li_material = liveArray.get(position).getLive_material();
+                String tr_score = liveArray.get(position).getTrainer_score();
 
                 AlertDialog.Builder ad = new AlertDialog.Builder(getContext());
                 ad.setTitle("알림");
@@ -224,19 +236,40 @@ public class FragLive extends Fragment {
                     @Override
                     public void onClick(View view) {
                         alertDialog.dismiss();
-//                        Intent intent = new Intent(getContext(), VodDetailActivity.class);
-//                        intent.putExtra("vod_id",vod_id);
-//                        intent.putExtra("vod_thumbnail_path",vod_thumbnail_path);
-//                        intent.putExtra("vod_time",vod_time);
-//                        intent.putExtra("vod_title",vod_title);
-//                        intent.putExtra("vod_category",vod_category);
-//                        intent.putExtra("vod_difficulty",vod_difficulty);
-//                        intent.putExtra("vod_explain",vod_explain);
-//                        intent.putExtra("vod_material",vod_material);
-//                        intent.putExtra("vod_calorie",vod_calorie);
-//                        intent.putExtra("isEdit",true);
-//
-//                        startActivity(intent);
+
+                        int tmp_score = scoreCalculate(li_date);
+
+                        AlertDialog.Builder ad = new AlertDialog.Builder(getContext());
+                        ad.setTitle("알림");
+                        ad.setMessage("라이브 수정 시 평판 패널티를 받습니다 \n(-" + tmp_score + "점)\n현재 내 점수 : " + tr_score + "점");
+                        ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Intent intent = new Intent(getContext(), LiveCreateActivity_2.class);
+                                intent.putExtra("li_id",li_id);
+                                intent.putExtra("li_date",li_date);
+                                intent.putExtra("li_title",li_title);
+                                intent.putExtra("li_start_hour",li_start_hour);
+                                intent.putExtra("li_start_minute",li_start_minute);
+                                intent.putExtra("li_spend_time",li_spend_time);
+                                intent.putExtra("li_calorie",li_calorie);
+                                intent.putExtra("li_limit_join",li_limit_join);
+                                intent.putExtra("li_material",li_material);
+                                intent.putExtra("edit_score",tmp_score);
+                                intent.putExtra("isEdit",true);
+
+                                startActivity(intent);
+                            }
+
+                        });
+                        ad.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        });
+                        AlertDialog alertDialog2 = ad.create();
+                        alertDialog2.show();
                     }
                 });
 
@@ -272,31 +305,6 @@ public class FragLive extends Fragment {
                                         final FragmentTransaction ftt = getActivity().getSupportFragmentManager().beginTransaction();
                                         ftt.replace(R.id.main_frame_tr, new FragLive());
                                         ftt.commit();
-
-//                                        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-//                                        Call<LiveData> call = apiInterface.deleteLive(li_id);
-//                                        call.enqueue(new Callback<LiveData>() {
-//                                            @Override
-//                                            public void onResponse(Call<LiveData> call, Response<LiveData> response) {
-//                                                if (response.isSuccessful() && response.body() != null){
-//                                                    if(response.body().isSuccess()){
-//
-//                                                        sendNoti(user_id,li_id,get_message,getContext());
-//
-//                                                        final FragmentTransaction ftt = getActivity().getSupportFragmentManager().beginTransaction();
-//                                                        ftt.replace(R.id.main_frame_tr, new FragLive());
-//                                                        ftt.commit();
-//
-//                                                        Toast.makeText(getContext(), "삭제가 완료되었습니다.", Toast.LENGTH_SHORT).show();
-//                                                    }
-//                                                }
-//                                            }
-//
-//                                            @Override
-//                                            public void onFailure(Call<LiveData> call, Throwable t) {
-//                                                Toast.makeText(getContext(), "삭제 통신 문제.", Toast.LENGTH_SHORT).show();
-//                                            }
-//                                        });
 
                                     }
                                 });
@@ -535,6 +543,36 @@ public class FragLive extends Fragment {
                 Toast.makeText(getContext(), "통신 오류", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private int scoreCalculate(String date){
+
+        Date now = new Date();
+        Date format1 = null;
+        try {
+            format1 = (new SimpleDateFormat("yyyy.M.dd")).parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        long diffSec = (format1.getTime() - now.getTime()) / 1000; //초 차이
+        //long diffMin = (format1.getTime() - now.getTime()) / 60000; //분 차이
+        //long diffHor = (format1.getTime() - now.getTime()) / 3600000; //시 차이
+        long diffDays = diffSec / (24*60*60); //일자수 차이
+        int days = (int) diffDays + 1;
+        Log.d("계산", "scoreCalculate: 초 " + diffSec);
+        Log.d("계산", "scoreCalculate: 일자 " + diffDays);
+
+        int result;
+        if(days <= 1){
+            result = 10;
+        } else if(days <=2){
+            result = 5;
+        } else {
+            result = 2;
+        }
+        return result;
+
     }
 
 }

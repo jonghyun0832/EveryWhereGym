@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
     <uses-feature android:name="android.hardware.camera2" />
 
@@ -26,6 +27,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EveryWhereGym"
         android:usesCleartextTraffic="true">
+        <service
+            android:name=".NotifiService"
+            android:enabled="true"
+            android:exported="true"></service>
+
         <activity
             android:name=".LiveCreateActivity_2"
             android:exported="true"
@@ -105,10 +111,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".FirebaseMsgService"
+
+        <service
+            android:name=".FirebaseMsgService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 

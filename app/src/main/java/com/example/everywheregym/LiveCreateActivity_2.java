@@ -2,6 +2,7 @@ package com.example.everywheregym;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,6 +17,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -84,6 +86,10 @@ public class LiveCreateActivity_2 extends AppCompatActivity {
     private Context context;
 
     private ArrayList<LiveData> liveArray;
+
+    //수정시 받아오는 데이터
+    private String li_id;
+    private int edit_score;
 
     //타임피커 리스너
     TimePickerDialog.OnTimeSetListener startlistener = new TimePickerDialog.OnTimeSetListener() {
@@ -160,7 +166,48 @@ public class LiveCreateActivity_2 extends AppCompatActivity {
 
 
         Intent get_intent = getIntent();
-        getted_date = get_intent.getStringExtra("selected_date");
+        boolean isEdit = get_intent.getBooleanExtra("isEdit",false);
+        if(isEdit){
+            getted_date = get_intent.getStringExtra("li_date");
+            li_id = get_intent.getStringExtra("li_id");
+            String li_title = get_intent.getStringExtra("li_title");
+            String li_start_hour = get_intent.getStringExtra("li_start_hour");
+            String li_start_minute = get_intent.getStringExtra("li_start_minute");
+            String li_spend_time = get_intent.getStringExtra("li_spend_time");
+            String li_calorie = get_intent.getStringExtra("li_calorie");
+            String li_limit_join = get_intent.getStringExtra("li_limit_join");
+            String li_material = get_intent.getStringExtra("li_material");
+            edit_score = get_intent.getIntExtra("edit_score",0);
+
+            et_title.setText(li_title);
+
+            starthour = Integer.parseInt(li_start_hour);
+            startminute = Integer.parseInt(li_start_minute);
+            if (startminute < 10){
+                tv_start_time.setText(starthour + " : 0" +startminute);
+            } else{
+                tv_start_time.setText(starthour + " : " + startminute);
+            }
+
+            spend_time = Integer.parseInt(li_spend_time);
+            spend_hour = spend_time/60;
+            spend_minute = spend_time&60;
+            tv_spend_time.setText(spend_time + "분");
+
+            get_calorie = li_calorie;
+            tv_calorie.setText(get_calorie + "Kcal");
+
+            limit_num = Integer.parseInt(li_limit_join);
+            tv_join_limit.setText(limit_num + "명");
+
+            get_material = li_material;
+            tv_material.setText(get_material);
+
+            btn_save.setText("라이브 일정 수정하기");
+
+        }else{
+            getted_date = get_intent.getStringExtra("selected_date");
+        }
         tv_date.setText(getted_date);
 
         //선택한 일에 해당하는 라이브 arraylist 불러오기
@@ -184,8 +231,8 @@ public class LiveCreateActivity_2 extends AppCompatActivity {
 //        }
 
 
-        //tv_title_limit.setText(et_title.getText().toString().length() + " / 30");
-        tv_title_limit.setText("0 / 30");
+        tv_title_limit.setText(et_title.getText().toString().length() + " / 30");
+        //tv_title_limit.setText("0 / 30");
 
         //공통사용가능
         et_title.addTextChangedListener(new TextWatcher() {
@@ -338,8 +385,6 @@ public class LiveCreateActivity_2 extends AppCompatActivity {
                     }else {
                         showpDialog();
 
-
-
                         HashMap<String, RequestBody> map = new HashMap<>();
 
                         if (get_material == null) {
@@ -368,44 +413,84 @@ public class LiveCreateActivity_2 extends AppCompatActivity {
                         map.put("material", live_material);
                         map.put("user_id", live_user_id);
 
-                        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-                        Call<LiveData> call = apiInterface.uploadLiveData(map);
-                        call.enqueue(new Callback<LiveData>() {
-                            @Override
-                            public void onResponse(Call<LiveData> call, Response<LiveData> response) {
-                                if (response.isSuccessful() && response.body() != null) {
-                                    if (response.body().isSuccess()) {
-                                        hidepDialog();
 
-                                        AlertDialog.Builder ad = new AlertDialog.Builder(LiveCreateActivity_2.this);
-                                        ad.setTitle("알림");
-                                        ad.setMessage("라이브 일정 업로드를 완료되었습니다!");
-                                        ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                finish();
-                                            }
+                        if(!isEdit){ //새로 추가할때
+                            ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+                            Call<LiveData> call = apiInterface.uploadLiveData(map);
+                            call.enqueue(new Callback<LiveData>() {
+                                @Override
+                                public void onResponse(Call<LiveData> call, Response<LiveData> response) {
+                                    if (response.isSuccessful() && response.body() != null) {
+                                        if (response.body().isSuccess()) {
+                                            hidepDialog();
 
-                                        });
-                                        AlertDialog alertDialog = ad.create();
-                                        alertDialog.show();
+                                            AlertDialog.Builder ad = new AlertDialog.Builder(LiveCreateActivity_2.this);
+                                            ad.setTitle("알림");
+                                            ad.setMessage("라이브 일정 업로드를 완료되었습니다!");
+                                            ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    finish();
+                                                }
 
+                                            });
+                                            AlertDialog alertDialog = ad.create();
+                                            alertDialog.show();
+
+                                        } else {
+                                            hidepDialog();
+                                            Toast.makeText(LiveCreateActivity_2.this, "서버단쪽 sql에 문제생김", Toast.LENGTH_SHORT).show();
+                                        }
                                     } else {
                                         hidepDialog();
-                                        Toast.makeText(LiveCreateActivity_2.this, "서버단쪽 sql에 문제생김", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(LiveCreateActivity_2.this, " 업로드에 문제생김", Toast.LENGTH_SHORT).show();
                                     }
-                                } else {
-                                    hidepDialog();
-                                    Toast.makeText(LiveCreateActivity_2.this, " 업로드에 문제생김", Toast.LENGTH_SHORT).show();
                                 }
-                            }
 
-                            @Override
-                            public void onFailure(Call<LiveData> call, Throwable t) {
-                                hidepDialog();
-                                Toast.makeText(LiveCreateActivity_2.this, "라이브 업로드 실패", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                                @Override
+                                public void onFailure(Call<LiveData> call, Throwable t) {
+                                    hidepDialog();
+                                    Toast.makeText(LiveCreateActivity_2.this, "라이브 업로드 실패", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else { //수정일떄
+                            AlertDialog.Builder ad4 = new AlertDialog.Builder(LiveCreateActivity_2.this);
+                            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                            View dialogView2 = inflater.inflate(R.layout.dialog_notify_edit_message, null);
+                            ad4.setView(dialogView2);
+                            ad4.setTitle("수정 사유를 작성해주세요");
+
+                            EditText et_message = dialogView2.findViewById(R.id.et_dialog_notify_edit_message);
+
+                            ad4.setPositiveButton("수정", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    String get_message = et_message.getText().toString();
+
+                                    RequestBody live_id = RequestBody.create(MediaType.parse("text/plain"), li_id);
+                                    RequestBody live_message = RequestBody.create(MediaType.parse("text/plain"), get_message);
+                                    RequestBody live_score = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(edit_score));
+
+                                    map.put("live_id",live_id);
+                                    map.put("message",live_message);
+                                    map.put("score",live_score);
+
+                                    sendEditInfo(map);
+
+                                }
+                            });
+
+                            ad4.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                }
+                            });
+
+                            AlertDialog alertDialog4 = ad4.create();
+                            alertDialog4.show();
+                        }
+
                     }
                 } else {
                     AlertDialog.Builder ad = new AlertDialog.Builder(LiveCreateActivity_2.this);
@@ -561,6 +646,46 @@ public class LiveCreateActivity_2 extends AppCompatActivity {
         });
         AlertDialog alertDialog = ad.create();
         alertDialog.show();
+    }
+
+    private void sendEditInfo(HashMap<String, RequestBody> map){
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<LiveData> call = apiInterface.sendEditAlarm(map);
+        call.enqueue(new Callback<LiveData>() {
+            @Override
+            public void onResponse(Call<LiveData> call, Response<LiveData> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().isSuccess()) {
+                        hidepDialog();
+
+                        AlertDialog.Builder ad = new AlertDialog.Builder(LiveCreateActivity_2.this);
+                        ad.setTitle("알림");
+                        ad.setMessage("라이브 일정 수정이 완료되었습니다!");
+                        ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                finish();
+                            }
+                        });
+                        AlertDialog alertDialog = ad.create();
+                        alertDialog.show();
+
+                    } else {
+                        hidepDialog();
+                        Toast.makeText(LiveCreateActivity_2.this, "서버단쪽 sql에 문제생김", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    hidepDialog();
+                    Toast.makeText(LiveCreateActivity_2.this, " 업로드에 문제생김", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LiveData> call, Throwable t) {
+                hidepDialog();
+                Toast.makeText(LiveCreateActivity_2.this, "라이브 업로드 실패", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 

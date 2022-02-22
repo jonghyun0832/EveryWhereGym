@@ -93,10 +93,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
+                android:layout_marginTop="25dp"
                 android:text="이름"
                 android:textColor="@color/black"
                 android:textSize="20sp"
-                app:layout_constraintBottom_toTopOf="@+id/guideline27"
                 app:layout_constraintStart_toEndOf="@+id/iv_tr_mypage_img"
                 app:layout_constraintTop_toTopOf="@+id/guideline26" />
 
@@ -271,6 +271,29 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/btn_my_upload" />
+
+            <RatingBar
+                android:id="@+id/ratingBar_tr_mypage"
+                style="@style/Widget.AppCompat.RatingBar.Indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:isIndicator="true"
+                android:numStars="5"
+                android:rating="3"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_tr_mypage_img"
+                app:layout_constraintStart_toStartOf="@+id/textview_tr_mypage_name" />
+
+            <TextView
+                android:id="@+id/textView31"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="트레이너 평판"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toTopOf="@+id/ratingBar_tr_mypage"
+                app:layout_constraintStart_toStartOf="@+id/ratingBar_tr_mypage" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

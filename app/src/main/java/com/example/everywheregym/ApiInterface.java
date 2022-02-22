@@ -399,13 +399,20 @@ public interface ApiInterface {
     );
 
 
-    //삭제 알림 보내기
+    //삭제 알림 보내고 라이브 삭제하기
     @FormUrlEncoded
     @POST("sendDeleteAlarm.php")
     Call<LiveData> sendDeleteAlarm(
             @Field("user_id") String user_id,
             @Field("live_id") String live_id,
             @Field("message") String message
+    );
+
+    //수정 알림 보내고 라이브 일정 수정
+    @Multipart
+    @POST("sendEditAlarm.php")
+    Call<LiveData> sendEditAlarm(
+            @PartMap HashMap<String, RequestBody> data
     );
 
 

@@ -51,6 +51,9 @@ public class LiveData {
     @SerializedName("alarm_num") private String alarm_num;
 
     @Expose
+    @SerializedName("trainer_score") private String trainer_score;
+
+    @Expose
     @SerializedName("open") private String open;
 
     @Expose
@@ -169,6 +172,14 @@ public class LiveData {
 
     public void setAlarm_num(String alarm_num) {
         this.alarm_num = alarm_num;
+    }
+
+    public String getTrainer_score() {
+        return trainer_score;
+    }
+
+    public void setTrainer_score(String trainer_score) {
+        this.trainer_score = trainer_score;
     }
 
     public String getEnable() {

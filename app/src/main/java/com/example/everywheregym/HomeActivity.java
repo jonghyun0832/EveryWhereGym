@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,13 +30,17 @@ public class HomeActivity extends AppCompatActivity {
     private FragVideo frag_video; //VOD
     private FragMypage frag_mypage; //마이페이지
 
-
+    private int view = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Log.d("TAG", "HomeonCreate: ");
+
+        Intent getintent = getIntent();
+        view = getintent.getIntExtra("view",0);
+
 
 
 //        //권한 획득 체크
@@ -92,7 +97,11 @@ public class HomeActivity extends AppCompatActivity {
         frag_live = new FragLive();
         frag_video = new FragVideo();
         frag_mypage = new FragMypage();
-        setFrag(0);
+        if (view == 0 ){
+            setFrag(0);
+        } else {
+            setFrag(1);
+        }
 
 
     }

@@ -3,7 +3,9 @@ package com.example.everywheregym;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
@@ -21,6 +23,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class FirebaseMsgService extends FirebaseMessagingService {
+
+    private static final int NOTIFICATION_ID = 0;
 
 
     @Override
@@ -77,15 +81,32 @@ public class FirebaseMsgService extends FirebaseMessagingService {
 //            String messageTitle = remoteMessage.getNotification().getTitle();
 //        }
 
+
+        //String body = remoteMessage.getNotification().getBody();
+        //String[] split = body.split("456");
+
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+        Intent intent = new Intent(this,HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra("view",2);
+        //Intent intent1 = Intent(getBaseContext(),)
+//        intent.putExtra("live_id",split[1]);
+//        intent.putExtra("uploader_id",split[2]);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,NOTIFICATION_ID,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        //PendingIntent pendingIntent1 = PendingIntent.getService(this,NOTIFICATION_ID,intent,PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (notificationManager.getNotificationChannel("default") == null) {
-                NotificationChannel channel = new NotificationChannel("default", "기본채널", NotificationManager.IMPORTANCE_DEFAULT);
+            if (notificationManager.getNotificationChannel("defaultd") == null) {
+                NotificationChannel channel = new NotificationChannel("defaultd", "기본채널", NotificationManager.IMPORTANCE_HIGH);
+                channel.enableLights(true);
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//                    channel.canBubble();
+//                }
                 notificationManager.createNotificationChannel(channel);
             }
-            builder = new NotificationCompat.Builder(getApplicationContext(), "default");
+            builder = new NotificationCompat.Builder(getApplicationContext(), "defaultd");
         }else {
             builder = new NotificationCompat.Builder(getApplicationContext());
         }
@@ -95,17 +116,22 @@ public class FirebaseMsgService extends FirebaseMessagingService {
 
         builder.setContentTitle(title)
                 .setContentText(body)
-                .setSmallIcon(R.drawable.ic_launcher_background);
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                //.setTicker("알림 간단한 설명")
+                .setWhen(System.currentTimeMillis())
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+        //builder.addAction(R.drawable.ic_launcher_background,"해당 라이브 알림해제",pendingIntent1);
 
         Notification notification = builder.build();
-        notificationManager.notify(1, notification);
+        notificationManager.notify(NOTIFICATION_ID, notification);
 
 
 
 
 
     }
-
-
 
 }

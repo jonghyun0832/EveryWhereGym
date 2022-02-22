@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +40,7 @@ public class FragTrMypage extends Fragment {
     Button btn_my_bookmark; //내 북마크
     Button btn_tr_logout; //로그아웃
 
+    RatingBar rb;
 
     String img_url; //프로필 이미지
     String back_img_url; //배경 이미지
@@ -72,6 +74,8 @@ public class FragTrMypage extends Fragment {
         btn_my_upload = view.findViewById(R.id.btn_my_upload);
         btn_my_bookmark = view.findViewById(R.id.btn_my_bookmark_tr);
         btn_tr_logout = view.findViewById(R.id.btn_tr_logout);
+
+        rb = view.findViewById(R.id.ratingBar_tr_mypage);
 
         SharedPreferences sharedPreferences= getContext().getSharedPreferences("info", Context.MODE_PRIVATE);
         user_id = sharedPreferences.getString("user_id","");
@@ -207,6 +211,12 @@ public class FragTrMypage extends Fragment {
                         tr_expert = response.body().getTr_expert(); //트레이너 전문영역
                         tr_career = response.body().getTr_career(); //트레이너 경력
                         tr_certify = response.body().getTr_certify(); //트레이너 전문사항
+                        int tr_score = response.body().getTr_score();
+                        if(tr_score < 0){
+                            tr_score = 0;
+                        }
+
+                        float result = (float)tr_score/100 * 5;
 
                         //텍스트 설정
                         tv_profile_name.setText(user_name);
@@ -214,6 +224,7 @@ public class FragTrMypage extends Fragment {
                         tv_tr_expert.setText(tr_expert);
                         tv_tr_career.setText(tr_career);
                         tv_tr_certify.setText(tr_certify);
+                        rb.setRating(result);
 
                         //이미지 설정
                         if (user_img == null || user_img.equals("")){
