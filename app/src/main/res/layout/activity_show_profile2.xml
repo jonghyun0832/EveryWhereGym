@@ -94,7 +94,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="35dp"
                 android:text="이름"
                 android:textColor="@color/black"
                 android:textSize="20sp"
@@ -244,22 +244,23 @@
                 style="@style/Widget.AppCompat.RatingBar.Indicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
                 android:isIndicator="true"
                 android:numStars="5"
                 android:rating="3"
                 app:layout_constraintBottom_toTopOf="@+id/guideline27"
                 app:layout_constraintStart_toStartOf="@+id/textview_showPF_name" />
 
-            <TextView
-                android:id="@+id/textView28"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:text="트레이너 평판"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toTopOf="@+id/ratingBar_show"
-                app:layout_constraintStart_toStartOf="@+id/ratingBar_show" />
+<!--            <TextView-->
+<!--                android:id="@+id/textView28"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginBottom="5dp"-->
+<!--                android:text="트레이너 평판"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:textSize="16sp"-->
+<!--                app:layout_constraintBottom_toTopOf="@+id/ratingBar_show"-->
+<!--                app:layout_constraintStart_toStartOf="@+id/ratingBar_show" />-->
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

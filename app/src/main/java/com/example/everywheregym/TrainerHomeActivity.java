@@ -89,6 +89,7 @@ public class TrainerHomeActivity extends AppCompatActivity {
         });
 
 
+
         ActivityResultLauncher<Intent> activityLauncher_getVideo = registerForActivityResult( //갤러리에서 이미지 받아오기
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
@@ -383,7 +384,8 @@ public class TrainerHomeActivity extends AppCompatActivity {
 
         TedPermission.with(TrainerHomeActivity.this).setPermissionListener(permissionLitener)
                 .setDeniedMessage("동영상을 업로드 하기 위해 접근 권한이 필요합니다.")
-                .setPermissions(new String[] {Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE})
+                .setPermissions(new String[] {Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ,Manifest.permission.RECORD_AUDIO})
                 .check();
 
 

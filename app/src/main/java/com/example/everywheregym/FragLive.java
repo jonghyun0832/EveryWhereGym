@@ -1,5 +1,7 @@
 package com.example.everywheregym;
 import androidx.appcompat.app.AlertDialog;
+
+import android.Manifest;
 import android.content.DialogInterface;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -32,6 +34,8 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -86,6 +90,8 @@ public class FragLive extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_frag_live,container,false);
 
+        ted();
+
         calendar = (MaterialCalendarView) view.findViewById(R.id.live_calendar);
         recyclerView = (RecyclerView) view.findViewById(R.id.rv_live);
 
@@ -138,12 +144,16 @@ public class FragLive extends Fragment {
         int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
         int first_day = todaysDay(dayOfWeek);
 
-        selected_date = y + "." +  (m+1) + "." + d;
+        if(d < 10){
+            selected_date = y + "." +  (m+1) + ".0" + d;
+        } else {
+            selected_date = y + "." +  (m+1) + "." + d;
+        }
         //callList(selected_date);
 
         calendar.state().edit()
                 .setMinimumDate(CalendarDay.from(y,m,d))
-                .setMaximumDate(CalendarDay.from(y,m,d+6))
+                .setMaximumDate(CalendarDay.from(y,m+1,d+6))
                 .isCacheCalendarPositionEnabled(false)
                 .setCalendarDisplayMode(CalendarMode.WEEKS)
                 .setFirstDayOfWeek(first_day)
@@ -172,7 +182,13 @@ public class FragLive extends Fragment {
                 int month = widget.getSelectedDate().getMonth();
                 int day = widget.getSelectedDate().getDay();
 
-                selected_date = year + "." +  (month+1) + "." + day;
+                if(day < 10){
+                    selected_date = year + "." +  (month+1) + ".0" + day;
+                } else {
+                    selected_date = year + "." +  (month+1) + "." + day;
+                }
+
+                System.out.println(selected_date);
 
                 liveArray= new ArrayList<>();
                 page = 1;
@@ -364,7 +380,9 @@ public class FragLive extends Fragment {
                     //reload(is_trainer);
 
                 } else if (vh.btn_push.getText().toString().equals("라이브 시작")){
-                    //라이브 시작하기
+                    ted();
+                    Intent intent = new Intent(getContext(),LiveWebViewActivity.class);
+                    startActivity(intent);
                 }
 
             }
@@ -572,6 +590,29 @@ public class FragLive extends Fragment {
             result = 2;
         }
         return result;
+
+    }
+
+    void ted(){
+        PermissionListener permissionLitener = new PermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+                //권한 요청 성공
+
+            }
+
+            @Override
+            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+                Log.d("permission", "onPermissionDenied: 요청 실패");
+            }
+        };
+
+        TedPermission.with(getContext()).setPermissionListener(permissionLitener)
+                .setDeniedMessage("라이브에 참여하기 위해선 카메라, 오디오 권한이 필요합니다")
+                .setPermissions(new String[] {Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        ,Manifest.permission.RECORD_AUDIO})
+                .check();
+
 
     }
 
