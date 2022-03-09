@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
     <uses-permission android:name="android.permission.RECORD_VIDEO" />
+    <uses-permission android:name="android.permission.MICROPHONE" />
     <uses-permission android:name="android.webkit.PermissionRequest" />
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -17,7 +18,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.CAMERA2" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+
 
     <uses-feature android:name="android.hardware.camera2" />
 
@@ -42,7 +43,6 @@
             android:name=".LiveWebViewActivity"
             android:screenOrientation="landscape"
             android:exported="true" />
-
         <service
             android:name=".NotifiService"
             android:enabled="true"
@@ -113,7 +113,12 @@
             android:exported="true" />
         <activity
             android:name=".HomeActivity"
-            android:exported="true" />
+            android:exported="true" >
+            <intent-filter>
+                <action android:name=".HomeActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".SignUpActivity"
             android:exported="true"

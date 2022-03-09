@@ -31,6 +31,9 @@ public class HomeActivity extends AppCompatActivity {
     private FragMypage frag_mypage; //마이페이지
 
     private int view = 0;
+    private String live_id;
+
+    private boolean isback = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +41,29 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         Log.d("TAG", "HomeonCreate: ");
 
-        Intent getintent = getIntent();
-        view = getintent.getIntExtra("view",0);
+        Bundle bundle = getIntent().getExtras();
+        if(bundle != null){
+            isback = true;
+            Log.d("팬딩", "onCreate: " + bundle);
+            String aa = bundle.getString("moveto");
+            Log.d("팬딩", "onCreate: " + aa);
+            try{
+                view = Integer.parseInt(bundle.getString("moveto"));
+            }catch (Exception e){
+                view = bundle.getInt("view",0);
+            }
+            Log.d("팬딩", "onCreate: " + view);
+            try{
+                live_id = bundle.getString("live_id");
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        if(!isback){
+            Intent getintent = getIntent();
+            view = getintent.getIntExtra("view",0);
+        }
 
 
 
@@ -99,8 +123,13 @@ public class HomeActivity extends AppCompatActivity {
         frag_mypage = new FragMypage();
         if (view == 0 ){
             setFrag(0);
-        } else {
+        } else if (view == 2) {
             setFrag(1);
+        } else {
+            setFrag(0);
+            Intent intent1 = new Intent(this,LiveWebViewActivity.class);
+            intent1.putExtra("room_id",live_id);
+            startActivity(intent1);
         }
 
 

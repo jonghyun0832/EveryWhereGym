@@ -171,9 +171,15 @@ public class LiveAdapter extends RecyclerView.Adapter<LiveAdapter.LiveViewHolder
             if(arrayList.get(position).getEnable().equals("1")){
                 String limit = "현재 : " + arrayList.get(position).getLive_join() + "명\n" + "제한 : " + arrayList.get(position).getLive_limit_join() + "명";
                 holder.tv_limit.setText(limit);
-                holder.btn_push.setText("라이브 준비중");
-                holder.btn_push.setBackground(ContextCompat.getDrawable(context,R.drawable.round_text_gray));
-                holder.btn_push.setTextColor(Color.WHITE);
+                if(arrayList.get(position).getOpen().equals("1")){
+                    holder.btn_push.setText("참여하기");
+                    holder.btn_push.setBackground(ContextCompat.getDrawable(context,R.drawable.round_text_blue));
+                    holder.btn_push.setTextColor(Color.WHITE);
+                } else {
+                    holder.btn_push.setText("라이브 준비중");
+                    holder.btn_push.setBackground(ContextCompat.getDrawable(context,R.drawable.round_text_gray));
+                    holder.btn_push.setTextColor(Color.BLACK);
+                }
             } else {
 
                 ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);

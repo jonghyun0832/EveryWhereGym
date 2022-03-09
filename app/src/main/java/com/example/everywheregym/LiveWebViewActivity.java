@@ -5,6 +5,7 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -24,11 +25,16 @@ public class LiveWebViewActivity extends AppCompatActivity {
 
     private WebView webView;
 
+    private String room_id;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("웹뷰", "onCreate: ");
         setContentView(R.layout.activity_live_web_view);
+
+        Intent getIntent = getIntent();
+        room_id = getIntent.getStringExtra("room_id");
 
         webView = findViewById(R.id.webview);
 
@@ -118,7 +124,8 @@ public class LiveWebViewActivity extends AppCompatActivity {
         //webView.setWebViewClient(new WebViewClient());
 
         //webView.clearCache(true);
-        String enterUrl = "https://8598-180-69-18-217.ngrok.io/";
+        //String enterUrl = "https://b90a-180-69-18-217.ngrok.io/" + room_id;
+        String enterUrl = "https://b90a-180-69-18-217.ngrok.io/";
         webView.loadUrl(enterUrl);
         //webView.loadUrl("https://www.google.com/");
     }

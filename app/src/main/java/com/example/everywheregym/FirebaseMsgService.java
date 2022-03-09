@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -81,20 +82,34 @@ public class FirebaseMsgService extends FirebaseMessagingService {
 //            String messageTitle = remoteMessage.getNotification().getTitle();
 //        }
 
+        String title = remoteMessage.getNotification().getTitle();
+        Log.d("노티", "onMessageReceived: " + title);
+        String message = remoteMessage.getNotification().getBody();
+        Log.d("노티", "onMessageReceived: " + message);
+        String[] split = message.split("/");
 
-        //String body = remoteMessage.getNotification().getBody();
-        //String[] split = body.split("456");
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+        //NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         Intent intent = new Intent(this,HomeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra("view",2);
+
+        Intent selectIntent;
+        if (title.equals("라이브 방송 시작 알림")){
+            Log.d("노티", "onMessageReceived: intent1");
+            Intent intent1 = new Intent(this,LiveWebViewActivity.class);
+            intent1.putExtra("room_id",split[1]);
+            selectIntent = intent1;
+        } else {
+            Log.d("노티", "onMessageReceived: intent");
+            selectIntent = intent;
+        }
         //Intent intent1 = Intent(getBaseContext(),)
 //        intent.putExtra("live_id",split[1]);
 //        intent.putExtra("uploader_id",split[2]);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,NOTIFICATION_ID,intent,PendingIntent.FLAG_UPDATE_CURRENT);
-        //PendingIntent pendingIntent1 = PendingIntent.getService(this,NOTIFICATION_ID,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        //PendingIntent pendingIntent = PendingIntent.getActivity(this,NOTIFICATION_ID,selectIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,NOTIFICATION_ID,selectIntent,PendingIntent.FLAG_ONE_SHOT);
 
         NotificationCompat.Builder builder = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -106,13 +121,14 @@ public class FirebaseMsgService extends FirebaseMessagingService {
 //                }
                 notificationManager.createNotificationChannel(channel);
             }
-            builder = new NotificationCompat.Builder(getApplicationContext(), "defaultd");
+            builder = new NotificationCompat.Builder(this, "defaultd");
         }else {
-            builder = new NotificationCompat.Builder(getApplicationContext());
+            builder = new NotificationCompat.Builder(this);
         }
 
-        String title = remoteMessage.getNotification().getTitle();
-        String body = remoteMessage.getNotification().getBody();
+        //String title = remoteMessage.getNotification().getTitle();
+        String body = split[0];
+        //String body = remoteMessage.getNotification().getBody();
 
         builder.setContentTitle(title)
                 .setContentText(body)

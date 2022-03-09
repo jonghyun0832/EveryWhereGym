@@ -415,6 +415,14 @@ public interface ApiInterface {
             @PartMap HashMap<String, RequestBody> data
     );
 
+    //라이브 시작했음
+    @FormUrlEncoded
+    @POST("sendOpenAlarm.php")
+    Call<LiveData> sendOpenAlarm(
+            @Field("live_id") String live_id,
+            @Field("live_title") String live_title
+    );
+
 
 
 //    @Multipart

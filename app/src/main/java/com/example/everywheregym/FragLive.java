@@ -361,6 +361,7 @@ public class FragLive extends Fragment {
             public void whenBtnClick(LiveAdapter.LiveViewHolder vh, int position) {
                 String li_id = liveArray.get(position).getLive_id();
                 String uploader_id = liveArray.get(position).getUploader_id();
+                String li_title = liveArray.get(position).getLive_title();
                 //시간에 따라 버튼 달라지니까
                 //버튼 내용에 따라서 알람등록 / 방송참여 할수있게 해줘야함
                 if(vh.btn_push.getText().toString().equals("알림받기")){
@@ -381,7 +382,27 @@ public class FragLive extends Fragment {
 
                 } else if (vh.btn_push.getText().toString().equals("라이브 시작")){
                     ted();
+
+                    AlertDialog.Builder ad = new AlertDialog.Builder(getContext());
+                    ad.setMessage("라이브를 시작하시겠습니까?");
+                    ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //레트로핏 보내서 여기서 open으로 만들어줘야함
+                            openLive(li_id,li_title);
+                        }
+                    });
+                    ad.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    });
+                    AlertDialog alertDialog = ad.create();
+                    alertDialog.show();
+                } else if (vh.btn_push.getText().toString().equals("참여하기")){
                     Intent intent = new Intent(getContext(),LiveWebViewActivity.class);
+                    intent.putExtra("room_id",li_id);
                     startActivity(intent);
                 }
 
@@ -614,6 +635,38 @@ public class FragLive extends Fragment {
                 .check();
 
 
+    }
+
+    private void openLive(String live_id, String title){
+        ApiInterface apiInterface2 = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<LiveData> call2 = apiInterface2.sendOpenAlarm(live_id,title);
+        call2.enqueue(new Callback<LiveData>() {
+            @Override
+            public void onResponse(Call<LiveData> call2, Response<LiveData> response2) {
+                if (response2.isSuccessful() && response2.body() != null){
+                    if(response2.body().isSuccess()){
+                        AlertDialog.Builder ad3 = new AlertDialog.Builder(getContext());
+                        ad3.setTitle("전송 완료");
+                        ad3.setMessage("알림 신청한 회원들에게 라이브 시작 알림을 보냈습니다.");
+                        ad3.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Intent intent = new Intent(getContext(),LiveWebViewActivity.class);
+                                intent.putExtra("room_id",live_id);
+                                startActivity(intent);
+                            }
+                        });
+                        AlertDialog alertDialog3 = ad3.create();
+                        alertDialog3.show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LiveData> call2, Throwable t) {
+                Toast.makeText(getContext(), "통신 오류", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 }
