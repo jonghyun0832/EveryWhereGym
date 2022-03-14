@@ -54,6 +54,9 @@ public class LiveData {
     @SerializedName("trainer_score") private String trainer_score;
 
     @Expose
+    @SerializedName("user_name") private String user_name;
+
+    @Expose
     @SerializedName("open") private String open;
 
     @Expose
@@ -180,6 +183,14 @@ public class LiveData {
 
     public void setTrainer_score(String trainer_score) {
         this.trainer_score = trainer_score;
+    }
+
+    public String getUser_name() {
+        return user_name;
+    }
+
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
     }
 
     public String getEnable() {

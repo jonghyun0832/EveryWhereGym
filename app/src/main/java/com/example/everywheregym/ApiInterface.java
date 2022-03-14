@@ -423,6 +423,20 @@ public interface ApiInterface {
             @Field("live_title") String live_title
     );
 
+    //라이브 끝났음
+    @FormUrlEncoded
+    @POST("finishLive.php")
+    Call<LiveData> finishLive(
+            @Field("live_id") String live_id
+    );
+
+    //유저 정보 가져오기
+    @FormUrlEncoded
+    @POST("getUserInfo.php")
+    Call<LiveData> getUserInfo(
+            @Field("user_id") String user_id
+    );
+
 
 
 //    @Multipart

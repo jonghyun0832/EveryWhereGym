@@ -68,6 +68,7 @@ public class FragLive extends Fragment {
 
     private String user_id;
     private String is_trainer;
+    private String user_name;
 
     private String selected_date;
 
@@ -127,6 +128,8 @@ public class FragLive extends Fragment {
         SharedPreferences sharedPreferences= getActivity().getSharedPreferences("info", Context.MODE_PRIVATE);
         user_id = sharedPreferences.getString("user_id","0");
         is_trainer = sharedPreferences.getString("is_trainer","0");
+
+        getUserInfo(user_id);
 
         SimpleDateFormat format = new SimpleDateFormat("yy . M");
 
@@ -389,7 +392,7 @@ public class FragLive extends Fragment {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             //레트로핏 보내서 여기서 open으로 만들어줘야함
-                            openLive(li_id,li_title);
+                            openLive(li_id,li_title,uploader_id,user_name);
                         }
                     });
                     ad.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -402,7 +405,9 @@ public class FragLive extends Fragment {
                     alertDialog.show();
                 } else if (vh.btn_push.getText().toString().equals("참여하기")){
                     Intent intent = new Intent(getContext(),LiveWebViewActivity.class);
-                    intent.putExtra("room_id",li_id);
+                    String room_id = li_id + "/" + user_name;
+                    intent.putExtra("room_id",room_id);
+                    intent.putExtra("host_id",uploader_id);
                     startActivity(intent);
                 }
 
@@ -448,6 +453,26 @@ public class FragLive extends Fragment {
 
             @Override
             public void onFailure(Call<LiveDataArray> call, Throwable t) {
+                Toast.makeText(getContext(), "통신 오류", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void getUserInfo(String user_id){
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<LiveData> call = apiInterface.getUserInfo(user_id);
+        call.enqueue(new Callback<LiveData>() {
+            @Override
+            public void onResponse(Call<LiveData> call, Response<LiveData> response) {
+                if (response.isSuccessful() && response.body() != null){
+                    if(response.body().isSuccess()){
+                        user_name = response.body().getUser_name();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LiveData> call, Throwable t) {
                 Toast.makeText(getContext(), "통신 오류", Toast.LENGTH_SHORT).show();
             }
         });
@@ -637,7 +662,7 @@ public class FragLive extends Fragment {
 
     }
 
-    private void openLive(String live_id, String title){
+    private void openLive(String live_id, String title, String host_id, String user_name){
         ApiInterface apiInterface2 = ApiClient.getApiClient().create(ApiInterface.class);
         Call<LiveData> call2 = apiInterface2.sendOpenAlarm(live_id,title);
         call2.enqueue(new Callback<LiveData>() {
@@ -648,6 +673,40 @@ public class FragLive extends Fragment {
                         AlertDialog.Builder ad3 = new AlertDialog.Builder(getContext());
                         ad3.setTitle("전송 완료");
                         ad3.setMessage("알림 신청한 회원들에게 라이브 시작 알림을 보냈습니다.");
+                        ad3.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Intent intent = new Intent(getContext(),LiveWebViewActivity.class);
+                                String room_id = live_id + "/" + user_name + "/1";
+                                intent.putExtra("room_id",room_id);
+                                intent.putExtra("host_id",host_id);
+                                startActivity(intent);
+                            }
+                        });
+                        AlertDialog alertDialog3 = ad3.create();
+                        alertDialog3.show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LiveData> call2, Throwable t) {
+                Toast.makeText(getContext(), "통신 오류", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void finishLive(String live_id){
+        ApiInterface apiInterface2 = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<LiveData> call2 = apiInterface2.finishLive(live_id);
+        call2.enqueue(new Callback<LiveData>() {
+            @Override
+            public void onResponse(Call<LiveData> call2, Response<LiveData> response2) {
+                if (response2.isSuccessful() && response2.body() != null){
+                    if(response2.body().isSuccess()){
+                        AlertDialog.Builder ad3 = new AlertDialog.Builder(getContext());
+                        ad3.setTitle("알림");
+                        ad3.setMessage("라이브가 종료되었습니다.");
                         ad3.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
