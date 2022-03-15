@@ -365,6 +365,7 @@ public class FragLive extends Fragment {
                 String li_id = liveArray.get(position).getLive_id();
                 String uploader_id = liveArray.get(position).getUploader_id();
                 String li_title = liveArray.get(position).getLive_title();
+                String li_limit = liveArray.get(position).getLive_limit_join();
                 //시간에 따라 버튼 달라지니까
                 //버튼 내용에 따라서 알람등록 / 방송참여 할수있게 해줘야함
                 if(vh.btn_push.getText().toString().equals("알림받기")){
@@ -391,8 +392,8 @@ public class FragLive extends Fragment {
                     ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            //레트로핏 보내서 여기서 open으로 만들어줘야함
-                            openLive(li_id,li_title,uploader_id,user_name);
+                            //클릭시 라이브 참여 버튼 활성화
+                            openLive(li_id,li_title,uploader_id,user_name,li_limit);
                         }
                     });
                     ad.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -404,11 +405,8 @@ public class FragLive extends Fragment {
                     AlertDialog alertDialog = ad.create();
                     alertDialog.show();
                 } else if (vh.btn_push.getText().toString().equals("참여하기")){
-                    Intent intent = new Intent(getContext(),LiveWebViewActivity.class);
-                    String room_id = li_id + "/" + user_name;
-                    intent.putExtra("room_id",room_id);
-                    intent.putExtra("host_id",uploader_id);
-                    startActivity(intent);
+                    //클릭시 최대인원수 체크하기 - 최대인원수보다 적으면 인원수 늘리면서 참여하기
+                    joinCheck(li_id,uploader_id,li_limit);
                 }
 
             }
@@ -662,7 +660,7 @@ public class FragLive extends Fragment {
 
     }
 
-    private void openLive(String live_id, String title, String host_id, String user_name){
+    private void openLive(String live_id, String title, String host_id, String user_name, String li_limit){
         ApiInterface apiInterface2 = ApiClient.getApiClient().create(ApiInterface.class);
         Call<LiveData> call2 = apiInterface2.sendOpenAlarm(live_id,title);
         call2.enqueue(new Callback<LiveData>() {
@@ -677,9 +675,10 @@ public class FragLive extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Intent intent = new Intent(getContext(),LiveWebViewActivity.class);
-                                String room_id = live_id + "/" + user_name + "/1";
+                                String room_id = live_id + "/" + user_name + "/" + li_limit + "/1";
                                 intent.putExtra("room_id",room_id);
                                 intent.putExtra("host_id",host_id);
+                                intent.putExtra("live_id",live_id);
                                 startActivity(intent);
                             }
                         });
@@ -696,27 +695,72 @@ public class FragLive extends Fragment {
         });
     }
 
-    private void finishLive(String live_id){
+    private void joinCheck(String live_id, String uploader,String li_limit){
         ApiInterface apiInterface2 = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<LiveData> call2 = apiInterface2.finishLive(live_id);
+        Call<LiveData> call2 = apiInterface2.joinCheck(live_id);
         call2.enqueue(new Callback<LiveData>() {
             @Override
             public void onResponse(Call<LiveData> call2, Response<LiveData> response2) {
                 if (response2.isSuccessful() && response2.body() != null){
                     if(response2.body().isSuccess()){
+                        //참여 가능 (참여할거냐고 물어봄)
+                        String li_join = response2.body().getLive_join();
                         AlertDialog.Builder ad3 = new AlertDialog.Builder(getContext());
                         ad3.setTitle("알림");
-                        ad3.setMessage("라이브가 종료되었습니다.");
+                        ad3.setMessage("참여하시겠습니까?");
                         ad3.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Intent intent = new Intent(getContext(),LiveWebViewActivity.class);
-                                intent.putExtra("room_id",live_id);
-                                startActivity(intent);
+                                joinLive(live_id,uploader,li_join,li_limit);
+                                //여기서 현재 참여인원 늘려주기
+                            }
+                        });
+                        ad3.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
                             }
                         });
                         AlertDialog alertDialog3 = ad3.create();
                         alertDialog3.show();
+                    }else {
+                        //참여 불가능 (최대인원 수 까지 다참)
+                        AlertDialog.Builder ad3 = new AlertDialog.Builder(getContext());
+                        ad3.setTitle("알림");
+                        ad3.setMessage("참여 가능 인원수가 모두 찼습니다.\n다음 라이브를 이용해주세요.");
+                        ad3.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        });
+                        AlertDialog alertDialog3 = ad3.create();
+                        alertDialog3.show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LiveData> call2, Throwable t) {
+                Toast.makeText(getContext(), "통신 오류", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void joinLive(String live_id, String uploader, String live_join, String li_limit){
+        ApiInterface apiInterface2 = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<LiveData> call2 = apiInterface2.joinLive(live_id,live_join);
+        call2.enqueue(new Callback<LiveData>() {
+            @Override
+            public void onResponse(Call<LiveData> call2, Response<LiveData> response2) {
+                if (response2.isSuccessful() && response2.body() != null){
+                    if(response2.body().isSuccess()){
+                        Intent intent = new Intent(getContext(),LiveWebViewActivity.class);
+                        String room_id = live_id + "/" + user_name + "/" + li_limit;
+                        intent.putExtra("room_id",room_id);
+                        intent.putExtra("host_id",uploader);
+                        intent.putExtra("live_id",live_id);
+                        startActivity(intent);
                     }
                 }
             }

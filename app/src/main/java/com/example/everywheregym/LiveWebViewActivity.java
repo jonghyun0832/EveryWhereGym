@@ -21,9 +21,14 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LiveWebViewActivity extends AppCompatActivity {
 
@@ -32,7 +37,7 @@ public class LiveWebViewActivity extends AppCompatActivity {
     private String room_url;
     private String user_id;
     private String host_id;
-    private String user_name;
+    private String live_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +48,7 @@ public class LiveWebViewActivity extends AppCompatActivity {
         Intent getIntent = getIntent();
         room_url = getIntent.getStringExtra("room_id");
         host_id = getIntent.getStringExtra("host_id");
+        live_id = getIntent.getStringExtra("live_id");
 
         SharedPreferences sharedPreferences= getSharedPreferences("info", MODE_PRIVATE);
         user_id = sharedPreferences.getString("user_id","");
@@ -148,15 +154,15 @@ public class LiveWebViewActivity extends AppCompatActivity {
 
             @Override
             public boolean onJsConfirm(WebView view, String url, String message, final JsResult result) {
-
                 new AlertDialog.Builder(LiveWebViewActivity.this)
-                        .setTitle("라이브 나가기")
+                        .setTitle("알림")
                         .setMessage(message)
                         .setPositiveButton(android.R.string.ok,
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         result.confirm();
-                                        finish();
+                                        finishLive(live_id);
+                                        //finish();
                                     }
                                 })
                         .setNegativeButton(android.R.string.cancel,
@@ -193,8 +199,8 @@ public class LiveWebViewActivity extends AppCompatActivity {
         //webView.setWebViewClient(new WebViewClient());
 
         //webView.clearCache(true);
-        String enterUrl = "https://70b2-1-227-215-212.ngrok.io/" + room_url;
-        //String enterUrl = "https://7c77-180-69-18-217.ngrok.io/123";
+        String enterUrl = "https://df3f-1-227-215-212.ngrok.io/" + room_url;
+        //String enterUrl = "https://cf76-1-227-215-212.ngrok.io/";
         webView.loadUrl(enterUrl);
         //webView.loadUrl("https://www.google.com/");
     }
@@ -206,10 +212,8 @@ public class LiveWebViewActivity extends AppCompatActivity {
             webView.goBack();
             System.out.println("1번");
         } else {
-            if(host_id.equals(user_id)){
-                //여기서 하면될듯 라이브 삭제 ㄱㄱ?
-            }
-            super.onBackPressed();
+            //뒤로가기로는 못나가게 막음
+            //super.onBackPressed();
             System.out.println("2번");
         }
     }
@@ -220,4 +224,63 @@ public class LiveWebViewActivity extends AppCompatActivity {
         webView.destroy();
 
     }
+
+    private void finishLive(String live_id){
+        if(host_id.equals(user_id)){
+            ApiInterface apiInterface2 = ApiClient.getApiClient().create(ApiInterface.class);
+            Call<LiveData> call2 = apiInterface2.finishLive(live_id);
+            call2.enqueue(new Callback<LiveData>() {
+                @Override
+                public void onResponse(Call<LiveData> call2, Response<LiveData> response2) {
+                    if (response2.isSuccessful() && response2.body() != null){
+                        if(response2.body().isSuccess()){
+                            AlertDialog.Builder ad3 = new AlertDialog.Builder(LiveWebViewActivity.this);
+                            ad3.setTitle("알림");
+                            ad3.setMessage("라이브가 종료되었습니다.");
+                            ad3.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    finish();
+                                }
+                            });
+                            AlertDialog alertDialog3 = ad3.create();
+                            alertDialog3.show();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<LiveData> call2, Throwable t) {
+                    Toast.makeText(LiveWebViewActivity.this, "통신 오류", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            //여긴 회원들이 나가기 했을떄임
+            //나갈경우에는 현재인원수에서 1개씩 뺴주면 됨
+            leftLive(live_id);
+        }
+
+    }
+
+    private void leftLive(String live_id){
+        ApiInterface apiInterface2 = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<LiveData> call2 = apiInterface2.leftLive(live_id);
+        call2.enqueue(new Callback<LiveData>() {
+            @Override
+            public void onResponse(Call<LiveData> call2, Response<LiveData> response2) {
+                if (response2.isSuccessful() && response2.body() != null){
+                    if(response2.body().isSuccess()){
+                        finish();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LiveData> call2, Throwable t) {
+                Toast.makeText(LiveWebViewActivity.this, "통신 오류", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
 }

@@ -437,6 +437,29 @@ public interface ApiInterface {
             @Field("user_id") String user_id
     );
 
+    //라이브 현재 인원수 체크 - 참여가능 여부
+    @FormUrlEncoded
+    @POST("joinCheck.php")
+    Call<LiveData> joinCheck(
+            @Field("live_id") String live_id
+    );
+
+    //라이브 현재 인원수 추가하기
+    @FormUrlEncoded
+    @POST("joinLive.php")
+    Call<LiveData> joinLive(
+            @Field("live_id") String live_id,
+            @Field("live_join") String live_join
+    );
+
+    //라이브 현재 인원수 빼기
+    @FormUrlEncoded
+    @POST("leftLive.php")
+    Call<LiveData> leftLive(
+            @Field("live_id") String live_id
+    );
+
+
 
 
 //    @Multipart
