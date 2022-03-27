@@ -490,7 +490,9 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("getReview.php")
     Call<ReviewDataArray> getReview(
-            @Field("uploader_id") String uploader_id
+            @Field("uploader_id") String uploader_id,
+            @Field("page") int page,
+            @Field("cursor") String cursor
     );
 
     //라이브 리뷰 점수 가져오기

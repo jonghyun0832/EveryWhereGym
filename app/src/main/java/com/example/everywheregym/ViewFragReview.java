@@ -11,10 +11,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,6 +38,12 @@ public class ViewFragReview extends Fragment {
     private String user_id;
     private String uploader;
 
+    private NestedScrollView nsv;
+    private int page = 1;
+    private String cursor = "0";
+    private boolean isEnd = false;
+    private ProgressBar pbBar;
+
     public static ViewFragReview newInstance(int number) {
         ViewFragReview fragmentReview = new ViewFragReview();
         Bundle bundle = new Bundle();
@@ -50,17 +58,10 @@ public class ViewFragReview extends Fragment {
 
         Log.d("review", "onCreate: ");
 
+        page = 1;
+        cursor = "0";
 
-
-//        SharedPreferences sharedPreferences= getContext().getSharedPreferences("info", MODE_PRIVATE);
-//        user_id = sharedPreferences.getString("user_id","");
-
-        //reviewArray = new ArrayList<>();
-
-        //reviewArray = ((ShowProfileActivity)getActivity()).getReviewArray;
         uploader = ((ShowProfileActivity)getActivity()).show_uploader_id;
-
-        //reviewArray = new ArrayList<>();
     }
 
     @Override
@@ -68,6 +69,22 @@ public class ViewFragReview extends Fragment {
         View v = inflater.inflate(R.layout.fragment_view_frag_review, container, false);
 
         Log.d("review", "onCreateView: ");
+
+        nsv = (NestedScrollView) v.findViewById(R.id.nsv_review);
+        pbBar = (ProgressBar) v.findViewById(R.id.pb_review);
+
+        nsv.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if(!nsv.canScrollVertically(1)){
+                    Log.d("왜안됨", "더는아래로 못가요 ");
+                    if(!isEnd){
+                        page++;
+                        getReview(uploader);
+                    }
+                }
+            }
+        });
 
         recyclerView = (RecyclerView) v.findViewById(R.id.rv_frag_review);
         linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -150,21 +167,33 @@ public class ViewFragReview extends Fragment {
     public void onResume() {
         super.onResume();
         Log.d("review", "onResume: ");
+        pbBar.setVisibility(View.VISIBLE);
+
+        reviewArray = new ArrayList<>();
+        page = 1;
+        cursor = "0";
+
         getReview(uploader);
         ((ShowProfileActivity)getActivity()).getReviewScore(uploader);
     }
 
     private void getReview(String uploader_id){
         ApiInterface apiInterface2 = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<ReviewDataArray> call2 = apiInterface2.getReview(uploader_id);
+        Call<ReviewDataArray> call2 = apiInterface2.getReview(uploader_id,page,cursor);
         call2.enqueue(new Callback<ReviewDataArray>() {
             @Override
             public void onResponse(Call<ReviewDataArray> call2, Response<ReviewDataArray> response2) {
                 if (response2.isSuccessful() && response2.body() != null){
-                    reviewArray = new ArrayList<>();
 
+                    isEnd = response2.body().isEnd();
+                    if(isEnd){
+                        pbBar.setVisibility(View.GONE);
+                    }
+                    cursor = response2.body().getCursor();
+                    ArrayList<ReviewData> reviewArray_tmp = response2.body().getReviewDataArray();
+                    reviewArray.addAll(reviewArray_tmp);
 
-                    reviewArray = response2.body().getReviewDataArray();
+                    //reviewArray = response2.body().getReviewDataArray();
                     reviewAdapter.setArrayList(reviewArray);
                     reviewAdapter.notifyDataSetChanged();
 
@@ -195,6 +224,12 @@ public class ViewFragReview extends Fragment {
 //                                final FragmentTransaction ftt = getActivity().getSupportFragmentManager().beginTransaction();
 //                                ftt.replace(R.id.main_frame_tr, new FragVideo());
 //                                ftt.commit();
+                                pbBar.setVisibility(View.VISIBLE);
+
+                                reviewArray = new ArrayList<>();
+                                page = 1;
+                                cursor = "0";
+
                                 getReview(uploader);
                                 ((ShowProfileActivity)getActivity()).getReviewScore(uploader);
                             }
