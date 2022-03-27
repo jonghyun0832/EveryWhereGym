@@ -101,9 +101,13 @@ public class FirebaseMsgService extends FirebaseMessagingService {
             Intent intent1 = new Intent(this,LiveWebViewActivity.class);
             intent1.putExtra("room_id",split[1]);
             selectIntent = intent1;
-        } else {
+        } else if(title.equals("라이브 수정 알림")){
             Log.d("노티", "onMessageReceived: intent");
             selectIntent = intent;
+        } else {
+            Intent intent2 = new Intent(this,reviewActivity.class);
+            intent2.putExtra("live_id",split[1]);
+            selectIntent = intent2;
         }
         //Intent intent1 = Intent(getBaseContext(),)
 //        intent.putExtra("live_id",split[1]);

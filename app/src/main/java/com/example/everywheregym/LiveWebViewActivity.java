@@ -2,6 +2,7 @@ package com.example.everywheregym;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
@@ -11,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +23,8 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -31,6 +35,21 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class LiveWebViewActivity extends AppCompatActivity {
+    private TextView tv_area;
+
+    private ConstraintLayout conView;
+    private Boolean isView = false;
+
+    private SeekBar sb_mic;
+    private SeekBar sb_volume;
+    private final int max = 2;
+    private final float min = 0;
+    private final float step = (float)0.1;
+    private float mic;
+    private float vol;
+    private int voll;
+
+    private AudioManager audioManager;
 
     private WebView webView;
 
@@ -53,11 +72,104 @@ public class LiveWebViewActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences= getSharedPreferences("info", MODE_PRIVATE);
         user_id = sharedPreferences.getString("user_id","");
 
+        tv_area = findViewById(R.id.tv_area);
+
         webView = findViewById(R.id.webview);
+        conView = findViewById(R.id.conView);
+
+        sb_mic = findViewById(R.id.sb_web_mic);
+        sb_volume = findViewById(R.id.sb_web_volume);
+
+        sb_mic.setProgress(10);
+        sb_volume.setProgress(1);
+
+        setSeekBarMax(sb_mic,max);
+        sb_mic.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                Log.d("t22", "onProgressChanged: ");
+                setSeekBarChange(i);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                Log.d("t22", "onStartTrackingTouch: ");
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Log.d("t22", "onStopTrackingTouch: ");
+                webView.loadUrl("javascript:handleMicVol(" + mic + ")");
+            }
+        });
+
+        audioManager = (AudioManager)getSystemService(AUDIO_SERVICE);
+        int maxVol = audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL);
+        System.out.println("최대값");
+        System.out.println(maxVol);
+        sb_volume.setMax(maxVol);
+
+        //setSeekBarMax(sb_volume,1);
+        sb_volume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                System.out.println(i);
+                voll = i;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                if(voll != 0){
+                    audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,voll,AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+                }else {
+                    audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,AudioManager.ADJUST_MUTE,AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+                }
+                //webView.loadUrl("javascript:handleVol(" + vol + ")");
+            }
+        });
+
+        conView.setVisibility(View.INVISIBLE);
+
+//        AndroidBridge ab = new AndroidBridge(LiveWebViewActivity.this);
+//        webView.addJavascriptInterface(ab,"Android");
+
+        tv_area.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!isView){
+                    tv_area.setVisibility(View.GONE);
+                    conView.setVisibility(View.VISIBLE);
+                    isView = true;
+                }
+            }
+        });
+
+        conView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isView){
+                    conView.setVisibility(View.INVISIBLE);
+                    tv_area.setVisibility(View.VISIBLE);
+                    isView = false;
+                }
+            }
+        });
 
 //        webView.setOnTouchListener(new OnClickWithOnTouchListener(this, new OnClickWithOnTouchListener.OnClickListener() {
 //            @Override
 //            public void onClick() {
+//                if(isView){
+//                    conView.setVisibility(View.INVISIBLE);
+//                    isView = false;
+//                } else {
+//                    conView.setVisibility(View.VISIBLE);
+//                    isView = true;
+//                }
 //                Log.d("웹뷰", "onClick: sdasdasdasdasdasdd");
 //            }
 //        }));
@@ -109,21 +221,7 @@ public class LiveWebViewActivity extends AppCompatActivity {
         webView.setWebChromeClient(new WebChromeClient(){
             @Override
             public void onPermissionRequest(final PermissionRequest request) {
-//
-//                runOnUiThread(new Runnable() {
-//                    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-//                    @Override
-//                    public void run() {
-//                        Log.d("뷰뷰뷰뷰", "onPermissionRequest: 퍼미션하는곳 들어옴" + request.getOrigin().toString());
-//                        if (request.getOrigin().toString().equals("https://8103-180-69-18-217.ngrok.io/")) {
-//                            Log.d("뷰뷰뷰뷰", "onPermissionRequest: 퍼미션ㄱㄱ");
-//                            request.grant(request.getResources());
-//                            Log.d("뷰뷰뷰뷰", "onPermissionRequest: 퍼미션 끝");
-//                        } else {
-//                            request.deny();
-//                        }
-//                    }
-//                });
+
                 Log.d("뷰뷰뷰뷰", "onPermissionRequest: 퍼미션하는곳 들어옴" + Arrays.toString(request.getResources()));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     String[] PERMISSIONS = {
@@ -199,7 +297,7 @@ public class LiveWebViewActivity extends AppCompatActivity {
         //webView.setWebViewClient(new WebViewClient());
 
         //webView.clearCache(true);
-        String enterUrl = "https://df3f-1-227-215-212.ngrok.io/" + room_url;
+        String enterUrl = "https://6e39-1-227-215-212.ngrok.io/" + room_url;
         //String enterUrl = "https://cf76-1-227-215-212.ngrok.io/";
         webView.loadUrl(enterUrl);
         //webView.loadUrl("https://www.google.com/");
@@ -225,6 +323,18 @@ public class LiveWebViewActivity extends AppCompatActivity {
 
     }
 
+    private void setSeekBarMax(SeekBar sb, int max_value) {
+        sb.setMax((int)((max_value-min) / step));
+    }
+
+    private void setSeekBarChange(int progress) {
+        mic = min + (progress * step);
+    }
+
+    private void setSeekBarChangeVolume(int progress) {
+        vol = min + (progress * step);
+    }
+
     private void finishLive(String live_id){
         if(host_id.equals(user_id)){
             ApiInterface apiInterface2 = ApiClient.getApiClient().create(ApiInterface.class);
@@ -240,7 +350,8 @@ public class LiveWebViewActivity extends AppCompatActivity {
                             ad3.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    finish();
+                                    reviewLive("0");
+                                    //finish();
                                 }
                             });
                             AlertDialog alertDialog3 = ad3.create();
@@ -270,6 +381,28 @@ public class LiveWebViewActivity extends AppCompatActivity {
             public void onResponse(Call<LiveData> call2, Response<LiveData> response2) {
                 if (response2.isSuccessful() && response2.body() != null){
                     if(response2.body().isSuccess()){
+                        reviewLive(user_id);
+                        //finish();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LiveData> call2, Throwable t) {
+                Toast.makeText(LiveWebViewActivity.this, "통신 오류", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void reviewLive(String user){
+        ApiInterface apiInterface2 = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<LiveData> call2 = apiInterface2.reviewLive(live_id, user);
+        call2.enqueue(new Callback<LiveData>() {
+            @Override
+            public void onResponse(Call<LiveData> call2, Response<LiveData> response2) {
+                if (response2.isSuccessful() && response2.body() != null){
+                    if(response2.body().isSuccess()){
+                        //평가창 띄우기???
                         finish();
                     }
                 }

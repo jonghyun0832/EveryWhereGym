@@ -449,7 +449,8 @@ public interface ApiInterface {
     @POST("joinLive.php")
     Call<LiveData> joinLive(
             @Field("live_id") String live_id,
-            @Field("live_join") String live_join
+            @Field("live_join") String live_join,
+            @Field("user_id") String user_id
     );
 
     //라이브 현재 인원수 빼기
@@ -458,6 +459,63 @@ public interface ApiInterface {
     Call<LiveData> leftLive(
             @Field("live_id") String live_id
     );
+
+    //라이브 평가 요청
+    @FormUrlEncoded
+    @POST("reviewLive.php")
+    Call<LiveData> reviewLive(
+            @Field("live_id") String live_id,
+            @Field("user_id") String user_id
+    );
+
+    //라이브 정보 가져오기
+    @FormUrlEncoded
+    @POST("getLiveInfo.php")
+    Call<LiveData> getLiveInfo(
+            @Field("live_id") String live_id
+    );
+
+    //라이브 리뷰 저장하기
+    @FormUrlEncoded
+    @POST("addReview.php")
+    Call<LiveData> addReview(
+            @Field("uploader_id") String uploader_id,
+            @Field("user_id") String user_id,
+            @Field("review") String review,
+            @Field("score") int score,
+            @Field("title") String title
+    );
+
+    //라이브 리뷰 가져오기
+    @FormUrlEncoded
+    @POST("getReview.php")
+    Call<ReviewDataArray> getReview(
+            @Field("uploader_id") String uploader_id
+    );
+
+    //라이브 리뷰 점수 가져오기
+    @FormUrlEncoded
+    @POST("getReviewScore.php")
+    Call<ReviewData> getReviewScore(
+            @Field("uploader_id") String uploader_id
+    );
+
+    //라이브 리뷰 삭제
+    @FormUrlEncoded
+    @POST("deleteReview.php")
+    Call<ReviewData> deleteReivew(
+            @Field("rv_id") String rv_id
+    );
+
+    //라이브 리뷰 수정
+    @FormUrlEncoded
+    @POST("editReview.php")
+    Call<ReviewData> editReivew(
+            @Field("rv_id") String rv_id,
+            @Field("rv_text") String rv_text,
+            @Field("rv_score") int rv_score
+    );
+
 
 
 

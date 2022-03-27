@@ -25,5 +25,8 @@
     <style name="numberPickerCustomSize">
         <item name="android:textSize">30sp</item>
     </style>
+    <style name="webSeekBar" parent="Widget.AppCompat.SeekBar">
+        <item name="colorAccent">#23A7FF</item>
+    </style>
 
 </resources>

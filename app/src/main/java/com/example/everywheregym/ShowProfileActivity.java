@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -53,6 +55,8 @@ public class ShowProfileActivity extends AppCompatActivity {
 
 
     public ArrayList<VodData> getVodArray;
+    public ArrayList<ReviewData> getReviewArray;
+    public String show_uploader_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +71,6 @@ public class ShowProfileActivity extends AppCompatActivity {
         tv_showpf_name = findViewById(R.id.textview_showPF_name);
 
         rb = findViewById(R.id.ratingBar_show);
-
 
 
         iv_showpf_img.setOnClickListener(new View.OnClickListener() {
@@ -88,16 +91,19 @@ public class ShowProfileActivity extends AppCompatActivity {
             }
         });
 
-
-
         Intent intent = getIntent();
-        String uploader_id = intent.getStringExtra("uploader_id");
-        //System.out.println("받은 번호 : " + uploader_id);
+        show_uploader_id = intent.getStringExtra("uploader_id");
+
+        //getReviewScore(show_uploader_id);
 
 
+        //리뷰 가져오기
+//        SharedPreferences sharedPreferences= getSharedPreferences("info", MODE_PRIVATE);
+//        String user_id = sharedPreferences.getString("user_id","");
 
+        //vod 리스트 가져오기
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<TrainerInfo> call = apiInterface.getTrainerInfo(uploader_id);
+        Call<TrainerInfo> call = apiInterface.getTrainerInfo(show_uploader_id);
         call.enqueue(new Callback<TrainerInfo>() {
             @Override
             public void onResponse(Call<TrainerInfo> call, Response<TrainerInfo> response) {
@@ -111,33 +117,33 @@ public class ShowProfileActivity extends AppCompatActivity {
                         tr_expert = response.body().getTr_expert(); //트레이너 전문영역
                         tr_career = response.body().getTr_career(); //트레이너 경력
                         tr_certify = response.body().getTr_certify(); //트레이너 전문사항
-                        int tr_score = response.body().getTr_score();
-                        if(tr_score < 0){
-                            tr_score = 0;
-                        }
-
-                        float result = (float)tr_score/100 * 5;
-
-                        rb.setRating(result);
+//                        int tr_score = response.body().getTr_score();
+//                        if(tr_score < 0){
+//                            tr_score = 0;
+//                        }
+//
+//                        float result = (float)tr_score/100 * 5;
+//
+//                        rb.setRating(result);
 
                         //텍스트 설정
                         tv_showpf_name.setText(user_name);
 
 
                         ApiInterface apiInterface2 = ApiClient.getApiClient().create(ApiInterface.class);
-                        Call<VodDataArray> call2 = apiInterface2.getTrainervodList(uploader_id);
+                        Call<VodDataArray> call2 = apiInterface2.getTrainervodList(show_uploader_id);
                         call2.enqueue(new Callback<VodDataArray>() {
                             @Override
                             public void onResponse(Call<VodDataArray> call2, Response<VodDataArray> response2) {
                                 if (response2.isSuccessful() && response2.body() != null){
                                     getVodArray = response2.body().getVodDataArray();
 
-
                                     //뷰페이저 탭 레이아웃 연결
                         Log.d("why", "ActivityonResponse2: " + tr_intro);
                                     ArrayList<Fragment> fragments = new ArrayList<>();
                                     fragments.add(ViewFragInfo.newInstance(0));
                                     fragments.add(ViewFragVod.newInstance(1));
+                                    fragments.add(ViewFragReview.newInstance(2));
                         Log.d("why", "ActivityonResponse3: " + tr_intro);
 
                                     viewpager2 = (ViewPager2) findViewById(R.id.viewpager2);
@@ -146,7 +152,7 @@ public class ShowProfileActivity extends AppCompatActivity {
                                     ViewFragAdapter viewFragAdapter = new ViewFragAdapter(ShowProfileActivity.this,fragments);
                                     viewpager2.setAdapter(viewFragAdapter);
 
-                                    final List<String> tabElement = Arrays.asList("트레이너 정보", "업로드한 영상");
+                                    final List<String> tabElement = Arrays.asList("트레이너 정보", "업로드한 영상", "라이브 리뷰");
                         Log.d("why", "ActivityonResponse4: " + tr_intro);
                                     new TabLayoutMediator(tabLayout, viewpager2, new TabLayoutMediator.TabConfigurationStrategy() {
                                         @Override
@@ -198,4 +204,30 @@ public class ShowProfileActivity extends AppCompatActivity {
 
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getReviewScore(show_uploader_id);
+    }
+
+    public void getReviewScore(String uploader_id){
+        ApiInterface apiInterface2 = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<ReviewData> call2 = apiInterface2.getReviewScore(uploader_id);
+        call2.enqueue(new Callback<ReviewData>() {
+            @Override
+            public void onResponse(Call<ReviewData> call2, Response<ReviewData> response2) {
+                if (response2.isSuccessful() && response2.body() != null){
+                    float score_result = response2.body().getRv_total_score();
+                    rb.setRating(score_result);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ReviewData> call2, Throwable t) {
+                Toast.makeText(ShowProfileActivity.this, "통신 오류", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 }

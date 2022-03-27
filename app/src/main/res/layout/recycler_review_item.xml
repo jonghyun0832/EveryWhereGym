@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tv_rv_review_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="닉네임"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/iv_review_user_img"
+        app:layout_constraintTop_toTopOf="@+id/iv_review_user_img" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_review_user_img"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:background="@android:color/transparent"
+        app:civ_border_color="#000000"
+        app:civ_border_overlay="false"
+        app:civ_border_width="3dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RatingBar
+        android:id="@+id/rb_rv_review_score"
+        style="@style/Widget.AppCompat.RatingBar.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:isIndicator="true"
+        android:numStars="5"
+        app:layout_constraintStart_toEndOf="@+id/iv_review_user_img"
+        app:layout_constraintTop_toBottomOf="@+id/tv_rv_review_name" />
+
+    <TextView
+        android:id="@+id/tv_rv_review_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="20dp"
+        android:paddingLeft="10dp"
+        android:text="리뷰 내용"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_review_user_img" />
+
+    <TextView
+        android:id="@+id/tv_rv_review_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:text="날짜"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_rv_review_name"
+        app:layout_constraintStart_toEndOf="@+id/tv_rv_review_name"
+        app:layout_constraintTop_toTopOf="@+id/tv_rv_review_name" />
+
+    <TextView
+        android:id="@+id/tv_rv_review_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:text="제목"
+        app:layout_constraintBottom_toBottomOf="@+id/rb_rv_review_score"
+        app:layout_constraintStart_toEndOf="@+id/rb_rv_review_score"
+        app:layout_constraintTop_toTopOf="@+id/rb_rv_review_score" />
+
+    <TextView
+        android:id="@+id/tv_btn_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:gravity="center"
+        android:minWidth="40dp"
+        android:minHeight="30dp"
+        android:text="삭제"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_btn_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:gravity="center"
+        android:minWidth="40dp"
+        android:minHeight="30dp"
+        android:text="수정"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_btn_delete"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -749,7 +749,7 @@ public class FragLive extends Fragment {
 
     private void joinLive(String live_id, String uploader, String live_join, String li_limit){
         ApiInterface apiInterface2 = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<LiveData> call2 = apiInterface2.joinLive(live_id,live_join);
+        Call<LiveData> call2 = apiInterface2.joinLive(live_id,live_join,user_id);
         call2.enqueue(new Callback<LiveData>() {
             @Override
             public void onResponse(Call<LiveData> call2, Response<LiveData> response2) {

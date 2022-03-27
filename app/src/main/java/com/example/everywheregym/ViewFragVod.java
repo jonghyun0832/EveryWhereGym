@@ -43,7 +43,6 @@ public class ViewFragVod extends Fragment {
     private LinearLayoutManager linearLayoutManager;
 
     private String user_id;
-//    private String is_trainer;
 
     public static ViewFragVod newInstance(int number) {
         ViewFragVod fragmentvod = new ViewFragVod();
