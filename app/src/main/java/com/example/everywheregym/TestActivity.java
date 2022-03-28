@@ -8,13 +8,16 @@ import retrofit2.Response;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -31,11 +34,56 @@ import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.hls.HlsMediaSource;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 
 public class TestActivity extends AppCompatActivity {
 
-    private VideoView videoView;
-    private MediaController mediaController;
+    private ConstraintLayout con_layout;
+
+    private PlayerView exoPlayerView;
+    private SimpleExoPlayer player;
+
+    private MediaSource buildMediaSource(Uri uri) {
+
+        String userAgent = Util.getUserAgent(this, "blackJin");
+
+        if (uri.getLastPathSegment().contains("mp3") || uri.getLastPathSegment().contains("mp4")) {
+
+            return new ExtractorMediaSource.Factory(new DefaultHttpDataSourceFactory(userAgent))
+                    .createMediaSource(uri);
+
+        } else if (uri.getLastPathSegment().contains("m3u8")) {
+
+
+            return new HlsMediaSource.Factory(new DefaultHttpDataSourceFactory(userAgent))
+                    .createMediaSource(uri);
+
+        } else {
+
+            return new ExtractorMediaSource.Factory(new DefaultDataSourceFactory(this, userAgent))
+                    .createMediaSource(uri);
+        }
+
+    }
+
+    private Boolean playWhenReady = true;
+    private int currentWindow = 0;
+    private Long playbackPosition = 0L;
+
+    private boolean fullscreen = false;
+    private ImageView fullscreenButton;
+
+//    private VideoView videoView;
+//    private MediaController mediaController;
 
     private TextView tv_category;
     private TextView tv_title;
@@ -78,10 +126,13 @@ public class TestActivity extends AppCompatActivity {
 //            setContentView(R.layout.activity_test);
 //        }
 
+        con_layout = findViewById(R.id.layout);
 
 
+        exoPlayerView = findViewById(R.id.exoPlayerView);
+        fullscreenButton = findViewById(R.id.exo_fullscreen_icon);
 
-        videoView = findViewById(R.id.videoView_vod_show);
+        //videoView = findViewById(R.id.videoView_vod_show);
 
         tv_category = findViewById(R.id.tv_vod_show_category);
         tv_title = findViewById(R.id.tv_vod_show_title);
@@ -100,7 +151,7 @@ public class TestActivity extends AppCompatActivity {
 
         fr_show_profile = findViewById(R.id.fr_vod_show);
 
-        prBar = findViewById(R.id.progressBar);
+        //prBar = findViewById(R.id.progressBar);
         iv_loading_thumbnail = findViewById(R.id.iv_loading_thumbnail);
 
 
@@ -181,6 +232,8 @@ public class TestActivity extends AppCompatActivity {
         Log.d("IMG", "onCreate업로더이미지후: ");
 
         SAMPLE_VIDEO_URL = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/video/" + vod_path;
+
+        initializePlayer();
 //        tv_title.setText(vod_title);
 //        tv_difficulty.setText(vod_difficulty);
 
@@ -193,38 +246,38 @@ public class TestActivity extends AppCompatActivity {
         //videoView.setMediaController(mediaController);
 
         // 비디오 재생경로
-        videoView.setVideoURI(Uri.parse(SAMPLE_VIDEO_URL));
-        Log.d("IMG", "onCreate리스너 들어가기 전: ");
-        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mediaPlayer) {
-                Log.d("IMG", "onCreate비디오 준비됨: ");
-                mediaPlayer.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
-                    @Override
-                    public void onVideoSizeChanged(MediaPlayer mediaPlayer, int i, int i1) {
-                        Log.d("IMG", "onCreate비디오 사이즈 바뀌었을때: ");
-                        mediaController = new MediaController(TestActivity.this);
-                        videoView.setMediaController(mediaController);
-                        mediaController.setAnchorView(videoView);
-                    }
-                });
-                videoView.seekTo(1);
-
-                videoView.start();
-//                hidepDialog();
-                prBar.setVisibility(View.INVISIBLE);
-                iv_loading_thumbnail.setVisibility(View.INVISIBLE);
-
-            }
-        });
-
-        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                //끝났으면 처음으로 돌아간다
-                videoView.seekTo(1);
-            }
-        });
+//        videoView.setVideoURI(Uri.parse(SAMPLE_VIDEO_URL));
+//        Log.d("IMG", "onCreate리스너 들어가기 전: ");
+//        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//            @Override
+//            public void onPrepared(MediaPlayer mediaPlayer) {
+//                Log.d("IMG", "onCreate비디오 준비됨: ");
+//                mediaPlayer.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
+//                    @Override
+//                    public void onVideoSizeChanged(MediaPlayer mediaPlayer, int i, int i1) {
+//                        Log.d("IMG", "onCreate비디오 사이즈 바뀌었을때: ");
+//                        mediaController = new MediaController(TestActivity.this);
+//                        videoView.setMediaController(mediaController);
+//                        mediaController.setAnchorView(videoView);
+//                    }
+//                });
+//                videoView.seekTo(1);
+//
+//                videoView.start();
+////                hidepDialog();
+//                prBar.setVisibility(View.INVISIBLE);
+//                iv_loading_thumbnail.setVisibility(View.INVISIBLE);
+//
+//            }
+//        });
+//
+//        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//            @Override
+//            public void onCompletion(MediaPlayer mediaPlayer) {
+//                //끝났으면 처음으로 돌아간다
+//                videoView.seekTo(1);
+//            }
+//        });
 
 
 
@@ -409,10 +462,104 @@ public class TestActivity extends AppCompatActivity {
 
 
 
+    private void initializePlayer() {
+        if (player == null) {
+
+            player = ExoPlayerFactory.newSimpleInstance(this.getApplicationContext());
+
+            player.addListener(new Player.EventListener() {
+                @Override
+                public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+
+                    switch (playbackState) {
+
+                        case Player.STATE_IDLE: // 1
+                            //재생 실패
+                            break;
+                        case Player.STATE_BUFFERING: // 2
+                            // 재생 준비
+                            break;
+                        case Player.STATE_READY: // 3
+                            // 재생 준비 완료
+                            iv_loading_thumbnail.setVisibility(View.INVISIBLE);
+                            break;
+                        case Player.STATE_ENDED: // 4
+                            // 재생 마침
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            });
 
 
+            fullscreenButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (fullscreen) {
+                        fullscreenButton.setImageDrawable(ContextCompat.getDrawable(TestActivity.this, R.drawable.ic_baseline_fullscreen_30));
+                        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                        if (getSupportActionBar() != null) {
+                            getSupportActionBar().show();
+                        }
+                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) exoPlayerView.getLayoutParams();
+                        params.width = params.MATCH_PARENT;
+                        params.height = (int) (225 * getApplicationContext().getResources().getDisplayMetrics().density);
+                        exoPlayerView.setLayoutParams(params);
+                        fullscreen = false;
+                        con_layout.setBackgroundColor(Color.WHITE);
+                    } else {
+                        fullscreenButton.setImageDrawable(ContextCompat.getDrawable(TestActivity.this, R.drawable.ic_baseline_fullscreen_exit_24));
+                        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+                        if (getSupportActionBar() != null) {
+                            getSupportActionBar().hide();
+                        }
+                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) exoPlayerView.getLayoutParams();
+                        params.width = params.MATCH_PARENT;
+                        params.height = params.MATCH_PARENT;
+                        exoPlayerView.setLayoutParams(params);
+                        fullscreen = true;
+                        con_layout.setBackgroundColor(Color.BLACK);
+                    }
+                }
+            });
 
+            //플레이어 연결
+            exoPlayerView.setPlayer(player);
 
+        }
 
+        String sample = SAMPLE_VIDEO_URL;
 
+        MediaSource mediaSource = buildMediaSource(Uri.parse(sample));
+
+        //prepare
+        player.prepare(mediaSource, true, false);
+
+        //start,stop
+        player.setPlayWhenReady(playWhenReady);
+    }
+
+    private void releasePlayer() {
+        if (player != null) {
+            playbackPosition = player.getCurrentPosition();
+            currentWindow = player.getCurrentWindowIndex();
+            playWhenReady = player.getPlayWhenReady();
+
+            exoPlayerView.setPlayer(null);
+            player.release();
+            player = null;
+
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        releasePlayer();
+        super.onDestroy();
+    }
 }

@@ -58,6 +58,7 @@
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout-land/activity_vod_detail2.xml" value="0.21472663139329806" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/activity_create.xml" value="0.22509057971014493" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/activity_edit_profile.xml" value="0.264" />
+        <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/activity_exotest.xml" value="0.152" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/activity_home.xml" value="0.176" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/activity_live_create1.xml" value="0.264" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/activity_live_create2.xml" value="0.264" />
@@ -89,6 +90,7 @@
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/activity_vod_detail2.xml" value="0.264" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/activity_vod_upload.xml" value="0.2" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/alert_menu.xml" value="0.20153985507246377" />
+        <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/custom_exo_view.xml" value="0.2" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/dasdasd.xml" value="0.18342391304347827" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/dialog_alert_menu.xml" value="0.264" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/dialog_category_box.xml" value="0.2" />
@@ -104,6 +106,7 @@
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/dialog_vod_explain.xml" value="0.264" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/dialog_vod_material.xml" value="0.264" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/dialog_vod_more.xml" value="0.264" />
+        <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/exo_playback_control_view.xml" value="0.16394927536231885" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/fragment_frag_live.xml" value="0.264" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/fragment_frag_mypage.xml" value="0.264" />
         <entry key="..\:/Users/jongh/AndroidStudioProjects/EveryWhereGym/app/src/main/res/layout/fragment_frag_video.xml" value="0.264" />
