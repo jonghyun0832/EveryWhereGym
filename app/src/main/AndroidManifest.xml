@@ -42,6 +42,8 @@
             android:exported="true" />
         <activity
             android:name=".LiveWebViewActivity"
+            android:windowSoftInputMode="adjustUnspecified|adjustPan"
+            android:theme="@style/AppTheme.ActionBar"
             android:exported="true"
             android:screenOrientation="landscape" />
 

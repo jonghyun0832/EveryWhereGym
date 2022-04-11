@@ -35,7 +35,6 @@ public class FragTrMypage extends Fragment {
     TextView tv_tr_expert; //전문분야
     TextView tv_tr_career; //경력사항
     TextView tv_tr_certify; //자격사항
-    Button btn_my_live; //내 라이브 일정
     Button btn_my_upload; //내 업로드 영상
     Button btn_my_bookmark; //내 북마크
     Button btn_tr_logout; //로그아웃
@@ -70,7 +69,6 @@ public class FragTrMypage extends Fragment {
         tv_tr_career = view.findViewById(R.id.textview_tr_career);
         tv_tr_certify = view.findViewById(R.id.textview_tr_certify);
 
-        btn_my_live = view.findViewById(R.id.btn_my_live);
         btn_my_upload = view.findViewById(R.id.btn_my_upload);
         btn_my_bookmark = view.findViewById(R.id.btn_my_bookmark_tr);
         btn_tr_logout = view.findViewById(R.id.btn_tr_logout);
@@ -113,16 +111,6 @@ public class FragTrMypage extends Fragment {
                 intent.putExtra("tr_career",tr_career);
                 intent.putExtra("tr_certify",tr_certify);
                 startActivity(intent);
-            }
-        });
-
-
-
-        //내 라이브 일정 확인
-        btn_my_live.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getContext(), "라이브 확인 만들어야함", Toast.LENGTH_SHORT).show();
             }
         });
 

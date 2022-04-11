@@ -216,24 +216,10 @@
                 app:layout_constraintTop_toTopOf="@+id/guideline26" />
 
             <Button
-                android:id="@+id/btn_my_live"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="80dp"
-                android:paddingLeft="20dp"
-                android:text="내 라이브 수업 일정"
-                android:textAlignment="textStart"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textview_tr_certify" />
-
-            <Button
                 android:id="@+id/btn_my_upload"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="80dp"
                 android:paddingLeft="20dp"
                 android:text="내 업로드한 영상"
                 android:textAlignment="textStart"
@@ -241,7 +227,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_my_live" />
+                app:layout_constraintTop_toBottomOf="@+id/textview_tr_certify" />
 
             <Button
                 android:id="@+id/btn_tr_logout"

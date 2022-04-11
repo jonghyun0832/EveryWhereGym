@@ -419,8 +419,7 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("sendOpenAlarm.php")
     Call<LiveData> sendOpenAlarm(
-            @Field("live_id") String live_id,
-            @Field("live_title") String live_title
+            @Field("live_id") String live_id
     );
 
     //라이브 끝났음
@@ -457,7 +456,8 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("leftLive.php")
     Call<LiveData> leftLive(
-            @Field("live_id") String live_id
+            @Field("live_id") String live_id,
+            @Field("user_id") String user_id
     );
 
     //라이브 평가 요청
