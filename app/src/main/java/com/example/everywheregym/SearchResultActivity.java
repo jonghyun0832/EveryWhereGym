@@ -20,7 +20,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -35,7 +34,6 @@ import com.skydoves.balloon.ArrowOrientation;
 import com.skydoves.balloon.Balloon;
 import com.skydoves.balloon.BalloonAnimation;
 import com.skydoves.balloon.OnBalloonClickListener;
-import com.skydoves.balloon.ViewExtensionKt;
 
 import java.util.ArrayList;
 
@@ -181,7 +179,7 @@ public class SearchResultActivity extends AppCompatActivity {
                 String vod_thumbnail = item.getVod_thumbnail();
                 int vod_view = item.getVod_view();
 
-                Intent intent = new Intent(SearchResultActivity.this,TestActivity.class);
+                Intent intent = new Intent(SearchResultActivity.this, ShowVodActivity.class);
                 intent.putExtra("vod_path",vod_path);
                 intent.putExtra("vod_title",vod_title);
                 intent.putExtra("vod_difficulty",vod_difficulty);

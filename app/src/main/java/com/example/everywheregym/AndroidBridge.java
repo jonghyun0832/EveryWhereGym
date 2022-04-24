@@ -18,6 +18,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.example.everywheregym.ApiClient;
+import com.example.everywheregym.ApiInterface;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

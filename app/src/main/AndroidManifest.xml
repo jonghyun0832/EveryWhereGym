@@ -79,7 +79,7 @@
             android:name=".ShowProfileActivity"
             android:exported="true" />
         <activity
-            android:name=".TestActivity"
+            android:name=".ShowVodActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true" />
         <activity

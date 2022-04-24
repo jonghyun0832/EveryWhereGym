@@ -33,8 +33,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,7 +45,6 @@ import com.skydoves.balloon.Balloon;
 import com.skydoves.balloon.BalloonAnimation;
 import com.skydoves.balloon.OnBalloonClickListener;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -317,7 +314,7 @@ public class FragVideo extends Fragment {
                 String vod_thumbnail = item.getVod_thumbnail();
                 int vod_view = item.getVod_view();
 
-                Intent intent = new Intent(getContext(),TestActivity.class);
+                Intent intent = new Intent(getContext(), ShowVodActivity.class);
                 intent.putExtra("vod_path",vod_path);
                 intent.putExtra("vod_title",vod_title);
                 intent.putExtra("vod_difficulty",vod_difficulty);

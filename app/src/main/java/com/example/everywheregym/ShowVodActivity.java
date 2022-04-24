@@ -16,24 +16,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.graphics.Color;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.RoundedCorner;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -45,7 +39,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
-public class TestActivity extends AppCompatActivity {
+public class ShowVodActivity extends AppCompatActivity {
 
     private ConstraintLayout con_layout;
 
@@ -181,12 +175,12 @@ public class TestActivity extends AppCompatActivity {
         String vod_thumbnail_url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/" + vod_thumbnail;
 
         Log.d("IMG", "onCreate전: ");
-        Glide.with(TestActivity.this).load(vod_thumbnail_url).into(iv_loading_thumbnail);
+        Glide.with(ShowVodActivity.this).load(vod_thumbnail_url).into(iv_loading_thumbnail);
         Log.d("IMG", "onCreate후: ");
 
         //제대로된 조회수를 받아왔을때 조회수 증가
         if (vod_view == -1){
-            Toast.makeText(TestActivity.this, "조회수 오류", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ShowVodActivity.this, "조회수 오류", Toast.LENGTH_SHORT).show();
         } else {
             increaseView(vod_id,vod_view);
         };
@@ -228,7 +222,7 @@ public class TestActivity extends AppCompatActivity {
             vod_uploader_img_url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/" + vod_uploader_img;
         }
         Log.d("IMG", "onCreate업로더 이미지전: ");
-        Glide.with(TestActivity.this).load(vod_uploader_img_url).override(50,50).into(iv_uploader_img);
+        Glide.with(ShowVodActivity.this).load(vod_uploader_img_url).override(50,50).into(iv_uploader_img);
         Log.d("IMG", "onCreate업로더이미지후: ");
 
         SAMPLE_VIDEO_URL = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/video/" + vod_path;
@@ -284,7 +278,7 @@ public class TestActivity extends AppCompatActivity {
         fr_show_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent2 = new Intent(TestActivity.this, ShowProfileActivity.class);
+                Intent intent2 = new Intent(ShowVodActivity.this, ShowProfileActivity.class);
                 intent2.putExtra("uploader_id",vod_uploader_id);
                 startActivity(intent2);
                 finish();
@@ -297,11 +291,11 @@ public class TestActivity extends AppCompatActivity {
                 if(isMark){
                     //한번더 누르면 북마크 해제
                     deleteBookMark(user_id,vod_id);
-                    iv_bookmark.setImageDrawable(ContextCompat.getDrawable(TestActivity.this,R.drawable.ic_baseline_bookmark_empty));
+                    iv_bookmark.setImageDrawable(ContextCompat.getDrawable(ShowVodActivity.this,R.drawable.ic_baseline_bookmark_empty));
                 } else {
                     //한번더 누르면 북마크 추가
                     addBookMark(user_id,vod_id);
-                    iv_bookmark.setImageDrawable(ContextCompat.getDrawable(TestActivity.this,R.drawable.ic_baseline_bookmark_24));
+                    iv_bookmark.setImageDrawable(ContextCompat.getDrawable(ShowVodActivity.this,R.drawable.ic_baseline_bookmark_24));
                 }
             }
         });
@@ -325,7 +319,7 @@ public class TestActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<VodData> call, Throwable t) {
-                Toast.makeText(TestActivity.this, "조회수 증가 실패", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ShowVodActivity.this, "조회수 증가 실패", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -340,11 +334,11 @@ public class TestActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null){
                     if(response.body().isSuccess()){
                         //북마크 없을때
-                        iv_bookmark.setImageDrawable(ContextCompat.getDrawable(TestActivity.this,R.drawable.ic_baseline_bookmark_empty));
+                        iv_bookmark.setImageDrawable(ContextCompat.getDrawable(ShowVodActivity.this,R.drawable.ic_baseline_bookmark_empty));
                         isMark = false;
                     } else {
                         //이미 북마크 된경우
-                        iv_bookmark.setImageDrawable(ContextCompat.getDrawable(TestActivity.this,R.drawable.ic_baseline_bookmark_24));
+                        iv_bookmark.setImageDrawable(ContextCompat.getDrawable(ShowVodActivity.this,R.drawable.ic_baseline_bookmark_24));
                         isMark = true;
 
                     }
@@ -366,7 +360,7 @@ public class TestActivity extends AppCompatActivity {
             public void onResponse(Call<VodData> call, Response<VodData> response) {
                 if (response.isSuccessful() && response.body() != null){
                     if(response.body().isSuccess()){
-                        AlertDialog.Builder ad = new AlertDialog.Builder(TestActivity.this);
+                        AlertDialog.Builder ad = new AlertDialog.Builder(ShowVodActivity.this);
                         ad.setTitle("알림");
                         ad.setMessage("동영상이 북마크에 추가되었습니다");
                         ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
@@ -397,7 +391,7 @@ public class TestActivity extends AppCompatActivity {
             public void onResponse(Call<VodData> call, Response<VodData> response) {
                 if (response.isSuccessful() && response.body() != null){
                     if(response.body().isSuccess()){
-                        AlertDialog.Builder ad = new AlertDialog.Builder(TestActivity.this);
+                        AlertDialog.Builder ad = new AlertDialog.Builder(ShowVodActivity.this);
                         ad.setTitle("알림");
                         ad.setMessage("해당 동영상의 북마크를 해제했습니다");
                         ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
@@ -414,7 +408,7 @@ public class TestActivity extends AppCompatActivity {
                         AlertDialog alertDialog = ad.create();
                         alertDialog.show();
                     }else {
-                        Toast.makeText(TestActivity.this, "서버에서 삭제실패", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ShowVodActivity.this, "서버에서 삭제실패", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -437,7 +431,7 @@ public class TestActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<VodData> call, Throwable t) {
-                Toast.makeText(TestActivity.this, "시청기록 추가 실패", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ShowVodActivity.this, "시청기록 추가 실패", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -497,7 +491,7 @@ public class TestActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     if (fullscreen) {
-                        fullscreenButton.setImageDrawable(ContextCompat.getDrawable(TestActivity.this, R.drawable.ic_baseline_fullscreen_30));
+                        fullscreenButton.setImageDrawable(ContextCompat.getDrawable(ShowVodActivity.this, R.drawable.ic_baseline_fullscreen_30));
                         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
                         if (getSupportActionBar() != null) {
                             getSupportActionBar().show();
@@ -510,7 +504,7 @@ public class TestActivity extends AppCompatActivity {
                         fullscreen = false;
                         con_layout.setBackgroundColor(Color.WHITE);
                     } else {
-                        fullscreenButton.setImageDrawable(ContextCompat.getDrawable(TestActivity.this, R.drawable.ic_baseline_fullscreen_exit_24));
+                        fullscreenButton.setImageDrawable(ContextCompat.getDrawable(ShowVodActivity.this, R.drawable.ic_baseline_fullscreen_exit_24));
                         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
                                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);

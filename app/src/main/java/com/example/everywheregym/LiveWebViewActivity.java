@@ -411,7 +411,7 @@ public class LiveWebViewActivity extends AppCompatActivity {
         //webView.setWebViewClient(new WebViewClient());
 
         //webView.clearCache(true);
-        String enterUrl = "https://8687-203-234-103-157.ngrok.io/" + room_url;
+        String enterUrl = "https://4aec-180-69-18-217.ngrok.io/" + room_url;
 
         webView.loadUrl(enterUrl);
 

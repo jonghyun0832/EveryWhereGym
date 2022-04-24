@@ -3,7 +3,6 @@ package com.example.everywheregym;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -92,7 +91,7 @@ public class TrainerMyVodActivity extends AppCompatActivity {
                 String vod_thumbnail = item.getVod_thumbnail();
                 int vod_view = item.getVod_view();
 
-                Intent intent = new Intent(TrainerMyVodActivity.this,TestActivity.class);
+                Intent intent = new Intent(TrainerMyVodActivity.this, ShowVodActivity.class);
                 intent.putExtra("vod_path",vod_path);
                 intent.putExtra("vod_title",vod_title);
                 intent.putExtra("vod_difficulty",vod_difficulty);

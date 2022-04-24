@@ -92,7 +92,7 @@ public class MyBookMarkActivity extends AppCompatActivity {
                 String vod_thumbnail = item.getVod_thumbnail();
                 int vod_view = item.getVod_view();
 
-                Intent intent = new Intent(MyBookMarkActivity.this,TestActivity.class);
+                Intent intent = new Intent(MyBookMarkActivity.this, ShowVodActivity.class);
                 intent.putExtra("vod_path",vod_path);
                 intent.putExtra("vod_title",vod_title);
                 intent.putExtra("vod_difficulty",vod_difficulty);
