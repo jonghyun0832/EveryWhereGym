@@ -1,5 +1,5 @@
 # EveryWhereGym (어디든짐)
-
+(TODO : Package Rebuild)
 ## Brief
 올바른 홈트레이닝을 위한 비대면 PT 어플리케이션
 Client(안드로이드), Server, Signaling Server(WebRTC) 3가지로 구성  
