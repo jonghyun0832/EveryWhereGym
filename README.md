@@ -65,3 +65,11 @@ FCM
 * 회원탈퇴
 * 동영상 이용
 * 라이브 트레이닝 평가
+
+## Live Training Flow (WebRTC)
+<img src="https://user-images.githubusercontent.com/72550133/164974264-5a9ec269-3ffa-47e5-a68d-d158b4af7ac0.png" width="800px" height="400px" title="1" alt="1"></img><br>
+<img src="https://user-images.githubusercontent.com/72550133/164974267-70fa0810-8487-4d58-9dd1-12465ce0f567.png" width="800px" height="400px" title="2" alt="2"></img><br>
+<img src="https://user-images.githubusercontent.com/72550133/164974270-7e4aca3c-7daf-4500-87c8-3e5111f742bb.png" width="800px" height="400px" title="3" alt="3"></img><br>
+<img src="https://user-images.githubusercontent.com/72550133/164974474-3846c170-13a0-4a61-9ec2-77198bcbad55.png" width="800px" height="400px" title="4" alt="4"></img><br>
+<img src="https://user-images.githubusercontent.com/72550133/164974278-3c6454a5-d92b-4822-bcde-383419c01f66.png" width="800px" height="400px" title="5-1" alt="5-1"></img>        
+<img src="https://user-images.githubusercontent.com/72550133/164974279-cc5d6568-a2c7-44c0-bdf5-ce26a482423a.png" width="800px" height="400px" title="5-2" alt="5-2"></img>  
