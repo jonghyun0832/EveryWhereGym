@@ -2,7 +2,7 @@
 
 ## Brief
 올바른 홈트레이닝을 위한 비대면 PT 어플리케이션
-Client(안드로이드), Server, Signaling Server(WebRTC) 3가지로 구성됨  
+Client(안드로이드), Server, Signaling Server(WebRTC) 3가지로 구성  
 Client : https://github.com/jonghyun0832/EveryWhereGym  
 Server : https://github.com/jonghyun0832/EveryWhereGymServer  
 Signaling Server : https://github.com/jonghyun0832/everywheregym_signal_server  
