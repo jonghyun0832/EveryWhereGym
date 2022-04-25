@@ -172,7 +172,7 @@ public class ShowVodActivity extends AppCompatActivity {
         String vod_uploader_id = intent.getStringExtra("vod_uploader_id");
         String vod_thumbnail = intent.getStringExtra("vod_thumbnail");
 
-        String vod_thumbnail_url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/" + vod_thumbnail;
+        String vod_thumbnail_url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/src/image/" + vod_thumbnail;
 
         Log.d("IMG", "onCreate전: ");
         Glide.with(ShowVodActivity.this).load(vod_thumbnail_url).into(iv_loading_thumbnail);
@@ -217,15 +217,15 @@ public class ShowVodActivity extends AppCompatActivity {
 
 
         if (vod_uploader_img.equals("")){
-            vod_uploader_img_url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/IMAGE_no_image.jpeg";
+            vod_uploader_img_url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/src/image/IMAGE_no_image.jpeg";
         } else{
-            vod_uploader_img_url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/" + vod_uploader_img;
+            vod_uploader_img_url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/src/image/" + vod_uploader_img;
         }
         Log.d("IMG", "onCreate업로더 이미지전: ");
         Glide.with(ShowVodActivity.this).load(vod_uploader_img_url).override(50,50).into(iv_uploader_img);
         Log.d("IMG", "onCreate업로더이미지후: ");
 
-        SAMPLE_VIDEO_URL = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/video/" + vod_path;
+        SAMPLE_VIDEO_URL = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/src/video/" + vod_path;
 
         initializePlayer();
 //        tv_title.setText(vod_title);

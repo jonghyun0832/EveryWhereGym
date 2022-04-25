@@ -113,9 +113,9 @@ public class VodAdapter extends RecyclerView.Adapter<VodAdapter.VodViewHolder> {
 
         String get_thumbnail_path;
         if(arrayList.get(position).getVod_thumbnail().equals("")){
-            get_thumbnail_path = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/IMAGE_no_image.jpeg";
+            get_thumbnail_path = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/src/image/IMAGE_no_image.jpeg";
         }else{
-            get_thumbnail_path = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/" + arrayList.get(position).getVod_thumbnail();
+            get_thumbnail_path = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/src/image/" + arrayList.get(position).getVod_thumbnail();
         }
         Glide.with(context).load(get_thumbnail_path).into(holder.iv_thumbnail);
 
@@ -125,9 +125,9 @@ public class VodAdapter extends RecyclerView.Adapter<VodAdapter.VodViewHolder> {
 
         String get_uploader_img_path;
         if(arrayList.get(position).getVod_uploader_img().equals("")){
-            get_uploader_img_path = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/IMAGE_no_image.jpeg";
+            get_uploader_img_path = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/src/image/IMAGE_no_image.jpeg";
         }else {
-            get_uploader_img_path = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/" + arrayList.get(position).getVod_uploader_img();
+            get_uploader_img_path = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/src/image/" + arrayList.get(position).getVod_uploader_img();
         }
         Glide.with(context).load(get_uploader_img_path).override(50,50).into(holder.iv_uploader_img);
 

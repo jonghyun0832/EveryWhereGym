@@ -61,7 +61,7 @@ public class VideoCheck extends AppCompatActivity {
         }
 
 
-        //SAMPLE_VIDEO_URL = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/video/4_1642659633875";
+        //SAMPLE_VIDEO_URL = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/src/video/4_1642659633875";
 
         // 비디오 재생
         videoView = (VideoView) findViewById(R.id.videoView);

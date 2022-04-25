@@ -171,7 +171,7 @@ public class VodDetailActivity extends AppCompatActivity {
 
         if(isEdit){
             //썸네일 불러와서 넣어주기
-            String getted_thumbnail_url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/" + getted_vod_thumbnail;
+            String getted_thumbnail_url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/src/image/" + getted_vod_thumbnail;
             Glide.with(VodDetailActivity.this).load(getted_thumbnail_url).centerCrop().into(iv_thumbnail);
             previous_thumbnail = getted_vod_thumbnail;
 

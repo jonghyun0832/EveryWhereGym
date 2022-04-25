@@ -126,9 +126,9 @@ public class FragMypage extends Fragment {
                         user_img = response.body().getUser_img();
                         tv_profile_name.setText(user_name);
                         if (user_img == null || user_img.equals("")){
-                            url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/IMAGE_no_image.jpeg";
+                            url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/src/image/IMAGE_no_image.jpeg";
                         }else {
-                            url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/" + user_img;
+                            url = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/src/image/" + user_img;
                         }
                         Glide.with(getContext()).load(url).override(250,250).into(iv_profile);
                     } else {

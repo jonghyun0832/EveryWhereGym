@@ -69,9 +69,9 @@ public class VodUploaderAdapter extends RecyclerView.Adapter<VodUploaderAdapter.
 
         String get_thumbnail;
         if(arrayList.get(position).getVod_thumbnail().equals("")){
-            get_thumbnail = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/IMAGE_no_image.jpeg";
+            get_thumbnail = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/src/image/IMAGE_no_image.jpeg";
         } else {
-            get_thumbnail = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/" + arrayList.get(position).getVod_thumbnail();
+            get_thumbnail = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/src/image/" + arrayList.get(position).getVod_thumbnail();
         }
         Glide.with(context).load(get_thumbnail).into(holder.iv_thumbnail);
 

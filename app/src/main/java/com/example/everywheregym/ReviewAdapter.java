@@ -68,9 +68,9 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
 
         String get_img_path;
         if(arrayList.get(position).getImg_path().equals("")){
-            get_img_path = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/IMAGE_no_image.jpeg";
+            get_img_path = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/src/image/IMAGE_no_image.jpeg";
         }else{
-            get_img_path = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/" + arrayList.get(position).getImg_path();
+            get_img_path = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/src/image/" + arrayList.get(position).getImg_path();
         }
         Glide.with(context).load(get_img_path).into(holder.iv_user);
 

@@ -61,9 +61,9 @@ public class LiveSubAdapter extends RecyclerView.Adapter<LiveSubAdapter.LiveSubV
         //업로더 이미지 글라이드로
         String get_uploader_img_path;
         if(arrayList.get(position).getUploader_img().equals("")){
-            get_uploader_img_path = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/IMAGE_no_image.jpeg";
+            get_uploader_img_path = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/src/image/IMAGE_no_image.jpeg";
         }else{
-            get_uploader_img_path = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/image/" + arrayList.get(position).getUploader_img();
+            get_uploader_img_path = "http://ec2-54-180-29-233.ap-northeast-2.compute.amazonaws.com/src/image/" + arrayList.get(position).getUploader_img();
         }
         Glide.with(context).load(get_uploader_img_path).into(holder.iv_uploader_img);
 
